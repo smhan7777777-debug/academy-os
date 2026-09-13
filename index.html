@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="원장실 Academy OS v3 — AI 직원이 서류를 준비하고 원장은 확인·고치기·보류만 하는 중소형 학원 운영체제 체험판">
+<link rel="icon" href="/favicon.svg">
+<title>원장실 Academy OS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="/src/styles.css">
+</head>
+<body>
+<div class="app">
+<aside class="rail" id="rail" aria-label="주 메뉴">
+  <a class="brand" href="#today" style="text-decoration:none"><span class="seal">결</span><span><b>원장실</b><small>Academy OS</small></span></a>
+  <div class="school"><b>수학의숲 판교학원</b><span>재원 10명 · 강사 2명 · 체험용</span></div>
+  <nav class="nav" id="nav"></nav>
+  <div class="rail-end">
+    <label for="roleSel">다른 사람의 화면으로 보기</label>
+    <select id="roleSel"><option value="owner">원장</option><option value="teacher">강사 (김민정 선생님)</option><option value="parent">학부모 (이서준 어머니)</option><option value="student">학생 (이서준)</option></select>
+  </div>
+</aside>
+<div class="main">
+  <header class="top">
+    <div style="display:flex;align-items:center;gap:10px"><button class="menu" id="menuBtn" aria-label="메뉴 열기">☰</button><span class="date">2026년 9월 14일 월요일 · 예시일</span></div>
+    <div class="demo"><span>모든 인물·기록은 가상 · 실제 발송·결제 없음</span><button class="btn-sm" id="resetBtn">처음부터</button></div>
+  </header>
+  <main class="content" id="view" tabindex="-1"></main>
+</div>
+</div>
+<div class="ov" id="ov"><div class="dr" id="dr" role="dialog" aria-modal="true"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script type="module" src="/src/app.js"></script>
+</body>
+</html>
