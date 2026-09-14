@@ -16,6 +16,7 @@ const STAFF=[
  {id:'wrong',   name:'오답 담당',     ch:'오', killer:true,  core:true, does:'조교가 체크한 오답을 단원별로 모아 학생마다 취약 단원과 맞춤 문제 세트를 준비합니다.', when:'시험 채점 후', needs:'강사 검수 → 원장 확인', src:'오답 체크표·문제 은행(사용 허가분)'},
  {id:'care',    name:'관심학생 담당', ch:'관', killer:true,  core:true, does:'결석·숙제·학부모 문의·성적 신호를 공개된 점수 기준으로 합산해 원장이 볼 학생을 표시합니다. 확률을 말하지 않습니다.', when:'매일 아침', needs:'즉시 확인 (상담 연결)', src:'출결·숙제·문의·성적'},
  {id:'career',  name:'진로상담 담당', ch:'진', killer:true,  core:true, does:'학생이 직접 말한 관심·활동·희망만으로 다음 탐색 단계와 상담 질문을 정리한 리포트를 씁니다.', when:'상담 예약 전날', needs:'담당 강사 확인 → 원장 확인', src:'학생 자기 기록·상담 메모'},
+ {id:'web',     name:'웹사이트 담당', ch:'웹', killer:true,  core:true, does:'agent1000 무료 웹사이트와 원장실을 잇습니다. 웹에서 온 상담 신청·문의·리뷰를 서류로 만들고, 결재된 소식·수강료·시간표만 웹에 올립니다.', when:'웹 이벤트 발생 시 · 매주 월요일', needs:'공개 게시·상담 확정은 즉시 확인, 리뷰 답글·주간 리포트는 아침', src:'웹사이트 이벤트·시간표·수납·확정 FAQ'},
  {id:'billing', name:'수납 담당',     ch:'수', killer:false, core:true, does:'청구·납부·잔액을 맞추고, 납부가 확인되면 이전 미납 안내를 자동으로 멈춥니다.', when:'납부 확인 시·매월 1일', needs:'금액 안내는 즉시 확인', src:'청구서·입금 기록'},
  {id:'lesson',  name:'수업기록 담당', ch:'기', killer:false, core:true, does:'강사의 체크 입력을 학생별 기록으로 정리합니다. 체크하지 않은 학생은 "미관찰"로 남깁니다.', when:'수업 직후', needs:'없음 (내부 기록)', src:'강사 체크 입력'},
  {id:'consult', name:'상담·등록 담당',ch:'상', killer:false, core:true, does:'문의 → 상담 예약 → 등록 → 첫 청구서까지 중복 없이 연결합니다.', when:'문의 접수 시', needs:'등록 확정만 원장 확인', src:'문의·상담 메모'},
@@ -68,11 +69,24 @@ function seed(){
   lessonSaved:{},
   career:{S9:{interests:['게임 만들기','영상 편집'],acts:['학교 코딩 동아리 6개월','유튜브 편집 영상 3편'],hopes:['컴퓨터 관련 고등학교','대학은 아직 모름']}},
   leads:[{id:'L1',name:'조은채',source:'네이버 검색',stage:'consulted',cls:'B',slot:'2026-09-15 16:00'},{id:'L2',name:'서지안',source:'학부모 소개',stage:'new',cls:'A',slot:null}],
+  site:seedSite(),
  };
  return st;
 }
+/* agent1000 프리미엄 웹사이트(무료)와 이어지는 상태 — 실제 사이트·서버는 미연결, 모의 */
+function seedSite(){
+ return {slug:'suhak-forest',url:'agent1000.kr/site/suhak-forest',
+  live:{popup:null,tuition:false,timetable:true,seats:true,teachers:true},
+  capacity:{A:8,B:6,C:6},
+  faq:[{q:'수강료',a:'중등 수학은 월 32만원(주 2회)입니다. 자세한 내용은 수강료 안내 페이지에 게시되어 있습니다.'},{q:'상담',a:'상담은 웹사이트에서 빈 시간을 골라 신청하시면 됩니다. 30분, 무료입니다.'},{q:'시간표',a:'반별 시간표는 시간표 페이지에 있습니다. 바뀌면 그 페이지가 먼저 바뀝니다.'},{q:'레벨테스트',a:'첫 상담 때 20분 진단을 함께 합니다. 따로 준비할 것은 없습니다.'},{q:'위치',a:'판교역 3번 출구에서 걸어서 5분입니다.'}],
+  reviews:[{id:'R1',author:'초6 학부모',rating:5,text:'매주 리포트를 보내 주셔서 아이가 뭘 배우는지 알 수 있어요.',at:'2026-09-08',reply:'리포트를 읽어 주셔서 감사합니다. 아이가 수업에서 한 이야기를 그대로 담고 있습니다.'}],
+  requests:[],chats:[],
+  stats:{visits:184,inquiries:6,bookings:2,prev:{visits:150,inquiries:4,bookings:1}}};
+}
 
 let S=load()||seed();
+if(!S.site){S.site=seedSite();}
+if(S.hired&&S.hired.web===undefined)S.hired.web=true;
 function load(){try{const j=localStorage.getItem(KEY);return j?JSON.parse(j):null}catch(e){return null}}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
 function log(action,detail,actor='원장'){S.rev++;S.log.unshift({at:new Date().toISOString(),action,detail,actor});}
@@ -127,6 +141,7 @@ function approve(id){
  const d=S.docs.find(x=>x.id===id);if(!d||d.status==='sent')return;
  const blocked=guard(d);if(blocked){d.status='stale';d.reason=blocked;log('결재 중지',d.title+' — '+blocked);save();render();toast(blocked,true);return;}
  d.status='sent';d.approvedAt=new Date().toISOString();d.history.push({at:d.approvedAt,what:'원장 결재 → 모의 전송 완료 (v'+d.version+')'});
+ afterApprove(d);
  log('결재·전송',d.title);save();render();toast('결재했습니다. '+(d.recipient?d.recipient+'에게 모의 전송 완료':'처리 완료'));
  const card=$('[data-doc="'+id+'"]');if(card){const st=card.querySelector('.stamp');if(st)st.classList.add('pop');}
 }
@@ -215,11 +230,73 @@ function commitTimetable(change){
 }
 const fmt=h=>{const m=Math.round((h%1)*60);return `${Math.floor(h)}:${m?String(m).padStart(2,'0'):'00'}`;};
 
+/* ---------- 웹사이트 담당 (agent1000 프리미엄 웹사이트 ↔ 원장실) ---------- */
+const WEEK=[['2026-09-15','화'],['2026-09-16','수'],['2026-09-17','목'],['2026-09-18','금']];
+function consultSlots(){
+ /* 원장실 시간표에서 실제로 비어 있는 상담 시간만 웹에 연다: 강사 수업·기존 상담·웹 신청과 겹치지 않는 칸 */
+ const taken=new Set([...S.leads.filter(l=>l.slot).map(l=>l.slot),...S.site.requests.map(r=>r.slot)]);
+ const out=[];
+ WEEK.forEach(([date,day])=>[15,16,17,18].forEach(h=>{const iso=`${date} ${h}:00`;if(taken.has(iso))return;
+  const teacherFree=!Object.values(S.classes).some(c=>c.days.includes(day)&&c.start<=h&&h<c.end&&c.teacher==='김민정');
+  out.push({iso,label:`${date.slice(5).replace('-','/')}(${day}) ${h}:00`,teacherFree});}));
+ return out;
+}
+function webBook(name,phone,slotIso,clsId){
+ /* 플랫폼 규칙: 로그인 없이 이름·전화만 받고, 확정은 사람이 한다 (status=requested) */
+ const slot=consultSlots().find(s=>s.iso===slotIso);if(!slot)return toast('그 시간은 방금 찼습니다. 다른 시간을 골라 주세요.',true);
+ const id='WR'+(S.site.requests.length+1);const c=cls(clsId);
+ S.site.requests.push({id,name,phone,slot:slotIso,cls:clsId,status:'requested',at:TODAY});
+ S.leads.push({id:'L'+(S.leads.length+1),name,source:'웹사이트 상담 신청',stage:'requested',cls:clsId,slot:slotIso,reqId:id});
+ S.site.stats.bookings++;
+ const body=`${name} 보호자님, 수학의숲 판교학원 상담 신청을 확인했습니다.\n\n상담 시간: ${slot.label} (30분, 무료)\n희망 반: ${c.name} · 담당 ${c.teacher} 선생님${slot.teacherFree?' 동석 가능':' (원장 상담 후 강사 연결)'}\n장소: 판교역 3번 출구 도보 5분, 2강의실\n\n첫 상담 때 20분 진단을 함께 합니다. 시간을 바꾸시려면 이 문자에 답장해 주세요.\n\n수학의숲 판교학원 드림`;
+ addDoc({key:'webbook:'+id,kind:'webbook',tier:'now',by:'웹사이트 담당',ic:'웹',ico:'b',title:`${name} 웹 상담 신청 확정`,sum:`${slot.label} · ${c.name} 희망 · 잔여석 ${seatsLeft(clsId)}석 · 확정 문자는 원장 확인 후`,body,evidence:[{l:'신청 경로',v:'웹사이트 상담 신청 칸 (로그인 없음)'},{l:'연락처',v:phone},{l:'시간 검사',v:'강사 수업·다른 상담과 겹치지 않음'},{l:'잔여석',v:`${c.name} ${seatsLeft(clsId)}석`}],recipient:name+' 보호자',reqId:id});
+ log('웹 상담 신청',`${name} · ${slot.label}`,'웹사이트 담당');save();render();toast('상담 신청이 결재함(지금 확인)에 올라왔습니다. 확정 문자는 원장님이 확인한 뒤 나갑니다.');
+}
+const seatsLeft=id=>Math.max(0,S.site.capacity[id]-cls(id).members.length);
+function webAsk(q){
+ const hit=S.site.faq.find(f=>q.includes(f.q));S.site.stats.inquiries++;
+ if(hit){S.site.chats.push({q,a:hit.a,src:'FAQ'});log('웹 문의 자동 답변',`"${q}" → FAQ「${hit.q}」`,'문의 답변 담당');save();render();return;}
+ S.site.chats.push({q,a:'이 질문은 학원에서 확인한 뒤 답변드리겠습니다. 연락처를 남겨 주시면 오늘 안에 연락드립니다.',src:'escalated'});
+ addDoc({key:'inquiry:'+S.site.chats.length,kind:'inquiry',tier:'morning',by:'문의 답변 담당',ic:'문',title:'웹 문의 답변 (FAQ 범위 밖)',sum:`"${q.slice(0,28)}${q.length>28?'…':''}" · 확정 FAQ에 없어 초안을 쓰지 않음 · 원장님 답을 적으면 FAQ 추가 여부를 묻습니다`,body:`방문자 질문: ${q}\n\n답변 (원장님이 적어 주세요):\n`,evidence:[{l:'질문',v:q},{l:'FAQ 대조',v:`확정 FAQ ${S.site.faq.length}개 중 일치 없음`},{l:'규칙',v:'범위 밖은 추측하지 않고 담당자에게 넘김'}],recipient:'웹 방문자 (연락처 대기)'});
+ log('웹 문의 넘김',q.slice(0,30),'문의 답변 담당');save();render();toast('FAQ 범위 밖 질문이라 답을 만들지 않고 아침 결재함으로 넘겼습니다.');
+}
+function webReview(rating,text){
+ const id='R'+(S.site.reviews.length+1);S.site.reviews.push({id,author:'재원 학부모',rating,text,at:TODAY,reply:null});
+ const draft=rating>=4?`말씀 감사합니다. 아이가 수업에서 한 이야기를 그대로 리포트에 담고 있습니다. 앞으로도 매주 같은 방식으로 알려드리겠습니다.`:`솔직하게 말씀해 주셔서 감사합니다. 말씀하신 부분은 담당 선생님과 함께 확인하고, 이번 주 안에 직접 연락드리겠습니다.`;
+ addDoc({key:'review:'+id,kind:'review',tier:'morning',by:'웹사이트 담당',ic:'웹',title:`웹사이트 리뷰 답글 (별 ${rating}개)`,sum:`"${text.slice(0,26)}${text.length>26?'…':''}" · 답글 초안 1개 · 성적·합격 실적 언급 없음`,body:draft,evidence:[{l:'리뷰',v:text},{l:'별점',v:rating+'개'},{l:'규칙',v:'과한 약속·성적 자랑 금지, 학원 말투'}],recipient:'웹사이트 리뷰 페이지 (공개)',reviewId:id});
+ log('웹 리뷰 접수',`별 ${rating}개`,'웹사이트 담당');save();render();toast('리뷰가 들어왔습니다. 답글 초안이 아침 결재함에 준비되었습니다.');
+}
+function preparePopup(text){
+ const clean=(text||'').trim();if(!clean)return toast('한 줄 소식을 적어 주세요.',true);
+ const body=`[상단 띠] ${clean}\n[팝업] ${clean}\n게시 기간: 9월 14일 ~ 9월 30일\n\n같은 문구를 네이버 플레이스·카카오 채널에도 복사해 쓸 수 있게 준비했습니다 (게시는 원장 결재 후).`;
+ addDoc({key:'news:'+clean,kind:'news',tier:'now',by:'학원 소식 담당',ic:'소',ico:'r',title:'웹사이트 상단 소식 게시',sum:`"${clean.slice(0,30)}" · 공개 게시라 즉시 확인`,body,evidence:[{l:'원장 메모',v:clean},{l:'게시 위치',v:'웹사이트 상단 띠 + 팝업'},{l:'규칙',v:'이모지·성적 자랑 없음, 기간 명시'}],recipient:'웹사이트 (공개)'});
+ log('소식 초안 준비',clean,'학원 소식 담당');save();render();toast('소식 초안을 준비했습니다. 공개 게시라 결재함(지금 확인)에서 확인해 주세요.');
+}
+function prepareTuitionPost(){
+ const body=`수강료 안내 (교육청 게시 기준)\n\n중2 수학 A · 주 2회 90분 · 월 320,000원\n초6 수학 B · 주 2회 90분 · 월 320,000원\n중3 영어 C · 주 2회 90분 · 월 320,000원\n교재비 별도 · 환불은 학원법 환불 기준표에 따릅니다.\n\n게시일 2026년 9월 14일 · 수납 장부의 청구 금액과 같습니다.`;
+ addDoc({key:'tuition:2026-09',kind:'tuition',tier:'now',by:'행정 서류 담당',ic:'행',ico:'a',title:'수강료 게시문 (웹사이트 공개)',sum:'수납 장부 청구 금액 그대로 · 교육청 게시 의무 · 공개라 즉시 확인',body,evidence:[{l:'근거',v:'9월 청구서 3개 반 320,000원'},{l:'규정',v:'학원법 수강료 게시 의무'},{l:'환불',v:'AI 계산 없음, 기준표 링크'}],recipient:'웹사이트 (공개)'});
+ log('수강료 게시문 준비','9월','행정 서류 담당');save();render();toast('수강료 게시문을 준비했습니다. 결재하면 웹사이트에 공개됩니다.');
+}
+function prepareWebReport(){
+ const s=S.site.stats,p=s.prev;const d=(a,b)=>a-b>=0?'+'+(a-b):String(a-b);
+ const body=`웹사이트 주간 리포트 (9월 7일 ~ 9월 13일)\n\n방문 ${s.visits}회 (지난주 ${p.visits}, ${d(s.visits,p.visits)})\n문의 ${s.inquiries}건 (지난주 ${p.inquiries}, ${d(s.inquiries,p.inquiries)}) · FAQ 자동 답변 비율은 다음 주부터 측정\n상담 신청 ${s.bookings}건 (지난주 ${p.bookings}, ${d(s.bookings,p.bookings)})\n\n말할 수 있는 것: 상담 신청은 모두 웹사이트 빈 시간 칸에서 들어왔습니다.\n말할 수 없는 것: 방문이 늘어난 이유(검색·소개·소식 게시)는 아직 구분되지 않습니다. 등록 전환은 상담이 끝나야 셉니다.\n\n제안: 이번 주 상단 소식 한 줄을 올려 보고 다음 주 방문과 비교합니다.`;
+ addDoc({key:'webreport:2026-09-14',kind:'webreport',tier:'morning',by:'웹사이트 담당',ic:'웹',title:'웹사이트 주간 리포트',sum:`방문 ${s.visits} · 문의 ${s.inquiries} · 상담 신청 ${s.bookings} · 말할 수 없는 것도 적음`,body,evidence:[{l:'방문',v:`${s.visits} (지난주 ${p.visits})`},{l:'문의',v:`${s.inquiries} (지난주 ${p.inquiries})`},{l:'상담 신청',v:`${s.bookings} (지난주 ${p.bookings})`}],recipient:null});
+}
+function afterApprove(d){
+ /* 결재가 곧 웹사이트 반영: 결재된 것만 공개된다 */
+ if(d.kind==='webbook'){const l=S.leads.find(x=>x.reqId===d.reqId);if(l)l.stage='consulted';const r=S.site.requests.find(x=>x.id===d.reqId);if(r)r.status='confirmed';}
+ if(d.kind==='review'){const r=S.site.reviews.find(x=>x.id===d.reviewId);if(r)r.reply=d.body;}
+ if(d.kind==='news'){S.site.live.popup=d.body.split('\n')[0].replace('[상단 띠] ','');}
+ if(d.kind==='tuition'){S.site.live.tuition=true;}
+ if(d.kind==='timetable'){S.site.live.timetable=true;}
+}
+const webOpen=()=>docsOpen().filter(d=>['webbook','inquiry','review'].includes(d.kind));
+
 /* ---------- 아침 준비 (교무 실장) ---------- */
 function morningPrep(){
  if(S.morningDone)return;
  S.invoices.forEach(inv=>{if(money(inv)>0&&inv.due<TODAY)prepareBilling(inv);});
- prepareCare();prepareCareer('S9');
+ prepareCare();prepareCareer('S9');prepareWebReport();
  addDoc({key:'attend:S7:'+TODAY,kind:'attend',tier:'auto',by:'출결 담당',ic:'출',title:'윤지호 학생 어제 출결 미기록',sum:'결석으로 단정하지 않고 확인 목록에 올림 · 자동 처리(내부 기록)',body:'9월 11일(목) 초6 수학 B 출결 기록이 없습니다. 결석으로 기록하지 않았습니다. 김민정 선생님께 확인 요청을 남겼습니다.',evidence:[{l:'출결 기기',v:'입실 기록 없음'},{l:'강사 체크',v:'미입력'}],studentId:'S7'});
  addDoc({key:'lead:L1',kind:'consult',tier:'auto',by:'상담·등록 담당',ic:'상',title:'조은채 상담 예약 확정 (9/15 16:00)',sum:'네이버 검색 문의 → 상담 예약 · 강사·교실 충돌 없음 · 자동 처리',body:'조은채 학생(초6) 상담이 9월 15일 16:00 2강의실로 잡혔습니다. 같은 시간 다른 상담 없음. 등록 확정 시에만 원장 확인을 요청합니다.',evidence:[{l:'문의 경로',v:'네이버 검색'},{l:'희망 반',v:'초6 수학 B'}]});
  S.morningDone=true;save();
@@ -233,6 +310,7 @@ const NAV=[
  {id:'timetable',t:'시간표',i:'M4 5h16v15H4zM4 10h16M9 5v15'},
  {id:'wrong',t:'오답 현황',i:'M6 6l12 12M18 6L6 18'},
  {id:'billing',t:'수납',i:'M3 7h18v11H3zM3 11h18M7 15h3'},
+ {id:'website',t:'웹사이트',i:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'},
  {sep:'운영'},
  {id:'staff',t:'AI 직원 명부',i:'M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10 0'},
  {id:'rules',t:'결재 규칙',i:'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z'},
@@ -246,7 +324,7 @@ function renderNav(){
 function render(){
  if(role==='owner'){renderNav();$('#rail').style.display='';}else{$('#nav').innerHTML='';}
  const v=$('#view');
- const V={today:vToday,students:vStudents,lesson:vLesson,timetable:vTimetable,wrong:vWrong,billing:vBilling,staff:vStaff,rules:vRules,guide:vGuide};
+ const V={today:vToday,students:vStudents,lesson:vLesson,timetable:vTimetable,wrong:vWrong,billing:vBilling,website:vWebsite,staff:vStaff,rules:vRules,guide:vGuide};
  if(role==='teacher')v.innerHTML=vTeacher();else if(role==='parent')v.innerHTML=vParent();else if(role==='student')v.innerHTML=vStudent();
  else v.innerHTML=(V[route]||vToday)();
  bind();
@@ -273,6 +351,7 @@ function vToday(){
  const lines=[
   now.length?{n:now.length,u:'건',t:'지금 확인',d:overdue.length?`미납 ${overdue.length}건은 금액이 들어가 맨 앞에 두었습니다`:'금액·상담처럼 바로 볼 서류',cls:'r'}:null,
   morn.length?{n:morn.length,u:'건',t:'아침 결재함',d:'리포트·시간표·문제 세트 등 모아서 보는 서류',cls:''}:null,
+  webOpen().length?{n:webOpen().length,u:'건',t:'웹사이트에서 온 것',d:'상담 신청·문의·리뷰 · 위 두 칸에 포함',cls:'b'}:null,
   careN?{n:careN,u:'명',t:'살펴볼 학생',d:`기준 ${S.policy.threshold}점 이상 · 오른쪽 목록`,cls:'a'}:null,
   auto.length?{n:auto.length,u:'건',t:'자동 처리',d:'규칙대로 처리하고 알림만 남김',cls:'g'}:null,
   minor.length?{n:minor.length,u:'건',t:'재결재 없이 유지',d:'어제 결재한 서류를 문장만 다듬음',cls:'g'}:null,
@@ -420,11 +499,56 @@ function vBilling(){
  </tbody></table></div><div class="card-b" style="padding-top:14px"><p class="note">부분 납부 예: 320,000원 청구에 100,000원이 들어오면 잔액 220,000원. 이전 금액으로 만든 안내 서류는 "중지"로 바뀌고 새 잔액으로 다시 준비합니다. 환불 계산은 AI가 하지 않고 정해진 계산표로만 합니다.</p></div></div>`;
 }
 
+/* ---------- 웹사이트 화면 ---------- */
+let webDraft={name:'',phone:'',slot:'',cls:'A',q:'',rating:5,review:'',popup:''};
+function vWebsite(){
+ const st=S.site;const slots=consultSlots();if(!webDraft.slot&&slots.length)webDraft.slot=slots[0].iso;
+ const liveN=['popup','tuition','timetable','seats','teachers'].filter(k=>st.live[k]).length;
+ const pend=k=>S.docs.find(d=>d.kind===k&&['review','held'].includes(d.status));
+ const status=(on,k)=>on?'<span class="pill g">게시 중</span>':pend(k)?'<span class="pill a">결재 대기</span>':'<span class="pill">미게시</span>';
+ const mockSite=`<div class="site"><div class="site-bar"><span></span><span></span><span></span><i>${st.url}</i></div>
+  ${st.live.popup?`<div class="site-strip">${esc(st.live.popup)}</div>`:'<div class="site-strip off">상단 소식 없음 · 원장실에서 한 줄을 적고 결재하면 여기 걸립니다</div>'}
+  <div class="site-hero"><small>수학의숲 판교학원 · 판교역 3번 출구 5분</small><h3>매주 리포트로 아이의 수업을 그대로 알려드립니다.</h3><p>성적 자랑 대신 기록을 보여드립니다. 재원 학부모는 아래 학부모 페이지에서 자녀 리포트·시간표·수강료를 봅니다.</p></div>
+  <div class="site-sec"><h4>반과 잔여석 <span class="src">원장실 시간표·명단에서 자동</span></h4><div class="site-classes">${Object.values(S.classes).map(c=>`<div><b>${c.name}</b><span>${c.days.join('·')} ${fmt(c.start)}~${fmt(c.end)} · ${c.teacher} 선생님</span>${st.live.seats?`<em class="${seatsLeft(c.id)<=1?'low':''}">${seatsLeft(c.id)?'잔여 '+seatsLeft(c.id)+'석':'대기 신청'}</em>`:''}</div>`).join('')}</div></div>
+  <div class="site-sec"><h4>수강료 안내 <span class="src">행정 서류 담당 · 교육청 게시</span></h4>${st.live.tuition?'<p>중2 수학 A · 초6 수학 B · 중3 영어 C 각 월 320,000원 (주 2회 90분) · 교재비 별도 · 환불 기준표 링크</p>':'<p class="off">게시 전 · 원장 결재 후 공개됩니다</p>'}</div>
+  <div class="site-sec"><h4>상담 신청 <span class="src">원장실 시간표의 빈 시간만 열림 · 로그인 없음</span></h4>
+   <div class="site-form"><input type="text" data-web="name" placeholder="학생 이름" value="${esc(webDraft.name)}"><input type="text" data-web="phone" placeholder="보호자 연락처" value="${esc(webDraft.phone)}">
+   <select data-web="cls">${Object.values(S.classes).map(c=>`<option value="${c.id}" ${webDraft.cls===c.id?'selected':''}>${c.name}</option>`).join('')}</select>
+   <select data-web="slot">${slots.map(s=>`<option value="${s.iso}" ${webDraft.slot===s.iso?'selected':''}>${s.label}${s.teacherFree?' · 강사 동석 가능':''}</option>`).join('')||'<option value="">이번 주 빈 시간 없음</option>'}</select>
+   <button class="btn-ok btn-sm" id="webBook" ${slots.length?'':'disabled'}>상담 신청</button></div>
+   ${st.requests.length?`<ul class="site-list">${st.requests.map(r=>`<li>${esc(r.name)} · ${r.slot.slice(5)} · ${r.status==='confirmed'?'<span class="pill g">확정 문자 발송(모의)</span>':'<span class="pill a">원장 확인 대기</span>'}</li>`).join('')}</ul>`:''}</div>
+  <div class="site-sec"><h4>궁금한 점 바로 묻기 <span class="src">문의 답변 담당 · 확정 FAQ ${st.faq.length}개 범위 안에서만</span></h4>
+   <div class="site-chat">${st.chats.slice(-4).map(c=>`<div class="me">${esc(c.q)}</div><div class="bot ${c.src}">${esc(c.a)}<small>${c.src==='FAQ'?'확정 FAQ에서 답함':'원장실 결재함으로 넘김'}</small></div>`).join('')||'<div class="bot">안녕하세요. 수강료·상담·시간표·레벨테스트·위치를 물어보실 수 있습니다.</div>'}</div>
+   <div class="site-form"><input type="text" data-web="q" placeholder="예: 수강료가 얼마인가요?" value="${esc(webDraft.q)}"><button class="btn-sm" id="webAsk">묻기</button><span class="small muted">추천: ${st.faq.map(f=>`<button class="btn-link" data-webq="${f.q}">${f.q}</button>`).join(' · ')} · <button class="btn-link" data-webq="셔틀버스가 있나요?">셔틀(범위 밖)</button></span></div></div>
+  <div class="site-sec"><h4>학부모 후기 <span class="src">재원 학부모만 · 답글은 원장 결재 후</span></h4>
+   ${st.reviews.map(r=>`<div class="site-review"><b>${'★'.repeat(r.rating)}<span class="muted"> ${r.author} · ${r.at.slice(5)}</span></b><p>${esc(r.text)}</p>${r.reply?`<p class="reply">학원 답글 · ${esc(r.reply)}</p>`:'<p class="reply off">답글 준비 중 (원장 결재 대기)</p>'}</div>`).join('')}
+   <div class="site-form"><select data-web="rating">${[5,4,3].map(n=>`<option value="${n}" ${webDraft.rating===n?'selected':''}>${'★'.repeat(n)}</option>`).join('')}</select><input type="text" data-web="review" placeholder="후기 한 줄 (체험용)" value="${esc(webDraft.review)}"><button class="btn-sm" id="webReview">후기 남기기</button></div></div>
+  <div class="site-foot"><button class="btn-sm" id="toParent">학부모 페이지 로그인 → 자녀 리포트·시간표·수강료</button><span class="muted small">AI 활용 동의한 자녀의 기록만 보입니다</span></div></div>`;
+ return `<div class="head"><div><div class="eyebrow">웹사이트 · 웹사이트 담당 · agent1000 프리미엄 웹사이트(무료)</div><h1>웹사이트는 결재함의 입구이고, 결재된 것만 밖으로 나갑니다.</h1><p>agent1000이 무료로 주는 학원 웹사이트를 원장실에 연결했습니다. 웹에서 온 상담 신청·문의·후기는 서류가 되어 결재함에 오고, 소식·수강료·시간표·잔여석은 원장실 장부에서 그대로 올라가되 공개는 결재 뒤에만 합니다.</p></div></div>
+ <div class="kpis"><div class="kpi"><div class="l">이번 주 방문</div><strong class="num">${st.stats.visits}<small>회</small></strong><p>지난주 ${st.stats.prev.visits}회</p></div><div class="kpi"><div class="l">웹에서 온 문의·후기·상담</div><strong class="num">${st.stats.inquiries+st.stats.bookings+st.reviews.length}<small>건</small></strong><p>결재 대기 ${webOpen().length}건</p></div><div class="kpi"><div class="l">웹사이트에 게시 중</div><strong class="num">${liveN}<small>/5</small></strong><p>결재된 것만 공개</p></div><div class="kpi"><div class="l">이번 주 빈 상담 시간</div><strong class="num">${slots.length}<small>칸</small></strong><p>시간표에서 자동 계산</p></div></div>
+ <div class="cols"><div>
+  <div class="card"><div class="card-h"><div><h2>방문자가 보는 웹사이트 (모의)</h2><p>직접 신청·질문·후기를 남겨 보면 결재함에 어떻게 들어오는지 볼 수 있습니다</p></div><span class="pill">실제 사이트 미연결</span></div><div class="card-b">${mockSite}</div></div>
+ </div><div class="grid">
+  <div class="card side"><div class="card-h"><div><h2>웹사이트에 올라가는 것</h2><p>모두 원장실 장부가 근거 · 공개는 결재 뒤</p></div></div><div class="card-b">
+   <div class="row"><div style="flex:1"><b>상단 소식·팝업</b><p>학원 소식 담당 · 원장 한 줄 → 초안 → 지금 확인</p><div class="site-form" style="margin-top:6px"><input type="text" data-web="popup" placeholder="예: 겨울방학 특강 상담 시작" value="${esc(webDraft.popup)}"><button class="btn-sm" id="webPopup">초안 준비</button></div></div>${status(!!st.live.popup,'news')}</div>
+   <div class="row"><div style="flex:1"><b>수강료 게시</b><p>행정 서류 담당 · 수납 장부 청구 금액 그대로 · 교육청 게시 의무</p>${st.live.tuition||pend('tuition')?'':'<button class="btn-sm" id="webTuition" style="margin-top:6px">게시문 준비</button>'}</div>${status(st.live.tuition,'tuition')}</div>
+   <div class="row"><div style="flex:1"><b>시간표</b><p>시간표 담당 · 변경 배포 서류가 결재되면 웹이 먼저 바뀜</p></div>${status(st.live.timetable,'timetable')}</div>
+   <div class="row"><div style="flex:1"><b>반별 잔여석</b><p>정원 − 재원 명단 · 0석이면 "대기 신청"으로 바뀜</p></div><label class="chk"><input type="checkbox" data-live="seats" ${st.live.seats?'checked':''}> 공개</label></div>
+   <div class="row"><div style="flex:1"><b>강사 소개</b><p>이름·담당 반만 · 학력·실적 문구 없음</p></div><label class="chk"><input type="checkbox" data-live="teachers" ${st.live.teachers?'checked':''}> 공개</label></div>
+  </div></div>
+  <div class="card side"><div class="card-h"><div><h2>웹사이트에서 들어오는 것</h2><p>전부 서류가 되어 결재함으로</p></div></div><div class="card-b">
+   <ul class="impact"><li><span>상담 신청</span><b>빈 시간 검사 → 지금 확인 (확정 문자)</b></li><li><span>문의 (챗)</span><b>FAQ 안: 자동 답 · 밖: 아침 결재함</b></li><li><span>후기</span><b>답글 초안 → 아침 결재함 → 게시</b></li><li><span>주간 리포트</span><b>매주 월요일 아침 결재함</b></li></ul>
+   <p class="small muted" style="margin-top:10px">지금 결재 대기 ${webOpen().length}건 · <a href="#today">오늘 결재함</a></p></div></div>
+  <div class="card side"><div class="card-h"><div><h2>확정 FAQ ${st.faq.length}개</h2><p>문의 답변 담당이 답할 수 있는 전부</p></div></div><div class="card-b"><ul class="ev">${st.faq.map(f=>`<li><b>${f.q}</b>${esc(f.a)}</li>`).join('')}</ul><p class="small muted" style="margin-top:8px">범위 밖 질문에 원장님이 답을 적어 결재하면 FAQ에 넣을지 물어봅니다.</p></div></div>
+  <div class="card side"><div class="card-h"><div><h2>지키는 선</h2></div></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>성적·합격 실적을 웹에 쓰지 않습니다. 기록(리포트)을 보여 줍니다.</div></li><li><span>2</span><div>학부모 페이지는 동의한 자녀의 기록만, 다른 학생 이름은 없습니다.</div></li><li><span>3</span><div>웹 챗은 확정 FAQ 밖을 추측하지 않습니다.</div></li><li><span>4</span><div>공개 게시·상담 확정 문자는 항상 원장이 먼저 봅니다.</div></li></ul></div></div>
+ </div></div>`;
+}
+
 function vStaff(){
  const k=STAFF.filter(x=>x.killer),c=STAFF.filter(x=>!x.killer&&x.core),o=STAFF.filter(x=>!x.core);
  const card=x=>`<article class="st ${x.killer?'killer':''}">${x.killer?'<span class="kmark">핵심</span>':''}<div class="role"><div class="badge">${x.ch}</div><h3>${x.name}<small>${x.when}</small></h3></div><p>${x.does}</p><dl><dt>보는 자료</dt><dd>${x.src}</dd><dt>원장 결재</dt><dd>${x.needs}</dd></dl><div class="foot"><span class="tag"><i style="background:${S.hired[x.id]?'var(--green)':'var(--line2)'}"></i>${S.hired[x.id]?'일하는 중':'쉬는 중'}</span><button class="sw ${S.hired[x.id]?'on':''}" data-hire="${x.id}" aria-label="${x.name} ${S.hired[x.id]?'끄기':'켜기'}" aria-pressed="${S.hired[x.id]}"></button></div></article>`;
- return `<div class="head"><div><div class="eyebrow">AI 직원 명부</div><h1>직원은 15명이지만, 원장님이 알아야 할 건 한 가지입니다.</h1><p>모두 서류만 준비하고, 보내거나 결제하는 일은 스스로 하지 않습니다. 켜고 끄는 것 외에 설정할 것이 없습니다. 위 여섯 명이 이 학원의 핵심입니다.</p></div></div>
- <div class="sec" style="margin-top:0">핵심 직원 6 · 처음부터 켜져 있음</div><div class="staff">${k.map(card).join('')}</div>
+ return `<div class="head"><div><div class="eyebrow">AI 직원 명부</div><h1>직원은 16명이지만, 원장님이 알아야 할 건 한 가지입니다.</h1><p>모두 서류만 준비하고, 보내거나 결제하는 일은 스스로 하지 않습니다. 켜고 끄는 것 외에 설정할 것이 없습니다. 위 일곱 명이 이 학원의 핵심이고, 웹사이트 담당은 agent1000 무료 웹사이트와 원장실을 잇습니다.</p></div></div>
+ <div class="sec" style="margin-top:0">핵심 직원 7 · 처음부터 켜져 있음</div><div class="staff">${k.map(card).join('')}</div>
  <div class="sec" style="margin-top:26px">기본 직원 4 · 장부를 맞추는 사람들</div><div class="staff">${c.map(card).join('')}</div>
  <div class="sec" style="margin-top:26px">필요할 때 켜는 직원 5</div><div class="staff">${o.map(card).join('')}</div>
  <p class="note" style="margin-top:22px">가게용 직원(재고·위생·쿠폰 등)은 학원 명부에서 뺐습니다. 직원 수를 자랑하지 않고, 학원에서 실제로 쓰는 일만 남겼습니다.</p>`;
@@ -449,7 +573,7 @@ function vRules(){
 function vGuide(){
  return `<div class="head"><div><div class="eyebrow">사용 안내</div><h1>원장실을 5분 안에 이해하기</h1></div></div>
  <div class="grid g2"><div class="card"><div class="card-h"><h2>이 화면이 다른 점</h2></div><div class="card-b"><ul class="timeline"><li><span>하나</span><div><b>결재함이 전부입니다.</b> AI 직원이 준비한 서류가 쌓이고, 원장은 확인·고치기·보류만 합니다. 학생·수납 목록도 확인이 필요한 사람이 먼저 옵니다.</div></li><li><span>둘</span><div><b>서류마다 근거가 붙습니다.</b> "고치기 · 근거 보기"를 누르면 어떤 기록으로 썼는지 나옵니다. 없는 내용은 쓰지 않습니다.</div></li><li><span>셋</span><div><b>강사는 체크만 합니다.</b> 말로 길게 설명하지 않아도 한 반 기록이 1분 안에 끝납니다.</div></li><li><span>넷</span><div><b>보내기 전에 다시 확인합니다.</b> 납부가 들어오거나 기록이 바뀌면 결재해 둔 서류도 스스로 멈춥니다.</div></li><li><span>다섯</span><div><b>규칙은 원장이 정합니다.</b> 무엇을 자동으로 하고 무엇을 볼지, 살펴볼 학생 기준까지 원장이 바꿉니다.</div></li></ul></div></div>
- <div class="card"><div class="card-h"><h2>체험 순서 (3분)</h2></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>오늘 결재함 → 미납 안내 하나를 <b>확인</b>해 도장이 찍히는지 봅니다.</div></li><li><span>2</span><div>수업 기록 → 중2 수학 A 학생들을 체크하고 <b>저장</b>. 아침 결재함에 리포트가 생깁니다.</div></li><li><span>3</span><div>시간표 → 중2 수학 A를 화요일 17:00으로 바꿔 보고, 박하린 학생의 피아노 일정 겹침이 잡히는지 봅니다.</div></li><li><span>4</span><div>왼쪽 아래에서 <b>강사 화면</b>으로 바꾸고 "오답 체크·맞춤 문제" 탭에서 칸을 몇 개 바꾼 뒤 <b>맞춤 문제 세트 준비</b> → 검수 완료. 원장 화면 "오답 현황"에는 결재 상태만 보입니다.</div></li><li><span>5</span><div>수납 → 기한 경과가 맨 위에 있는지 보고, 박하린 10만원 가상 입금. 미납 안내가 "중지"되는지 봅니다.</div></li><li><span>6</span><div>학생 → 확인 필요 학생이 먼저 오는지, 학년·반 필터가 되는지 봅니다. 학부모·학생 화면도 바꿔 봅니다.</div></li></ul></div></div></div>
+ <div class="card"><div class="card-h"><h2>체험 순서 (3분)</h2></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>오늘 결재함 → 미납 안내 하나를 <b>확인</b>해 도장이 찍히는지 봅니다.</div></li><li><span>2</span><div>수업 기록 → 중2 수학 A 학생들을 체크하고 <b>저장</b>. 아침 결재함에 리포트가 생깁니다.</div></li><li><span>3</span><div>시간표 → 중2 수학 A를 화요일 17:00으로 바꿔 보고, 박하린 학생의 피아노 일정 겹침이 잡히는지 봅니다.</div></li><li><span>4</span><div>왼쪽 아래에서 <b>강사 화면</b>으로 바꾸고 "오답 체크·맞춤 문제" 탭에서 칸을 몇 개 바꾼 뒤 <b>맞춤 문제 세트 준비</b> → 검수 완료. 원장 화면 "오답 현황"에는 결재 상태만 보입니다.</div></li><li><span>5</span><div>수납 → 기한 경과가 맨 위에 있는지 보고, 박하린 10만원 가상 입금. 미납 안내가 "중지"되는지 봅니다.</div></li><li><span>6</span><div>학생 → 확인 필요 학생이 먼저 오는지, 학년·반 필터가 되는지 봅니다. 학부모·학생 화면도 바꿔 봅니다.</div></li><li><span>7</span><div>웹사이트 → 모의 사이트에서 <b>상담 신청</b>·"셔틀(범위 밖)" 질문·후기를 남기고, 결재함에 서류가 생기는지 봅니다. 한 줄 소식을 적어 결재하면 사이트 상단에 걸립니다.</div></li></ul></div></div></div>
  <p class="note" style="margin-top:18px">이 파일은 한 개의 HTML 체험판입니다. 실제 AI 모델·음성·문자 발송·결제·출결 기기는 연결되어 있지 않고, 모든 인물과 기록은 가상입니다. 로그인·권한·서버 저장은 설계서(v2.1)의 참조 서버 규칙을 따릅니다.</p>`;
 }
 
@@ -467,7 +591,7 @@ function vTeacher(){
 function markReviewed(id){const d=S.docs.find(x=>x.id===id);if(!d)return;d.reviewed=true;d.history.push({at:new Date().toISOString(),what:(d.reviewer||'담당 강사')+' 검수 완료 → 원장 결재함'});log('강사 검수 완료',d.title,d.reviewer||'강사');save();render();toast('검수 완료. 원장 아침 결재함으로 보냈습니다.');}
 function vParent(){
  const s=stu('S1');const sent=S.docs.filter(d=>d.studentId==='S1'&&d.status==='sent'&&d.recipient===s.guardian);const inv=S.invoices.find(i=>i.studentId==='S1');const c=cls('A');
- return `<div class="hero-parent"><div class="head"><div><div class="eyebrow">수학의숲 판교학원 · 학부모</div><h1>이서준 학생의 학습 소식</h1><p>앱 설치 없이 문자 링크로 열립니다. 연결된 자녀의 기록만 보입니다.</p></div></div>
+ return `<div class="hero-parent"><div class="head"><div><div class="eyebrow">수학의숲 판교학원 웹사이트 · 학부모 페이지</div><h1>이서준 학생의 학습 소식</h1><p>학원 웹사이트(${S.site.url})의 학부모 로그인 뒷면입니다. 앱 설치 없이 문자 링크로 열리고, 연결된 자녀의 기록만 보입니다.</p></div></div>
  <div class="card"><div class="card-h"><div><h2>도착한 안내</h2></div><span class="pill ${sent.length?'g':''}">${sent.length}건</span></div><div class="card-b">${sent.length?sent.map(d=>`<div class="body" style="margin-bottom:12px">${esc(d.body)}</div>`).join(''):'<div class="body">아직 도착한 안내가 없습니다.\n원장 화면에서 리포트를 결재하면 이곳에 같은 내용이 도착합니다.</div>'}</div></div>
  <div class="grid g2" style="margin-top:18px"><div class="card"><div class="card-h"><h2>시간표</h2></div><div class="card-b"><b>${c.name}</b><p class="muted">${c.days.join('·')} ${fmt(c.start)}~${fmt(c.end)} · ${c.teacher} 선생님</p><p class="small muted" style="margin-top:8px">시간표가 바뀌면 여기 먼저 바뀌고 안내가 갑니다.</p></div></div>
  <div class="card"><div class="card-h"><h2>수강료</h2></div><div class="card-b"><b>${inv.label} ${won(inv.amount)}</b><p class="muted">납부 확인 ${won(inv.paid)}</p><span class="pill ${money(inv)<=0?'g':'a'}" style="margin-top:8px">${money(inv)<=0?'납부 완료':'잔액 '+won(money(inv))}</span></div></div></div>
@@ -533,6 +657,15 @@ function bind(){
  $$('[data-ttab]').forEach(b=>b.onclick=()=>{teacherTab=b.dataset.ttab;render();});
  $$('[data-reviewed]').forEach(b=>b.onclick=()=>markReviewed(b.dataset.reviewed));
  const tw=$('#toTeacherWrong');if(tw)tw.onclick=()=>{role='teacher';teacherTab='wrong';$('#roleSel').value='teacher';render();window.scrollTo({top:0});};
+ $$('[data-web]').forEach(el=>el.oninput=el.onchange=()=>{const k=el.dataset.web;webDraft[k]=k==='rating'?+el.value:el.value;});
+ const wb=$('#webBook');if(wb)wb.onclick=()=>{if(!webDraft.name.trim()||webDraft.phone.trim().length<9)return toast('학생 이름과 보호자 연락처(9자리 이상)를 적어 주세요.',true);webBook(webDraft.name.trim(),webDraft.phone.trim(),webDraft.slot,webDraft.cls);webDraft.name='';webDraft.phone='';webDraft.slot='';};
+ const wa=$('#webAsk');if(wa)wa.onclick=()=>{const q=webDraft.q.trim();if(!q)return;webDraft.q='';webAsk(q);};
+ $$('[data-webq]').forEach(b=>b.onclick=()=>{webDraft.q='';webAsk(b.dataset.webq.includes('?')?b.dataset.webq:b.dataset.webq+'는 어떻게 되나요?');});
+ const wr=$('#webReview');if(wr)wr.onclick=()=>{const t=webDraft.review.trim();if(!t)return toast('후기 한 줄을 적어 주세요.',true);webDraft.review='';webReview(webDraft.rating,t);};
+ const wp=$('#webPopup');if(wp)wp.onclick=()=>{preparePopup(webDraft.popup);webDraft.popup='';};
+ const wt=$('#webTuition');if(wt)wt.onclick=prepareTuitionPost;
+ $$('[data-live]').forEach(el=>el.onchange=()=>{S.site.live[el.dataset.live]=el.checked;log(el.checked?'웹 공개':'웹 비공개',el.dataset.live==='seats'?'반별 잔여석':'강사 소개','웹사이트 담당');save();render();});
+ const tp=$('#toParent');if(tp)tp.onclick=()=>{role='parent';$('#roleSel').value='parent';render();window.scrollTo({top:0});};
  $$('[data-f]').forEach(el=>el.onchange=()=>{const [p,k]=el.dataset.f.split(':');const f=p==='stu'?stuF:billF;f[k]=el.type==='checkbox'?el.checked:el.value;render();});
  $$('[data-pay]').forEach(b=>b.onclick=()=>{const [id,amt]=b.dataset.pay.split(':');const inv=S.invoices.find(i=>i.id===id);const a=Math.min(+amt,money(inv));inv.paid+=a;inv.version++;const s=stu(inv.studentId);log('가상 입금',`${s.name} ${won(a)} · 잔액 ${won(money(inv))}`,'수납 담당');
   invalidate('billing',d=>d.invoiceId===id,money(inv)<=0?'납부가 확인되어 안내를 멈췄습니다.':'금액이 바뀌어 새 잔액으로 다시 준비했습니다.');
