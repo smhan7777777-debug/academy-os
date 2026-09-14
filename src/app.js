@@ -92,6 +92,25 @@ function careScore(s){
 }
 function careList(){return S.students.map(s=>({s,...careScore(s)})).filter(x=>x.total>0).sort((a,b)=>b.total-a.total);}
 
+/* ---------- 확인이 필요한 학생 (목록 정렬·필터 공용) ---------- */
+const isOverdue=inv=>money(inv)>0&&inv.due<TODAY;
+function attention(s){
+ const inv=S.invoices.find(i=>i.studentId===s.id);const c=careScore(s);const r=[];
+ if(c.total>=S.policy.threshold)r.push({k:'care',t:`살펴볼 학생 ${c.total}점`,w:4,cls:'r'});
+ if(inv&&isOverdue(inv))r.push({k:'overdue',t:`미납 ${won(money(inv))}`,w:3,cls:'r'});
+ if(!s.consent)r.push({k:'consent',t:'AI 동의 미확인',w:2,cls:'a'});
+ if(c.total>0&&c.total<S.policy.threshold)r.push({k:'signal',t:`신호 ${c.total}점`,w:1,cls:'a'});
+ return {reasons:r,weight:r.reduce((a,x)=>a+x.w,0),care:c,inv};
+}
+const GRADES=()=>[...new Set(S.students.map(s=>s.grade))];
+const stuF={grade:'',cls:'',only:false};
+const billF={grade:'',cls:'',only:false,group:false};
+function passF(s,f){return (!f.grade||s.grade===f.grade)&&(!f.cls||s.cls===f.cls);}
+function filterBar(pfx,f,extra){
+ return `<div class="filters"><label>학년 <select data-f="${pfx}:grade"><option value="">전체</option>${GRADES().map(g=>`<option ${f.grade===g?'selected':''}>${g}</option>`).join('')}</select></label>
+ <label>반 <select data-f="${pfx}:cls"><option value="">전체</option>${Object.values(S.classes).map(c=>`<option value="${c.id}" ${f.cls===c.id?'selected':''}>${c.name}</option>`).join('')}</select></label>${extra||''}</div>`;
+}
+
 /* ---------- 결재 서류 ---------- */
 const TIER={now:'지금 확인',morning:'아침 결재함',auto:'자동 처리'};
 function addDoc(d){
@@ -212,7 +231,7 @@ const NAV=[
  {id:'students',t:'학생',i:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0'},
  {id:'lesson',t:'수업 기록',i:'M5 4h11l3 3v13H5zM8 12h8M8 16h5'},
  {id:'timetable',t:'시간표',i:'M4 5h16v15H4zM4 10h16M9 5v15'},
- {id:'wrong',t:'오답·맞춤 문제',i:'M6 6l12 12M18 6L6 18'},
+ {id:'wrong',t:'오답 현황',i:'M6 6l12 12M18 6L6 18'},
  {id:'billing',t:'수납',i:'M3 7h18v11H3zM3 11h18M7 15h3'},
  {sep:'운영'},
  {id:'staff',t:'AI 직원 명부',i:'M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10 0'},
@@ -235,7 +254,7 @@ function render(){
 function docCard(d){
  const done=d.status==='sent';const stale=d.status==='stale';
  return `<article class="doc ${done?'done':''}" data-doc="${d.id}"><div class="ic ${d.ico||''}">${d.ic}</div><div>
-  <h4>${esc(d.title)} ${d.status==='held'?'<span class="pill a">보류</span>':''}${stale?'<span class="pill r">중지</span>':''}${d.reviewer&&!done?`<span class="pill b">${esc(d.reviewer)} 검수 먼저</span>`:''}</h4>
+  <h4>${esc(d.title)} ${d.status==='held'?'<span class="pill a">보류</span>':''}${stale?'<span class="pill r">중지</span>':''}${d.reviewer&&!done?(d.reviewed?`<span class="pill g">${esc(d.reviewer)} 검수 완료</span>`:`<span class="pill b">${esc(d.reviewer)} 검수 먼저</span>`):''}</h4>
   <div class="sum">${esc(d.sum)}</div>
   ${stale?`<div class="sum bad" style="margin-top:4px">${esc(d.reason)}</div>`:''}
   <div class="meta"><span>준비: ${esc(d.by)}</span><span>v${d.version}</span>${d.recipient?`<span>받는 사람: ${esc(d.recipient)}</span>`:''}</div>
@@ -249,10 +268,19 @@ function vToday(){
  const auto=S.docs.filter(d=>d.status==='auto');const done=S.docs.filter(d=>['sent','stale'].includes(d.status));
  const care=careList();const overdue=S.invoices.filter(i=>money(i)>0&&i.due<TODAY);
  const minor=S.docs.filter(d=>d.history.some(h=>h.what.startsWith('문장만')));
- const headline=open.length?`지금 볼 서류 ${now.length}건, 아침 결재함 ${morn.length}건입니다.`:'오늘 결재할 서류가 없습니다. 준비되는 대로 여기에 쌓입니다.';
- const sub=[overdue.length?`미납 ${overdue.length}건은 금액이 들어가 먼저 두었습니다.`:'',care.filter(x=>x.total>=S.policy.threshold).length?`살펴볼 학생 ${care.filter(x=>x.total>=S.policy.threshold).length}명이 있습니다.`:'',auto.length?`${auto.length}건은 규칙대로 자동 처리했습니다.`:'',minor.length?`어제 결재한 서류 ${minor.length}건은 문장만 다듬어 재결재 없이 유지했습니다.`:''].filter(Boolean).join(' ');
+ const careN=care.filter(x=>x.total>=S.policy.threshold).length;
+ const headline=open.length?`오늘 결재할 서류 ${open.length}건`:'오늘 결재할 서류가 없습니다.';
+ const lines=[
+  now.length?{n:now.length,u:'건',t:'지금 확인',d:overdue.length?`미납 ${overdue.length}건은 금액이 들어가 맨 앞에 두었습니다`:'금액·상담처럼 바로 볼 서류',cls:'r'}:null,
+  morn.length?{n:morn.length,u:'건',t:'아침 결재함',d:'리포트·시간표·문제 세트 등 모아서 보는 서류',cls:''}:null,
+  careN?{n:careN,u:'명',t:'살펴볼 학생',d:`기준 ${S.policy.threshold}점 이상 · 오른쪽 목록`,cls:'a'}:null,
+  auto.length?{n:auto.length,u:'건',t:'자동 처리',d:'규칙대로 처리하고 알림만 남김',cls:'g'}:null,
+  minor.length?{n:minor.length,u:'건',t:'재결재 없이 유지',d:'어제 결재한 서류를 문장만 다듬음',cls:'g'}:null,
+ ].filter(Boolean);
  return `<div class="head"><div><div class="eyebrow">수학의숲 판교학원 · 원장실</div><h1>원장님, 서류가 준비되어 있습니다.</h1><p>AI 직원들이 밤사이 준비한 서류입니다. 원장님은 <b>확인</b>, <b>고치기</b>, <b>보류</b> 세 가지만 하시면 됩니다.</p></div></div>
- <div class="brief"><div><div class="who">교무 실장 · 아침 8:30 정리</div><h2>${headline}</h2><p>${sub||'장부와 기록에 새로 확인할 것이 없습니다.'}</p></div><div><a href="#rules" class="btn-hold btn-sm" style="display:inline-block;text-decoration:none">결재 규칙 보기</a></div></div>
+ <div class="brief"><div><div class="who">교무 실장 · 아침 8:30 정리</div><h2>${headline}</h2>
+  ${lines.length?`<ul class="brief-list">${lines.map(l=>`<li><strong class="num ${l.cls}">${l.n}<small>${l.u}</small></strong><div><b>${l.t}</b><span>${l.d}</span></div></li>`).join('')}</ul>`:'<p>장부와 기록에 새로 확인할 것이 없습니다. 준비되는 대로 여기에 쌓입니다.</p>'}</div>
+  <div><a href="#rules" class="btn-hold btn-sm" style="display:inline-block;text-decoration:none">결재 규칙 보기</a></div></div>
  <div class="kpis">
   <div class="kpi"><div class="l">재원 학생</div><strong class="num">${S.students.length}<small>명</small></strong><p>반 3개 · 강사 2명</p></div>
   <div class="kpi"><div class="l">오늘 수업</div><strong class="num">2<small>개 반</small></strong><p>중2 수학 A 16:00 · 중3 영어 C 18:00</p></div>
@@ -273,10 +301,16 @@ function vToday(){
 }
 
 function vStudents(){
- return `<div class="head"><div><div class="eyebrow">학생</div><h1>학생 한 명의 이야기가 한곳에 모입니다.</h1><p>이름을 누르면 수업 기록, 오답, 수납, 신호, 진로가 한 화면에 나옵니다. 이름이 같아도 학생 ID로 구분합니다.</p></div></div>
- <div class="card"><div class="tw"><table><thead><tr><th>학생</th><th>반</th><th>오늘 기록</th><th>취약 단원</th><th>수납</th><th>신호</th><th>AI 활용 동의</th></tr></thead><tbody>
- ${S.students.map(s=>{const inv=S.invoices.find(i=>i.studentId===s.id);const ex=S.exams.find(e=>e.cls===s.cls);const w=ex?weakUnits(ex,s.id):[];const c=careScore(s);const rec=S.lessonSaved[s.id];
-  return `<tr class="click" data-stu="${s.id}"><td><b>${s.name}</b> <span class="muted small">${s.id}</span></td><td>${cls(s.cls).name}</td><td>${rec?`<span class="pill g">${rec.att} · ${rec.hw}</span>`:'<span class="pill">미관찰</span>'}</td><td>${w.length?w.map(x=>x.unit).join(', '):'<span class="muted">—</span>'}</td><td>${money(inv)>0?`<span class="pill a">잔액 ${won(money(inv))}</span>`:'<span class="pill g">완납</span>'}</td><td>${c.total?`<span class="score ${c.total>=S.policy.threshold?'hi':''}">${c.total}점</span>`:'<span class="muted">—</span>'}</td><td>${s.consent?'<span class="pill g">확인</span>':'<span class="pill a">미확인</span>'}</td></tr>`}).join('')}
+ const all=S.students.map(s=>({s,...attention(s)}));
+ const needN=all.filter(x=>x.weight>0).length;
+ const rows=all.filter(x=>passF(x.s,stuF)&&(!stuF.only||x.weight>0)).sort((a,b)=>b.weight-a.weight||a.s.name.localeCompare(b.s.name,'ko'));
+ const firstOk=rows.findIndex(x=>x.weight===0);
+ return `<div class="head"><div><div class="eyebrow">학생</div><h1>확인이 필요한 학생이 먼저 보입니다.</h1><p>살펴볼 학생, 미납, AI 동의 미확인 순으로 위에 올립니다. 이름을 누르면 수업 기록, 오답, 수납, 신호, 진로가 한 화면에 나옵니다. 이름이 같아도 학생 ID로 구분합니다.</p></div></div>
+ <div class="card"><div class="card-h"><div><h2>재원 ${S.students.length}명 · 확인 필요 ${needN}명</h2><p>학년·반으로 좁혀 볼 수 있습니다</p></div>
+ ${filterBar('stu',stuF,`<label class="chk"><input type="checkbox" data-f="stu:only" ${stuF.only?'checked':''}> 확인 필요 학생만</label>`)}</div>
+ <div class="tw"><table><thead><tr><th>학생</th><th>확인 필요</th><th>학년 · 반</th><th>오늘 기록</th><th>취약 단원</th><th>수납</th><th>신호</th><th>AI 활용 동의</th></tr></thead><tbody>
+ ${rows.map((x,i)=>{const s=x.s;const inv=x.inv;const ex=S.exams.find(e=>e.cls===s.cls);const w=ex?weakUnits(ex,s.id):[];const c=x.care;const rec=S.lessonSaved[s.id];
+  return `${i===firstOk&&i>0?`<tr class="grp"><td colspan="8">확인할 것이 없는 학생 ${rows.length-i}명</td></tr>`:''}<tr class="click ${x.weight?'need':''}" data-stu="${s.id}"><td><b>${s.name}</b> <span class="muted small">${s.id}</span></td><td>${x.reasons.length?x.reasons.map(r=>`<span class="pill ${r.cls}">${r.t}</span>`).join(' '):'<span class="muted">—</span>'}</td><td>${s.grade} · ${cls(s.cls).name}</td><td>${rec?`<span class="pill g">${rec.att} · ${rec.hw}</span>`:'<span class="pill">미관찰</span>'}</td><td>${w.length?w.map(x=>x.unit).join(', '):'<span class="muted">—</span>'}</td><td>${money(inv)>0?`<span class="pill ${isOverdue(inv)?'r':'a'}">잔액 ${won(money(inv))}</span>`:'<span class="pill g">완납</span>'}</td><td>${c.total?`<span class="score ${c.total>=S.policy.threshold?'hi':''}">${c.total}점</span>`:'<span class="muted">—</span>'}</td><td>${s.consent?'<span class="pill g">확인</span>':'<span class="pill a">미확인</span>'}</td></tr>`}).join('')||'<tr><td colspan="8" class="empty">조건에 맞는 학생이 없습니다.</td></tr>'}
  </tbody></table></div></div>
  <div class="grid g2" style="margin-top:18px">
   <div class="card"><div class="card-h"><div><h2>상담·등록 진행</h2><p>상담·등록 담당 · 문의 → 예약 → 등록 → 첫 청구서</p></div></div><div class="card-b">${S.leads.map(l=>`<div class="side"><div class="row"><div style="flex:1"><b>${l.name}</b> <span class="muted small">${l.source} · ${cls(l.cls).name}</span><p>${l.stage==='consulted'?'상담 예약 '+l.slot+' · 등록 확정 시 원장 확인':'새 문의 · 상담 시간 제안 예정'}</p></div><span class="pill ${l.stage==='consulted'?'g':'b'}">${l.stage==='consulted'?'상담 예약':'새 문의'}</span></div></div>`).join('')}</div></div>
@@ -336,24 +370,53 @@ function vTimetable(){
 }
 
 let waExam='EX1';
+function unitRates(ex){
+ const c=cls(ex.cls);
+ return ex.units.map(u=>{const its=ex.items.filter(i=>i.unit===u);let w=0,t=0;c.members.forEach(id=>its.forEach(i=>{t++;if((ex.wrong[id]||[]).includes(i.n))w++;}));return {u,p:Math.round(w/t*100)};});
+}
+const rateBars=ex=>unitRates(ex).map(x=>`<div style="display:grid;grid-template-columns:110px 1fr 48px;gap:10px;align-items:center;padding:6px 0;font-size:13px"><span>${x.u}</span><div class="bar"><i style="width:${x.p}%;background:${x.p>=50?'var(--stamp)':'var(--amber)'}"></i></div><span class="num muted small" style="text-align:right">${x.p}%</span></div>`).join('');
+/* 원장 화면: 통계와 결재 상태만. 오답 체크·문제 세트 준비는 강사 화면 */
 function vWrong(){
  const ex=S.exams.find(e=>e.id===waExam);const c=cls(ex.cls);
- return `<div class="head"><div><div class="eyebrow">오답 · 오답 담당</div><h1>조교가 틀린 문항만 체크하면, 학생마다 취약 단원과 맞춤 문제가 나옵니다.</h1><p>학부모가 원하는 "학원이 해 주는 오답 관리"입니다. 엑셀 대신 여기서 체크합니다. 문제는 사용 허가된 문제 은행에서만 가져오고, 담당 선생님 검수 후 학생에게 열립니다.</p></div></div>
- <div class="card"><div class="card-h"><div><h2>${ex.name}</h2><p>${c.name} · 10문항 · 칸을 누르면 오답 표시가 바뀝니다</p></div><span class="pill">조교·강사 입력</span></div>
+ const weakN=c.members.filter(id=>weakUnits(ex,id).length).length;
+ const psets=S.docs.filter(d=>d.kind==='pset');
+ const stage=d=>!d?'<span class="pill">준비 전</span>':d.status==='sent'?'<span class="pill g">결재 완료</span>':d.status==='review'&&!d.reviewed?'<span class="pill b">강사 검수 중</span>':d.status==='review'?'<span class="pill a">결재 대기</span>':d.status==='held'?'<span class="pill a">보류</span>':'<span class="pill">'+d.status+'</span>';
+ const top=unitRates(ex).filter(x=>x.p>=50).map(x=>x.u);
+ return `<div class="head"><div><div class="eyebrow">오답 현황 · 오답 담당</div><h1>오답은 강사가 관리하고, 원장님은 결과만 봅니다.</h1><p>문항 체크와 맞춤 문제 준비는 담당 선생님의 수업 업무라 강사 화면에 있습니다. 여기서는 반별 취약 단원과 문제 세트 결재 상태만 봅니다. 준비된 세트는 아침 결재함으로 옵니다.</p></div>
+ <div><button class="btn-sm" id="toTeacherWrong">강사 화면에서 오답 체크 보기</button></div></div>
+ <div class="kpis"><div class="kpi"><div class="l">채점된 시험</div><strong class="num">${S.exams.length}<small>개</small></strong><p>${ex.name}</p></div><div class="kpi"><div class="l">취약 단원 있는 학생</div><strong class="num">${weakN}<small>명</small></strong><p>${c.name} ${c.members.length}명 중</p></div><div class="kpi"><div class="l">반 전체 50% 이상 오답</div><strong class="num">${top.length}<small>단원</small></strong><p>${top.join(', ')||'없음'}</p></div><div class="kpi"><div class="l">문제 세트 결재 대기</div><strong class="num">${psets.filter(d=>d.status==='review'&&d.reviewed).length}<small>건</small></strong><p>검수 중 ${psets.filter(d=>d.status==='review'&&!d.reviewed).length}건 · 완료 ${psets.filter(d=>d.status==='sent').length}건</p></div></div>
+ <div class="grid g2"><div class="card"><div class="card-h"><div><h2>${c.name} · 단원별 오답률</h2><p>${ex.name}</p></div></div><div class="card-b">${rateBars(ex)}<p class="small muted" style="margin-top:10px">반 전체 오답률이 높은 단원은 다음 수업 계획에도 반영됩니다.</p></div></div>
+ <div class="card"><div class="card-h"><div><h2>학생별 맞춤 문제 세트</h2><p>강사 검수 → 원장 결재 → 학생 화면</p></div></div><div class="card-b">${c.members.map(id=>{const s=stu(id);const w=weakUnits(ex,id);const d=psets.filter(x=>x.studentId===id).sort((a,b)=>b.id.localeCompare(a.id))[0];return `<div class="row"><div style="flex:1"><b>${s.name}</b> <span class="muted small">오답 ${(ex.wrong[id]||[]).length}개</span><p>${w.length?'취약 '+w.map(x=>x.unit).join(', '):'취약 단원 없음'}</p></div>${w.length?stage(d):'<span class="muted small">—</span>'}</div>`}).join('')}</div></div></div>
+ <div class="card" style="margin-top:18px"><div class="card-h"><div><h2>이 흐름이 하는 일</h2></div></div><div class="card-b"><ul class="timeline"><li><span>1</span><div><b>강사 화면</b> · 조교·강사가 채점 뒤 틀린 문항만 체크</div></li><li><span>2</span><div>오답 담당이 단원별로 모아 학생마다 취약 단원 계산</div></li><li><span>3</span><div><b>강사 화면</b> · 취약 단원별 유사 문항 세트 초안 준비 → 담당 선생님 검수</div></li><li><span>4</span><div><b>원장 화면</b> · 아침 결재함에서 결재 → 학생 화면에 열림</div></li><li><span>5</span><div>학부모 리포트에 "이번 시험 취약 단원" 한 줄 자동 반영</div></li></ul></div></div>`;
+}
+/* 강사 화면: 오답 체크표와 문제 세트 준비 */
+function vWrongGrid(){
+ const ex=S.exams.find(e=>e.id===waExam);const c=cls(ex.cls);
+ return `<div class="card"><div class="card-h"><div><h2>${ex.name}</h2><p>${c.name} · 10문항 · 칸을 누르면 오답 표시가 바뀝니다</p></div><span class="pill">조교·강사 입력</span></div>
  <div class="tw"><table class="wa"><thead><tr><th>학생</th>${ex.items.map(i=>`<th>${i.n}<br><span class="muted" style="font-weight:500">${i.unit.slice(0,4)}</span></th>`).join('')}<th style="text-align:left">취약 단원 (50% 이상 오답)</th></tr></thead><tbody>
  ${c.members.map(id=>{const s=stu(id);const w=weakUnits(ex,id);const wr=ex.wrong[id]||[];return `<tr><td><b>${s.name}</b><br><span class="muted small">오답 ${wr.length}개</span></td>${ex.items.map(i=>`<td><button class="q ${wr.includes(i.n)?'x':'o'}" data-wa="${id}:${i.n}" aria-label="${s.name} ${i.n}번">${wr.includes(i.n)?'✕':'○'}</button></td>`).join('')}<td style="text-align:left">${w.length?w.map(x=>`<div style="display:grid;grid-template-columns:90px 80px 1fr;gap:8px;align-items:center;font-size:12px"><span>${x.unit}</span><div class="bar"><i style="width:${Math.round(x.wrong/x.total*100)}%"></i></div><span class="muted">${x.wrong}/${x.total}</span></div>`).join(''):'<span class="muted">없음</span>'}</td></tr>`}).join('')}
  </tbody></table></div>
- <div class="card-b" style="padding-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn-ok" id="waGo">취약 단원별 맞춤 문제 세트 준비</button><span class="small muted">취약 단원이 있는 학생만 · ${c.teacher} 선생님 검수 후 원장 결재</span></div></div>
- <div class="grid g2" style="margin-top:18px"><div class="card"><div class="card-h"><div><h2>단원별 반 전체 오답률</h2></div></div><div class="card-b">${ex.units.map(u=>{const its=ex.items.filter(i=>i.unit===u);let w=0,t=0;c.members.forEach(id=>its.forEach(i=>{t++;if((ex.wrong[id]||[]).includes(i.n))w++;}));const p=Math.round(w/t*100);return `<div style="display:grid;grid-template-columns:110px 1fr 48px;gap:10px;align-items:center;padding:6px 0;font-size:13px"><span>${u}</span><div class="bar"><i style="width:${p}%;background:${p>=50?'var(--stamp)':'var(--amber)'}"></i></div><span class="num muted small" style="text-align:right">${p}%</span></div>`}).join('')}<p class="small muted" style="margin-top:10px">반 전체 오답률이 높은 단원은 다음 수업 계획에도 반영됩니다.</p></div></div>
- <div class="card"><div class="card-h"><div><h2>이 흐름이 하는 일</h2></div></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>조교·강사가 채점 뒤 틀린 문항만 체크</div></li><li><span>2</span><div>오답 담당이 단원별로 모아 학생마다 취약 단원 계산</div></li><li><span>3</span><div>취약 단원별 유사 문항 세트 초안 (문제 은행 허가분)</div></li><li><span>4</span><div>담당 선생님 검수 → 원장 결재 → 학생 화면에 열림</div></li><li><span>5</span><div>학부모 리포트에 "이번 시험 취약 단원" 한 줄 자동 반영</div></li></ul></div></div></div>`;
+ <div class="card-b" style="padding-top:18px;display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn-ok" id="waGo">취약 단원별 맞춤 문제 세트 준비</button><span class="small muted">취약 단원이 있는 학생만 · 선생님이 검수 완료하면 원장 결재함으로 갑니다</span></div></div>
+ <div class="card" style="margin-top:18px"><div class="card-h"><div><h2>단원별 반 전체 오답률</h2></div></div><div class="card-b">${rateBars(ex)}<p class="small muted" style="margin-top:10px">반 전체 오답률이 높은 단원은 다음 수업 계획에도 반영됩니다.</p></div></div>`;
 }
 
 function vBilling(){
  const total=S.invoices.reduce((a,i)=>a+i.amount,0),paid=S.invoices.reduce((a,i)=>a+i.paid,0);
- return `<div class="head"><div><div class="eyebrow">수납 · 수납 담당</div><h1>납부가 확인되면, 보내려던 안내는 저절로 멈춥니다.</h1><p>청구·납부·잔액을 따로 기록합니다. 같은 입금이 두 번 들어와도 한 번만 반영하고, 금액이 들어간 안내는 항상 원장이 확인합니다.</p></div></div>
- <div class="kpis"><div class="kpi"><div class="l">9월 청구</div><strong class="num">${won(total)}</strong></div><div class="kpi"><div class="l">납부 확인</div><strong class="num">${won(paid)}</strong></div><div class="kpi"><div class="l">잔액</div><strong class="num">${won(total-paid)}</strong><p>${S.invoices.filter(i=>money(i)>0).length}건</p></div><div class="kpi"><div class="l">대기 중 안내</div><strong class="num">${S.docs.filter(d=>d.kind==='billing'&&['review','held'].includes(d.status)).length}<small>건</small></strong><p>결재함에서 확인</p></div></div>
- <div class="card"><div class="tw"><table><thead><tr><th>학생</th><th>항목</th><th>청구</th><th>납부</th><th>잔액</th><th>상태</th><th>가상 입금</th></tr></thead><tbody>
- ${S.invoices.map(i=>{const s=stu(i.studentId);const b=money(i);return `<tr><td><b>${s.name}</b></td><td>${i.label}</td><td class="num">${won(i.amount)}</td><td class="num">${won(i.paid)}</td><td class="num"><b>${won(b)}</b></td><td>${b<=0?'<span class="pill g">완납</span>':i.paid>0?'<span class="pill a">부분 납부</span>':'<span class="pill r">미납</span>'}</td><td>${b>0?`<button class="btn-sm" data-pay="${i.id}:100000">10만원</button> <button class="btn-sm" data-pay="${i.id}:${b}">완납</button>`:'<span class="muted small">—</span>'}</td></tr>`}).join('')}
+ const head=`<div class="head"><div><div class="eyebrow">수납 · 수납 담당</div><h1>납부가 확인되면, 보내려던 안내는 저절로 멈춥니다.</h1><p>청구·납부·잔액을 따로 기록합니다. 같은 입금이 두 번 들어와도 한 번만 반영하고, 금액이 들어간 안내는 항상 원장이 확인합니다.</p></div></div>
+ <div class="kpis"><div class="kpi"><div class="l">9월 청구</div><strong class="num">${won(total)}</strong></div><div class="kpi"><div class="l">납부 확인</div><strong class="num">${won(paid)}</strong></div><div class="kpi"><div class="l">잔액</div><strong class="num">${won(total-paid)}</strong><p>${S.invoices.filter(i=>money(i)>0).length}건</p></div><div class="kpi"><div class="l">대기 중 안내</div><strong class="num">${S.docs.filter(d=>d.kind==='billing'&&['review','held'].includes(d.status)).length}<small>건</small></strong><p>결재함에서 확인</p></div></div>`;
+ const rank=i=>isOverdue(i)?0:money(i)>0?1:2;
+ const rows=S.invoices.map(i=>({i,s:stu(i.studentId)})).filter(x=>passF(x.s,billF)&&(!billF.only||money(x.i)>0))
+  .sort((a,b)=>billF.group&&a.s.cls!==b.s.cls?a.s.cls.localeCompare(b.s.cls):rank(a.i)-rank(b.i)||money(b.i)-money(a.i)||a.s.name.localeCompare(b.s.name,'ko'));
+ const overdueN=S.invoices.filter(isOverdue).length;
+ const row=({i,s})=>{const b=money(i);return `<tr class="${isOverdue(i)?'need':''}"><td><b>${s.name}</b> <span class="muted small">${s.grade} · ${cls(s.cls).name}</span></td><td>${i.label}</td><td class="num">${won(i.amount)}</td><td class="num">${won(i.paid)}</td><td class="num"><b>${won(b)}</b></td><td>${b<=0?'<span class="pill g">완납</span>':isOverdue(i)?`<span class="pill r">${i.paid>0?'부분 납부 · 기한 경과':'미납 · 기한 경과'}</span>`:i.paid>0?'<span class="pill a">부분 납부</span>':'<span class="pill a">미납</span>'}</td><td>${b>0?`<button class="btn-sm" data-pay="${i.id}:100000">10만원</button> <button class="btn-sm" data-pay="${i.id}:${b}">완납</button>`:'<span class="muted small">—</span>'}</td></tr>`};
+ let body='';
+ if(billF.group){const g={};rows.forEach(x=>(g[x.s.cls]=g[x.s.cls]||[]).push(x));body=Object.keys(g).sort().map(k=>{const list=g[k].sort((a,b)=>rank(a.i)-rank(b.i)||money(b.i)-money(a.i));const od=list.filter(x=>isOverdue(x.i)).length;return `<tr class="grp"><td colspan="7">${cls(k).name} · ${list.length}명${od?` · 기한 경과 ${od}건`:' · 기한 경과 없음'}</td></tr>`+list.map(row).join('')}).join('');}
+ else{const firstOk=rows.findIndex(x=>!isOverdue(x.i));body=rows.map((x,i)=>(i===firstOk&&i>0?`<tr class="grp"><td colspan="7">기한 안 · 완납 ${rows.length-i}건</td></tr>`:'')+row(x)).join('');}
+ return `${head}
+ <div class="card"><div class="card-h"><div><h2>기한 경과 ${overdueN}건이 먼저 보입니다</h2><p>잔액이 큰 순서 · 학년·반으로 좁히거나 반별로 묶어 볼 수 있습니다</p></div>
+ ${filterBar('bill',billF,`<label class="chk"><input type="checkbox" data-f="bill:only" ${billF.only?'checked':''}> 잔액 있는 학생만</label><label class="chk"><input type="checkbox" data-f="bill:group" ${billF.group?'checked':''}> 반별로 묶기</label>`)}</div>
+ <div class="tw"><table><thead><tr><th>학생</th><th>항목</th><th>청구</th><th>납부</th><th>잔액</th><th>상태</th><th>가상 입금</th></tr></thead><tbody>
+ ${body||'<tr><td colspan="7" class="empty">조건에 맞는 청구가 없습니다.</td></tr>'}
  </tbody></table></div><div class="card-b" style="padding-top:14px"><p class="note">부분 납부 예: 320,000원 청구에 100,000원이 들어오면 잔액 220,000원. 이전 금액으로 만든 안내 서류는 "중지"로 바뀌고 새 잔액으로 다시 준비합니다. 환불 계산은 AI가 하지 않고 정해진 계산표로만 합니다.</p></div></div>`;
 }
 
@@ -385,19 +448,23 @@ function vRules(){
 
 function vGuide(){
  return `<div class="head"><div><div class="eyebrow">사용 안내</div><h1>원장실을 5분 안에 이해하기</h1></div></div>
- <div class="grid g2"><div class="card"><div class="card-h"><h2>이 화면이 다른 점</h2></div><div class="card-b"><ul class="timeline"><li><span>하나</span><div><b>결재함이 전부입니다.</b> AI 직원이 준비한 서류가 쌓이고, 원장은 확인·고치기·보류만 합니다.</div></li><li><span>둘</span><div><b>서류마다 근거가 붙습니다.</b> "고치기 · 근거 보기"를 누르면 어떤 기록으로 썼는지 나옵니다. 없는 내용은 쓰지 않습니다.</div></li><li><span>셋</span><div><b>강사는 체크만 합니다.</b> 말로 길게 설명하지 않아도 한 반 기록이 1분 안에 끝납니다.</div></li><li><span>넷</span><div><b>보내기 전에 다시 확인합니다.</b> 납부가 들어오거나 기록이 바뀌면 결재해 둔 서류도 스스로 멈춥니다.</div></li><li><span>다섯</span><div><b>규칙은 원장이 정합니다.</b> 무엇을 자동으로 하고 무엇을 볼지, 살펴볼 학생 기준까지 원장이 바꿉니다.</div></li></ul></div></div>
- <div class="card"><div class="card-h"><h2>체험 순서 (3분)</h2></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>오늘 결재함 → 미납 안내 하나를 <b>확인</b>해 도장이 찍히는지 봅니다.</div></li><li><span>2</span><div>수업 기록 → 중2 수학 A 학생들을 체크하고 <b>저장</b>. 아침 결재함에 리포트가 생깁니다.</div></li><li><span>3</span><div>시간표 → 중2 수학 A를 화요일 17:00으로 바꿔 보고, 박하린 학생의 피아노 일정 겹침이 잡히는지 봅니다.</div></li><li><span>4</span><div>오답·맞춤 문제 → 칸을 몇 개 바꾼 뒤 <b>맞춤 문제 세트 준비</b>.</div></li><li><span>5</span><div>수납 → 박하린 10만원 가상 입금. 미납 안내가 "중지"되는지 봅니다.</div></li><li><span>6</span><div>왼쪽 아래에서 강사·학부모·학생 화면으로 바꿔 봅니다.</div></li></ul></div></div></div>
+ <div class="grid g2"><div class="card"><div class="card-h"><h2>이 화면이 다른 점</h2></div><div class="card-b"><ul class="timeline"><li><span>하나</span><div><b>결재함이 전부입니다.</b> AI 직원이 준비한 서류가 쌓이고, 원장은 확인·고치기·보류만 합니다. 학생·수납 목록도 확인이 필요한 사람이 먼저 옵니다.</div></li><li><span>둘</span><div><b>서류마다 근거가 붙습니다.</b> "고치기 · 근거 보기"를 누르면 어떤 기록으로 썼는지 나옵니다. 없는 내용은 쓰지 않습니다.</div></li><li><span>셋</span><div><b>강사는 체크만 합니다.</b> 말로 길게 설명하지 않아도 한 반 기록이 1분 안에 끝납니다.</div></li><li><span>넷</span><div><b>보내기 전에 다시 확인합니다.</b> 납부가 들어오거나 기록이 바뀌면 결재해 둔 서류도 스스로 멈춥니다.</div></li><li><span>다섯</span><div><b>규칙은 원장이 정합니다.</b> 무엇을 자동으로 하고 무엇을 볼지, 살펴볼 학생 기준까지 원장이 바꿉니다.</div></li></ul></div></div>
+ <div class="card"><div class="card-h"><h2>체험 순서 (3분)</h2></div><div class="card-b"><ul class="timeline"><li><span>1</span><div>오늘 결재함 → 미납 안내 하나를 <b>확인</b>해 도장이 찍히는지 봅니다.</div></li><li><span>2</span><div>수업 기록 → 중2 수학 A 학생들을 체크하고 <b>저장</b>. 아침 결재함에 리포트가 생깁니다.</div></li><li><span>3</span><div>시간표 → 중2 수학 A를 화요일 17:00으로 바꿔 보고, 박하린 학생의 피아노 일정 겹침이 잡히는지 봅니다.</div></li><li><span>4</span><div>왼쪽 아래에서 <b>강사 화면</b>으로 바꾸고 "오답 체크·맞춤 문제" 탭에서 칸을 몇 개 바꾼 뒤 <b>맞춤 문제 세트 준비</b> → 검수 완료. 원장 화면 "오답 현황"에는 결재 상태만 보입니다.</div></li><li><span>5</span><div>수납 → 기한 경과가 맨 위에 있는지 보고, 박하린 10만원 가상 입금. 미납 안내가 "중지"되는지 봅니다.</div></li><li><span>6</span><div>학생 → 확인 필요 학생이 먼저 오는지, 학년·반 필터가 되는지 봅니다. 학부모·학생 화면도 바꿔 봅니다.</div></li></ul></div></div></div>
  <p class="note" style="margin-top:18px">이 파일은 한 개의 HTML 체험판입니다. 실제 AI 모델·음성·문자 발송·결제·출결 기기는 연결되어 있지 않고, 모든 인물과 기록은 가상입니다. 로그인·권한·서버 저장은 설계서(v2.1)의 참조 서버 규칙을 따릅니다.</p>`;
 }
 
 /* ---------- 다른 역할 ---------- */
+let teacherTab='home';
 function vTeacher(){
- const c=cls('A');
- return `<div class="head"><div><div class="eyebrow">강사 화면 · 김민정 선생님</div><h1>선생님, 오늘 반 두 개입니다.</h1><p>담당 반의 기록만 남기면 됩니다. 수납·전송·다른 반은 보이지 않습니다.</p></div><div><button class="btn-ok" id="toLesson">중2 수학 A 기록하기</button></div></div>
+ const tabs=`<div class="tabs" role="tablist">${[['home','오늘'],['wrong','오답 체크·맞춤 문제']].map(([k,t])=>`<button role="tab" aria-selected="${teacherTab===k}" class="tab ${teacherTab===k?'on':''}" data-ttab="${k}">${t}</button>`).join('')}</div>`;
+ if(teacherTab==='wrong')return `<div class="head"><div><div class="eyebrow">강사 화면 · 김민정 선생님</div><h1>틀린 문항만 체크하면, 학생마다 취약 단원과 맞춤 문제가 나옵니다.</h1><p>학부모가 원하는 "학원이 해 주는 오답 관리"입니다. 엑셀 대신 여기서 체크합니다. 문제는 사용 허가된 문제 은행에서만 가져오고, 선생님이 검수한 뒤 원장 결재를 거쳐 학생에게 열립니다.</p></div></div>${tabs}${vWrongGrid()}`;
+ const pending=S.docs.filter(d=>d.reviewer&&d.reviewer.startsWith('김민정')&&d.status==='review'&&!d.reviewed);
+ return `<div class="head"><div><div class="eyebrow">강사 화면 · 김민정 선생님</div><h1>선생님, 오늘 반 두 개입니다.</h1><p>담당 반의 기록과 오답 체크만 하면 됩니다. 수납·전송·다른 반은 보이지 않습니다.</p></div><div><button class="btn-ok" id="toLesson">중2 수학 A 기록하기</button></div></div>${tabs}
  <div class="grid g2"><div class="card"><div class="card-h"><div><h2>오늘 수업</h2></div></div><div class="card-b side">${Object.values(S.classes).filter(x=>x.teacher==='김민정').map(x=>`<div class="row"><div style="flex:1"><b>${x.name}</b><p>${x.days.join('·')} ${fmt(x.start)}~${fmt(x.end)} · ${x.room} · ${x.members.length}명</p></div><span class="pill ${x.members.every(id=>S.lessonSaved[id])?'g':''}">${x.members.every(id=>S.lessonSaved[id])?'기록 완료':'기록 전'}</span></div>`).join('')}</div></div>
- <div class="card"><div class="card-h"><div><h2>검수 요청</h2><p>오답 담당·진로상담 담당이 선생님 확인을 기다립니다</p></div></div><div class="card-b side">${S.docs.filter(d=>d.reviewer&&d.reviewer.startsWith('김민정')&&d.status==='review').map(d=>`<div class="row"><div style="flex:1"><b>${esc(d.title)}</b><p>${esc(d.sum)}</p></div><button class="btn-sm" data-open="${d.id}">보기</button></div>`).join('')||'<div class="empty">지금은 없습니다.</div>'}</div></div></div>
+ <div class="card"><div class="card-h"><div><h2>검수 요청 ${pending.length?`<span class="pill b">${pending.length}</span>`:''}</h2><p>오답 담당·진로상담 담당이 선생님 확인을 기다립니다. 검수 완료하면 원장 결재함으로 갑니다.</p></div></div><div class="card-b side">${pending.map(d=>`<div class="row"><div style="flex:1"><b>${esc(d.title)}</b><p>${esc(d.sum)}</p></div><button class="btn-sm" data-open="${d.id}">보기</button><button class="btn-ok btn-sm" data-reviewed="${d.id}">검수 완료</button></div>`).join('')||'<div class="empty">지금은 없습니다. 오답 체크 탭에서 문제 세트를 준비하면 여기에 올라옵니다.</div>'}</div></div></div>
  <p class="note" style="margin-top:18px">선생님 입력은 체크가 기본입니다. 체크하지 않은 학생은 "미관찰"로 남고 리포트에 아무 말도 만들어 넣지 않습니다.</p>`;
 }
+function markReviewed(id){const d=S.docs.find(x=>x.id===id);if(!d)return;d.reviewed=true;d.history.push({at:new Date().toISOString(),what:(d.reviewer||'담당 강사')+' 검수 완료 → 원장 결재함'});log('강사 검수 완료',d.title,d.reviewer||'강사');save();render();toast('검수 완료. 원장 아침 결재함으로 보냈습니다.');}
 function vParent(){
  const s=stu('S1');const sent=S.docs.filter(d=>d.studentId==='S1'&&d.status==='sent'&&d.recipient===s.guardian);const inv=S.invoices.find(i=>i.studentId==='S1');const c=cls('A');
  return `<div class="hero-parent"><div class="head"><div><div class="eyebrow">수학의숲 판교학원 · 학부모</div><h1>이서준 학생의 학습 소식</h1><p>앱 설치 없이 문자 링크로 열립니다. 연결된 자녀의 기록만 보입니다.</p></div></div>
@@ -462,7 +529,11 @@ function bind(){
  const ts=$('#ttStart');if(ts)ts.onchange=()=>{ttChange.start=+ts.value;render();};
  const tg=$('#ttGo');if(tg)tg.onclick=()=>commitTimetable(ttChange);
  $$('[data-wa]').forEach(b=>b.onclick=()=>{const [sid,n]=b.dataset.wa.split(':');const ex=S.exams.find(e=>e.id===waExam);const arr=ex.wrong[sid]||(ex.wrong[sid]=[]);const i=arr.indexOf(+n);if(i>=0)arr.splice(i,1);else arr.push(+n);save();render();});
- const wg=$('#waGo');if(wg)wg.onclick=()=>{const ex=S.exams.find(e=>e.id===waExam);let n=0;cls(ex.cls).members.forEach(id=>{if(prepareProblemSet(ex,id))n++;});save();render();toast(n?`맞춤 문제 세트 ${n}건을 준비했습니다. 김민정 선생님 검수 후 아침 결재함에서 확인하세요.`:'취약 단원이 있는 학생이 없습니다.');if(n)location.hash='#today';};
+ const wg=$('#waGo');if(wg)wg.onclick=()=>{const ex=S.exams.find(e=>e.id===waExam);let n=0;cls(ex.cls).members.forEach(id=>{if(prepareProblemSet(ex,id))n++;});save();if(n)teacherTab='home';render();toast(n?`맞춤 문제 세트 ${n}건을 준비했습니다. 검수 요청에서 확인하고 검수 완료를 누르면 원장 결재함으로 갑니다.`:'취약 단원이 있는 학생이 없습니다.');};
+ $$('[data-ttab]').forEach(b=>b.onclick=()=>{teacherTab=b.dataset.ttab;render();});
+ $$('[data-reviewed]').forEach(b=>b.onclick=()=>markReviewed(b.dataset.reviewed));
+ const tw=$('#toTeacherWrong');if(tw)tw.onclick=()=>{role='teacher';teacherTab='wrong';$('#roleSel').value='teacher';render();window.scrollTo({top:0});};
+ $$('[data-f]').forEach(el=>el.onchange=()=>{const [p,k]=el.dataset.f.split(':');const f=p==='stu'?stuF:billF;f[k]=el.type==='checkbox'?el.checked:el.value;render();});
  $$('[data-pay]').forEach(b=>b.onclick=()=>{const [id,amt]=b.dataset.pay.split(':');const inv=S.invoices.find(i=>i.id===id);const a=Math.min(+amt,money(inv));inv.paid+=a;inv.version++;const s=stu(inv.studentId);log('가상 입금',`${s.name} ${won(a)} · 잔액 ${won(money(inv))}`,'수납 담당');
   invalidate('billing',d=>d.invoiceId===id,money(inv)<=0?'납부가 확인되어 안내를 멈췄습니다.':'금액이 바뀌어 새 잔액으로 다시 준비했습니다.');
   if(money(inv)>0)prepareBilling(inv);save();render();toast(`${s.name} ${won(a)} 입금 반영. ${money(inv)<=0?'미납 안내를 멈췄습니다.':'잔액 '+won(money(inv))+'으로 안내를 다시 준비했습니다.'}`);});
