@@ -424,16 +424,18 @@ function morningPrep(){
 
 /* ---------- 렌더 ---------- */
 const NAV=[
+ {sep:'My office'},
  {id:'today',t:'오늘 결재함',i:'M4 6h16M4 12h16M4 18h10'},
  {id:'students',t:'학생',i:'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM4 21a8 8 0 0 1 16 0'},
  {id:'lesson',t:'수업 기록',i:'M5 4h11l3 3v13H5zM8 12h8M8 16h5'},
  {id:'timetable',t:'시간표',i:'M4 5h16v15H4zM4 10h16M9 5v15'},
  {id:'wrong',t:'오답 현황',i:'M6 6l12 12M18 6L6 18'},
  {id:'billing',t:'수납',i:'M3 7h18v11H3zM3 11h18M7 15h3'},
+ {sep:'Grow together'},
  {id:'website',t:'웹사이트',i:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18'},
  {id:'content',t:'콘텐츠·플레이스',i:'M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01'},
  {id:'biz',t:'경영지원',i:'M4 7h16v13H4zM9 7V4h6v3M4 13h16'},
- {sep:'운영'},
+ {sep:'Settings'},
  {id:'staff',t:'AI 직원 명부',i:'M8 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM16 11a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM2 20a6 6 0 0 1 12 0M12 20a6 6 0 0 1 10 0'},
  {id:'rules',t:'결재 규칙',i:'M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z'},
  {id:'guide',t:'사용 안내',i:'M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18zM12 17v-5M12 8h.01'},
@@ -445,6 +447,9 @@ function renderNav(){
 }
 function render(){
  if(role==='owner'){renderNav();$('#rail').style.display='';}else{$('#nav').innerHTML='';}
+ const ROLE_T={teacher:'강사 화면',parent:'학부모 페이지',student:'학생 페이지'};
+ $('#crumb').textContent=role==='owner'?((NAV.find(n=>n.id===route)||{}).t||'오늘 결재함'):ROLE_T[role];
+ $('#bellDot').hidden=!docsOpen().length;
  const v=$('#view');
  const V={today:vToday,students:vStudents,lesson:vLesson,timetable:vTimetable,wrong:vWrong,billing:vBilling,website:vWebsite,content:vContent,biz:vBiz,staff:vStaff,rules:vRules,guide:vGuide};
  $('#mgr').hidden=role!=='owner';
@@ -489,7 +494,8 @@ function vToday(){
  ].filter(Boolean);
  return `<div class="head"><div><div class="eyebrow">수학의숲 판교학원 · 원장실</div><h1>원장님, 서류가 준비되어 있습니다.</h1><p>AI 직원들이 밤사이 준비한 서류입니다. 원장님은 <b>확인</b>, <b>고치기</b>, <b>보류</b> 세 가지만 하시면 됩니다.</p></div></div>
  <div class="brief"><div><div class="who">교무 실장 · 아침 8:30 정리</div><h2>${headline}</h2>
-  ${lines.length?`<ul class="brief-list">${lines.map(l=>`<li><strong class="num ${l.cls}">${l.n}<small>${l.u}</small></strong><div><b>${l.t}</b><span>${l.d}</span></div></li>`).join('')}</ul>`:'<p>장부와 기록에 새로 확인할 것이 없습니다. 준비되는 대로 여기에 쌓입니다.</p>'}</div>
+  ${lines.length?`<ul class="brief-list">${lines.map(l=>`<li><strong class="num ${l.cls}">${l.n}<small>${l.u}</small></strong><div><b>${l.t}</b><span>${l.d}</span></div></li>`).join('')}</ul>`:'<p>장부와 기록에 새로 확인할 것이 없습니다. 준비되는 대로 여기에 쌓입니다.</p>'}
+  <div class="flow"><div class="step"><i><svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5zM8 12h8M8 16h5"/></svg></i>현장 기록</div><span class="arrow">→</span><div class="step"><i><svg viewBox="0 0 24 24"><path d="M12 3l8 4v5c0 5-3.5 8-8 9-4.5-1-8-4-8-9V7z"/></svg></i>원장 결재</div><span class="arrow">→</span><div class="step"><i><svg viewBox="0 0 24 24"><path d="M4 12l16-8-4 16-4-6z"/></svg></i>학부모·웹으로</div></div></div>
   <div><a href="#rules" class="btn-hold btn-sm" style="display:inline-block;text-decoration:none">결재 규칙 보기</a></div></div>
  <div class="kpis">
   <div class="kpi"><div class="l">재원 학생</div><strong class="num">${S.students.length}<small>명</small></strong><p>반 3개 · 강사 2명 · 오늘 수업 2개 반</p></div>
