@@ -1,4 +1,5 @@
 ﻿import * as api from "./api.js";
+import { schoolNav } from "./brand.js";
 import {
   esc,
   icon,
@@ -17,10 +18,12 @@ import { websiteIntro } from "./website.js";
 import { websiteProfile } from "../shared/website.js";
 import { siteDesign, templateById } from "../shared/templates.js";
 import "./template-hero.js";
+import { announcementHtml } from "../shared/announcements.js";
 const sitePanel = (id, ...args) =>
   panel(...args).replace("<section ", `<section id="${esc(id)}" `);
 
 export async function startPortal() {
+  const dismissedAnnouncements = new Set();
   const app = document.querySelector("#app");
   let site = await api.request("/api/public");
   const params = new URLSearchParams(location.search);
@@ -73,10 +76,13 @@ export async function startPortal() {
   function render() {
     applyPreview();
     document.title = site.settings.name + " · 학원 공개 페이지";
-    app.innerHTML = `<main class="portal design-${siteDesign(site.settings).template.key}" id="main">${preview ? `<div class="design-preview-bar"><span>디자인 ${preview.number} · ${preview.name} 미리보기 · 현재 사이트에는 아직 적용되지 않았습니다.</span><a href="/start?template=${preview.id}">이 디자인 선택 →</a></div>` : ""}<header class="portal-header"><a class="brand" href="/site"><span class="brand-mark">${esc(site.settings.name.slice(0, 1))}</span><span class="brand-word">${esc(site.settings.name)}<small>GROW AT YOUR OWN PACE</small></span></a><a class="button secondary" href="/">원장실 ${icon("arrow")}</a></header>${site.posts
-      .filter((p) => p.kind === "popup")
+    app.innerHTML = `<main class="portal design-${siteDesign(site.settings).template.key}" id="main">${preview ? `<div class="design-preview-bar"><span>디자인 ${preview.number} · ${preview.name} 미리보기 · 현재 사이트에는 아직 적용되지 않았습니다.</span><a href="/start?template=${preview.id}">이 디자인 선택 →</a></div>` : ""}<header class="portal-header"><a class="brand" href="/site"><span class="brand-mark">${esc(site.settings.name.slice(0, 1))}</span><span class="brand-word">${esc(site.settings.name)}<small>GROW AT YOUR OWN PACE</small></span></a>${schoolNav()}</header>${site.posts
+      .filter(
+        (p) =>
+          p.kind === "popup" && !preview && !dismissedAnnouncements.has(p.id),
+      )
       .slice(0, 1)
-      .map((p) => `<div class="portal-strip">${esc(p.body)}</div>`)
+      .map((p) => announcementHtml(p))
       .join(
         "",
       )}${websiteIntro(site)}<section class="website-about" id="admission"><div class="eyebrow">ADMISSION</div><h2>우리 아이에게 맞는 수업</h2><p class="text-body">${esc(websiteProfile(site.settings).admission)}</p></section><div class="grid-three">${site.classes.map((c) => `<article class="portal-class"><div class="eyebrow">${esc(c.grade)} · ${esc(c.subject)}</div><h3>${esc(c.name)}</h3><p>${c.sessions.map((x) => `${DAYS[x.day]} ${timeLabel(x.start)}–${timeLabel(x.end)}`).join(" / ")}</p>${c.teacher ? `<p>${esc(c.teacher)} 선생님</p>` : ""}${c.seats !== null ? badge(c.seats > 0 ? `남은 자리 ${c.seats}석` : "정원 마감 · 상담 가능", c.seats ? "green" : "amber") : ""}</article>`).join("")}</div>
@@ -223,6 +229,13 @@ export async function startPortal() {
     if (e.target.name === "linkQuiz") formDraft.linkQuiz = e.target.checked;
   });
   app.addEventListener("click", async (e) => {
+    const dismiss = e.target.closest("[data-dismiss-announcement]");
+    if (dismiss) {
+      const card = dismiss.closest("[data-announcement]");
+      dismissedAnnouncements.add(card.dataset.announcement);
+      card.remove();
+      return;
+    }
     if (
       e.target.closest('[data-action="p-slots-retry"]') &&
       !busy &&
@@ -270,6 +283,7 @@ export async function startPortal() {
         mutationType = "booking";
         payload = {
           classId,
+          campaignId: new URLSearchParams(location.search).get("campaign"),
           name: p.name,
           phone: p.phone,
           date,

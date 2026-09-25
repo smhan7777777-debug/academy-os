@@ -1,4 +1,8 @@
 const video = document.querySelector(".ac-film video");
+document.addEventListener("click", (event) => {
+  const button = event.target.closest("[data-dismiss-announcement]");
+  if (button) button.closest("[data-announcement]").remove();
+});
 const toggle = document.querySelector(".ac-film-toggle");
 const reduced = matchMedia("(prefers-reduced-motion: reduce)");
 if (video && toggle) {

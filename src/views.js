@@ -1,4 +1,5 @@
-﻿import {
+import { FEATURED_AGENTS } from "../shared/agent-teams.js";
+import {
   esc,
   icon,
   btn,
@@ -33,14 +34,14 @@ import {
 } from "../shared/core.js";
 
 export const ownerNav = [
-  ["today", "오늘 결재함", "inbox"],
-  ["website", "무료 웹사이트", "globe"],
+  ["today", "원장실 홈", "home"],
+  ["website", "홈페이지 관리", "globe"],
   ["students", "학생", "users"],
   ["lesson", "수업 기록", "book"],
   ["timetable", "시간표", "calendar"],
   ["billing", "수납", "wallet"],
   ["content", "학원 소식", "leaf"],
-  ["staff", "업무실", "spark"],
+  ["staff", "자동 처리 규칙", "spark"],
   ["biz", "경영지원", "briefcase"],
   ["settings", "설정·기록", "settings"],
 ];
@@ -70,7 +71,8 @@ export const stat = (
 ) =>
   `<div class="stat ${accent ? "accent" : ""}"><div class="stat-top"><span>${esc(label)}</span>${icon(ic)}</div><strong class="num">${esc(value)}<small>${esc(suffix)}</small></strong><p>${esc(note)}</p>${progress !== null ? `<div class="mini-progress" aria-hidden="true">${Array.from({ length: 12 }, (_, i) => `<i class="${i < Math.round(progress * 12) ? "filled" : ""}"></i>`).join("")}</div>` : ""}</div>`;
 const workerName = (s, d) =>
-  s.workers?.find((w) => w.id === d.worker)?.name || "운영 서류";
+  s.workers?.find((w) => w.id === d.worker)?.name ||
+  (d.agentRunId ? "AI 직원 · 통합 결재" : "운영 서류");
 const statusTone = (d) =>
   d.status === "review"
     ? d.priority === "high"
@@ -147,6 +149,7 @@ export function home(s, ui) {
     .filter((x) => x.score >= s.settings.threshold)
     .sort((a, b) => b.score - a.score);
   return `<div class="page-heading home-heading"><div><div class="eyebrow">YOUR ACADEMY, IN GOOD ORDER</div><h1>${role === "teacher" ? "선생님, 오늘의 기록을 함께해요." : "오늘, 중요한 일부터."}</h1><p>${role === "teacher" ? "담당 반의 수업 기록과 검수를 한곳에서 확인하세요." : `원장님이 검토할 서류 ${pending.length}건을 정리했습니다. 차근차근 확인해 주세요.`}</p></div><div class="date-ornament">${icon("sun")}<div>${esc(dateLabel(s.date))}<br><span class="muted">기록이 쌓이는 하루</span></div></div></div>
+ ${role === "owner" ? `<section class="panel spaced"><div class="panel-body"><div class="entry-head"><h2>우리 학원 AI 직원팀</h2><a class="button secondary" href="/agents">업무별 직원 찾기 →</a></div><p>맡길 일부터 선택하세요. 학원 기록으로 준비하고, 원장 승인 후 연결된 곳에 반영합니다.</p><div class="agent-featured">${FEATURED_AGENTS.map((a) => `<a class="quick-link" href="/agents?agent=${a.code}"><div><strong>${a.name}</strong><small>${a.when}</small><small>${a.result}</small><span>${a.action} →</span></div></a>`).join("")}</div><a class="text-link" href="/agents?agent=academy-inquiry">홈페이지 문의 답변 준비 (${s.conversations.filter((q) => q.status === "pending").length}건) →</a></div></section>` : ""}
  <div class="stats">${stat(role === "teacher" ? "내 검수 대기" : "결재 대기", role === "teacher" ? pending.filter((d) => d.status === "teacher_review").length : pending.length, "건", now.length ? `지금 확인이 필요한 서류 ${now.length}건` : "급히 확인할 서류가 없습니다", "inbox", true, pending.length ? approved.length / (approved.length + pending.length) : 1)}${stat("오늘 수업", agenda.length, "개 반", `${agenda.reduce((n, x) => n + students.filter((st) => st.classId === x.c.id).length, 0)}명의 수업이 예정되어 있어요`, "calendar")}${role === "owner" ? stat("확인할 수강료", new Intl.NumberFormat("ko-KR").format(overdue.reduce((n, i) => n + balance(s, i), 0)), "원", `기한이 지난 청구 ${overdue.length}건 · 로컬 장부`, "wallet") : stat("담당 학생", students.length, "명", "내 담당 반의 재원 학생", "users")}${stat(role === "owner" ? "재원 학생" : "오늘 기록", role === "owner" ? students.length : s.records.filter((r) => r.date === s.date).length, role === "owner" ? "명" : "명", role === "owner" ? `${s.classes.length}개 반에서 함께 배우고 있어요` : "확인하여 저장한 관찰만 집계", "users")}</div>
  ${failed.length ? `<div class="error-note">로컬 반영이 중지된 서류 ${failed.length}건이 있습니다. ${btn("확인하기", "delivery-list", "", "ghost", "arrow")}</div>` : ""}
  <div class="layout-main"><div>${panel(role === "teacher" ? "나의 검수함" : "원장님의 결재함", "내용과 근거를 살펴본 뒤 다음 단계로 진행하세요.", inbox, badge("서버 저장", "green"))}
@@ -237,7 +240,7 @@ export function students(s, ui) {
       `<form class="filters" data-form="student-filter">${field("이름·보호자 검색", "query", f.query || "", "search", 'placeholder="찾을 이름을 입력하세요" class="search-input"')}${select("반", "classId", [["", "전체 반"], ...s.classes.map((c) => [c.id, c.name])], f.classId)}${select("학년", "grade", [["", "전체 학년"], ...[...new Set(s.students.map((st) => st.grade))]], f.grade)}${checkbox("확인 필요한 학생만", "only", f.only)}<button class="button secondary" type="submit">조회</button></form><div class="table-wrap"><table><thead><tr><th>학생</th><th>반 · 학년</th><th>확인할 내용</th><th>수강 기간</th>${owner ? "<th>잔액</th>" : ""}<th>활용 동의</th></tr></thead><tbody>${rows
         .map(({ st, care, due }) => {
           const c = s.classes.find((c) => c.id === st.classId);
-          return `<tr><td><button class="student-name" data-action="student" data-id="${esc(st.id)}"><span class="avatar">${initials(st.name)}</span><span>${esc(st.name)}<small>${st.status === "withdrawn" ? "퇴원" : "재원"} · ${esc(st.id.slice(0, 8))}</small></span></button></td><td>${esc(c?.name)}<div class="table-note">${esc(st.grade)}</div></td><td>${care.score >= s.settings.threshold ? badge(`살펴볼 기록 ${care.score}점`, "red") : due ? badge("수강료 확인", "amber") : !st.consent ? badge("동의 확인 필요", "amber") : badge("추가 확인 없음")}</td><td>${esc(st.termEnd)}<div class="table-note">기록 기준 ${remaining(s, st)}회 남음</div></td>${owner ? `<td class="num">${won(due)}</td>` : ""}<td>${badge(st.consent ? "확인" : "미확인", st.consent ? "green" : "amber")}</td></tr>`;
+          return `<tr><td><button class="student-name" data-action="student" data-id="${esc(st.id)}"><span class="avatar">${initials(st.name)}</span><span>${esc(st.name)}<small>${st.status === "withdrawn" ? "퇴원" : "재원"} · ${esc(st.id.slice(0, 8))}</small></span></button></td><td>${esc(c?.name)}<div class="table-note">${esc(st.grade)}</div></td><td>${care.score >= s.settings.threshold ? badge(`살펴볼 기록 ${care.score}점`, "red") : due ? badge("수강료 확인", "amber") : !st.consent ? badge("동의 확인 필요", "amber") : badge("추가 확인 없음")}</td><td>${esc(st.termEnd)}<div class="table-note">기록 기준 ${remaining(s, st)}회 남음</div></td>${owner ? `<td class="num">${won(due)}</td>` : ""}<td>${badge(st.consent ? "확인" : "미확인", st.consent ? "green" : "amber")}${owner ? `<div class="entry-actions"><a class="text-link" href="/agents?agent=academy-journal&student=${encodeURIComponent(st.id)}">수업 리포트 준비 →</a><a class="text-link" href="/agents?agent=academy-study-ledger&student=${encodeURIComponent(st.id)}">학습 장부 →</a><a class="text-link" href="/agents?agent=academy-reenroll&student=${encodeURIComponent(st.id)}">재등록 안내 →</a></div>` : ""}</td></tr>`;
         })
         .join(
           "",
@@ -441,7 +444,7 @@ export function website(s) {
               .reverse()
               .map(
                 (q) =>
-                  `<article class="entry"><div class="entry-head">${badge(q.status === "answered" ? "답변 있음" : "확인 필요", q.status === "answered" ? "green" : "amber")}<span class="small muted">${esc(q.date)}</span></div><h3 class="spaced">${esc(q.question)}</h3>${q.answer ? `<p>${esc(q.answer)}</p>` : btn("답변 작성", "inquiry", `data-id="${esc(q.id)}"`, "light", "chat")}</article>`,
+                  `<article class="entry"><div class="entry-head">${badge(q.status === "answered" ? "답변 있음" : "확인 필요", q.status === "answered" ? "green" : "amber")}<span class="small muted">${esc(q.date)}</span></div><h3 class="spaced">${esc(q.question)}</h3>${!q.answer ? `<a class="button primary" href="/agents?agent=academy-inquiry&inquiry=${encodeURIComponent(q.id)}">AI 답변 준비 →</a>` : ""}${q.answer ? `<p>${esc(q.answer)}</p>` : btn("답변 작성", "inquiry", `data-id="${esc(q.id)}"`, "light", "chat")}</article>`,
               )
               .join("")
           : empty(
@@ -507,11 +510,11 @@ export function workers(s) {
   return (
     heading(
       "WORKSPACE",
-      "함께 일하는 업무실.",
+      "기록에 따라 준비하는 자동 업무.",
       "기록 기반 자동 업무와 Agent1000 AI 직원의 실행 상태를 구분해 확인하세요.",
     ) +
     `<section class="studio-entry"><div><span class="eyebrow">AGENT1000 · AI WORKSPACE</span><h2>학원 핵심 AI 직원에게 일을 맡기세요.</h2><p>학원 특화 13종 · 공통 27종의 입력과 실행 연결을 준비했습니다. 입력 초안, 연결 상태, 결과 검토를 한곳에서 확인합니다.</p></div><a class="button primary" href="/agents">AI 직원 업무실 열기 →</a></section>` +
-    `<div class="capabilities"><span class="capability">${icon("database")} 서버 저장 연결됨</span><span class="capability">${icon("check")} 규칙·서식 업무 실행 가능</span><span class="capability">${icon("spark")} 외부 AI 모델 미연결</span><span class="capability">${icon("globe")} 외부 발송·플랫폼 미연결</span></div><div class="grid-three">${s.workers
+    `<div class="capabilities"><span class="capability">${icon("database")} 서버 저장 연결됨</span><span class="capability">${icon("check")} 규칙·서식 업무 실행 가능</span><span class="capability">${icon("spark")} AI 연결은 직원팀에서 확인</span><span class="capability">${icon("globe")} 외부 발송·플랫폼 미연결</span></div><div class="grid-three">${s.workers
       .filter((w) => w.id !== "inquiry")
       .map(
         (w) =>

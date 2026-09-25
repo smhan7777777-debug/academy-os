@@ -105,6 +105,25 @@ p {
 .ac-header nav [aria-current="page"] {
   border-bottom: 2px solid var(--ac-accent);
 }
+.ac-office-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 8px 14px;
+  border: 1px solid #74839460;
+  border-radius: 10px;
+  color: #263c55;
+  background: #ffffffd9;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.ac-office-nav:hover {
+  background: #e8eff7;
+  border-color: #748394;
+}
 main {
   max-width: 1440px;
   margin: auto;
@@ -375,10 +394,13 @@ main {
 }
 @media (max-width: 900px) {
   .ac-header {
-    align-items: flex-start;
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 16px;
   }
   .ac-header nav {
+    order: 3;
+    grid-column: 1 / -1;
     flex-wrap: wrap;
     gap: 10px 20px;
   }

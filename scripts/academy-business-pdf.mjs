@@ -16,6 +16,7 @@ const publicOutput = resolve(
 );
 const previews = resolve(root, "test-results/business-brief");
 const searchableOutput = resolve(previews, "searchable-source.pdf");
+const pageCount = 3;
 await mkdir(previews, { recursive: true });
 
 const browser = await chromium.launch({
@@ -29,7 +30,7 @@ const browser = await chromium.launch({
 try {
   const page = await browser.newPage({
     viewport: { width: 1000, height: 1300 },
-    deviceScaleFactor: 1.5,
+    deviceScaleFactor: 2,
   });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
@@ -41,7 +42,7 @@ try {
   await page.emulateMedia({ media: "print" });
   await page.goto(pathToFileURL(source).href, { waitUntil: "networkidle" });
   await page.evaluate(() => document.fonts.ready);
-  assert.equal(await page.locator(".page").count(), 4);
+  assert.equal(await page.locator(".page").count(), pageCount);
   const layout = await page.locator(".page").evaluateAll((pages) =>
     pages.map((sheet, index) => {
       const bounds = sheet.getBoundingClientRect();
@@ -59,7 +60,23 @@ try {
       };
     }),
   );
-  for (let i = 0; i < 4; i++) {
+  const links = await page.locator(".page").evaluateAll((pages) =>
+    pages.map((sheet) => {
+      const bounds = sheet.getBoundingClientRect();
+      return [...sheet.querySelectorAll('a[href^="https://"]')].map((a) => {
+        const box = a.getBoundingClientRect();
+        return {
+          href: a.href,
+          label: a.textContent.trim(),
+          left: ((box.left - bounds.left) / bounds.width) * 100,
+          top: ((box.top - bounds.top) / bounds.height) * 100,
+          width: (box.width / bounds.width) * 100,
+          height: (box.height / bounds.height) * 100,
+        };
+      });
+    }),
+  );
+  for (let i = 0; i < pageCount; i++) {
     await page
       .locator(".page")
       .nth(i)
@@ -83,16 +100,34 @@ try {
   });
   const imagePages = (
     await Promise.all(
-      Array.from({ length: 4 }, async (_, index) => {
+      Array.from({ length: pageCount }, async (_, index) => {
         const image = await readFile(
           resolve(previews, `source-page-${index + 1}.png`),
         );
-        return `<section><img alt="Academy OS 사업모델 소개서 ${index + 1}쪽" src="data:image/png;base64,${image.toString("base64")}"></section>`;
+        const esc = (value) =>
+          String(value).replace(
+            /[&<>"']/g,
+            (c) =>
+              ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;",
+              })[c],
+          );
+        const anchors = links[index]
+          .map(
+            (link) =>
+              `<a href="${esc(link.href)}" aria-label="${esc(link.label)}" style="left:${link.left}%;top:${link.top}%;width:${link.width}%;height:${link.height}%"></a>`,
+          )
+          .join("");
+        return `<section><img alt="Academy OS 사업모델 소개서 ${index + 1}쪽" src="data:image/png;base64,${image.toString("base64")}">${anchors}</section>`;
       }),
     )
   ).join("");
   await flattened.setContent(
-    `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>배움결 Academy OS · 사업모델 소개서</title><style>@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}section{width:210mm;height:297mm;break-after:page}section:last-child{break-after:auto}img{display:block;width:100%;height:100%;object-fit:fill}</style></head><body>${imagePages}</body></html>`,
+    `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>배움결 Academy OS · 사업모델 소개서</title><style>@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}section{position:relative;width:210mm;height:297mm;break-after:page}section:last-child{break-after:auto}img{display:block;width:100%;height:100%;object-fit:fill}a{display:block;position:absolute}</style></head><body>${imagePages}</body></html>`,
     { waitUntil: "load" },
   );
   await flattened.waitForFunction(() =>

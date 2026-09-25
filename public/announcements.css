@@ -1,0 +1,133 @@
+.school-announcement {
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 80;
+  right: 28px;
+  bottom: 28px;
+  width: min(370px, calc(100vw - 32px));
+  padding: 26px;
+  border-radius: 22px;
+  color: #fff;
+  background: #182e49;
+  border: 1px solid #ffffff35;
+  box-shadow: 0 22px 64px #13294045;
+  font-family: Arial, "Malgun Gothic", sans-serif;
+  text-align: left;
+}
+.school-announcement.announcement-teal {
+  background: #105956;
+}
+.school-announcement.announcement-plum {
+  background: #514264;
+}
+.school-announcement h2 {
+  color: #fff;
+  font-size: 25px;
+  line-height: 1.4;
+  margin: 20px 0 12px;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  font-weight: 700;
+}
+.school-announcement p {
+  color: #e5edf4;
+  font-size: 15px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  margin: 0 0 18px;
+  overflow-wrap: anywhere;
+  max-height: 240px;
+  overflow: auto;
+}
+.announcement-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+.announcement-top > span {
+  font-size: 11px;
+  letter-spacing: 0.13em;
+  color: #dde4ef;
+}
+.announcement-top button {
+  border: 1px solid #ffffff50;
+  color: #fff;
+  background: transparent;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  font-size: 22px;
+  cursor: pointer;
+}
+.school-announcement small {
+  display: block;
+  color: #e0e6ef;
+  font-size: 12px;
+  margin-bottom: 16px;
+}
+.school-announcement a.announcement-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-radius: 10px;
+  background: #fff;
+  color: #182e49;
+  padding: 14px 17px;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 15px;
+}
+.school-announcement.announcement-bar {
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
+  width: auto;
+  max-width: none;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px 24px;
+}
+.announcement-bar .announcement-top,
+.announcement-bar h2,
+.announcement-bar p {
+  grid-column: 1;
+}
+.school-announcement.announcement-bar h2 {
+  margin: 4px 0;
+  font-size: 22px;
+}
+.school-announcement.announcement-bar p {
+  margin: 0;
+  max-height: 100px;
+}
+.announcement-bar .announcement-cta {
+  grid-column: 2;
+  grid-row: 2 / 4;
+  min-width: 160px;
+  align-self: center;
+}
+.announcement-bar small {
+  margin: 0;
+}
+@media (max-width: 600px) {
+  .school-announcement {
+    right: 16px;
+    bottom: 16px;
+    padding: 22px;
+    max-height: 80vh;
+    overflow: auto;
+  }
+  .school-announcement.announcement-bar {
+    display: block;
+    left: 16px;
+    right: 16px;
+    bottom: 16px;
+  }
+  .announcement-bar .announcement-cta {
+    margin-top: 14px;
+  }
+  .school-announcement h2 {
+    font-size: 22px;
+  }
+}

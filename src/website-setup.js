@@ -1,4 +1,4 @@
-import { brand, workspaceNav } from "./brand.js";
+import { brand, workspaceNav, workspaceTrail } from "./brand.js";
 import * as api from "./api.js";
 import {
   TEMPLATES,
@@ -81,7 +81,7 @@ export async function startWebsiteSetup() {
   function render() {
     document.title = "웹사이트 만들기 · 배움결";
     app.innerHTML = `<main class="design-studio" id="main">
-      <header class="studio-header"><a class="brand" href="/#today">${brand("웹사이트 스튜디오")}</a>${workspaceNav("start")}</header>
+      <header class="studio-header"><a class="brand" href="/#today">${brand("웹사이트 스튜디오")}</a>${workspaceNav("start")}</header>${workspaceTrail("start")}
       <section class="studio-intro"><div><span class="eyebrow">YOUR WEBSITE, YOUR ACADEMY</span><h1>우리 학원 웹사이트,<br><em>보고 고르면 완성.</em></h1><p>디자인으로 바로 시작하거나, 학원 자료로 맞춤 소개를 준비하세요.<br>웹사이트와 예약·문의 직원, 콘텐츠 생성 직원이 함께합니다.</p></div><div class="studio-price"><span>웹사이트 + 영상 + 직원 2명</span><strong>₩0</strong><small>기본 제공 · 무료</small></div></section>
       <section class="studio-browser" aria-label="웹사이트 미리보기"><div class="studio-browser-bar"><span class="studio-dots" aria-hidden="true">● ● ●</span><span id="previewLabel">${esc(selected.name)} · 적용 전 미리보기</span><div class="studio-tools"><button class="button secondary" data-width="desktop" aria-pressed="${width === "desktop"}">PC</button><button class="button secondary" data-width="mobile" aria-pressed="${width === "mobile"}">모바일</button><a class="button secondary" id="previewOpen" href="${previewUrl()}" target="_blank" rel="noopener">새 창 ↗</a></div></div><div class="studio-preview-stage ${width}"><iframe id="studioPreview" title="선택한 학원 웹사이트 미리보기" src="${previewUrl()}"></iframe></div><div class="studio-browser-bar"><span>선택한 디자인과 영상을 적용 전에 확인하세요.</span><a href="/site" target="_blank" rel="noopener">현재 웹사이트 ↗</a><button class="button secondary" id="copySite">주소 복사</button></div></section>
       <section class="studio-builder"><div class="studio-step"><span>01</span><h2>웹사이트 만들기 · 두 가지 방법</h2></div><div class="studio-methods" aria-label="웹사이트 제작 방법"><button data-method="premium" aria-pressed="${tab === "premium"}"><strong>프리미엄 템플릿</strong><span>디자인 ${TEMPLATES.length}종과 영상 2편 중 선택. 바로 적용할 수 있어요.</span></button><button data-method="custom" aria-pressed="${tab === "custom"}"><strong>맞춤형 제작</strong><span>학원 링크·소개 자료로 초안을 준비하고 확인해 적용해요.</span></button></div>

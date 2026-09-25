@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { siteDesign, templateById } from "../shared/templates.js";
 import { websiteProfile } from "../shared/website.js";
 import { DAYS, timeLabel } from "../shared/core.js";
+import { announcementHtml } from "../shared/announcements.js";
 
 const esc = (value) =>
   String(value ?? "").replace(
@@ -59,9 +60,10 @@ export async function renderLibrarySite(site, url) {
     .join("");
   const news = site.posts.length
     ? site.posts
+        .filter((p) => p.kind !== "popup")
         .map(
           (p) =>
-            `<article class="ac-card"><span class="ac-eyebrow">학원 소식</span><h3>${esc(p.title)}</h3><p class="ac-copy">${esc(p.body)}</p></article>`,
+            `<article class="ac-card"><span class="ac-eyebrow">학원 소식</span><h3>${esc(p.title)}</h3><p class="ac-copy">${esc(p.body)}</p>${p.cta ? `<a class="ac-button" href="${esc(p.cta)}">상담 신청 →</a>` : ""}</article>`,
         )
         .join("")
     : '<p class="ac-empty">새 소식이 준비되면 이곳에 안내합니다.</p>';
@@ -86,6 +88,12 @@ export async function renderLibrarySite(site, url) {
   const title = PAGES.find(([key]) => key === page)[1];
   return {
     status: 200,
-    html: `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(site.settings.name)} · ${title}</title><meta name="description" content="${esc(profile.intro)}">${preview ? '<meta name="robots" content="noindex,nofollow">' : ""}${fonts}<link rel="stylesheet" href="/site-library.css"></head><body class="ac-site ac-${template.layout}" style="--ac-accent:${template.accent}" data-preview="${preview}">${preview ? `<div class="ac-preview">${esc(template.name)} · 적용 전 미리보기${!url.searchParams.has("embed") ? `<a href="/start?template=${template.id}">이 디자인 선택 →</a>` : ""}</div>` : ""}<header class="ac-header"><a class="ac-brand" href="${href()}">${esc(site.settings.name)}<small>GROW AT YOUR OWN PACE</small></a><nav aria-label="학원 웹사이트 메뉴">${PAGES.map(([key, label]) => `<a href="${href(key)}" ${page === key ? 'aria-current="page"' : ""}>${label}</a>`).join("")}</nav></header><main>${body}</main><footer class="ac-footer"><strong>${esc(site.settings.name)}</strong><p>${esc(site.settings.address)} · ${esc(site.settings.phone)}</p><a class="ac-office-link" href="/#today">⌂ 원장실로 이동 →</a><span> · 배움결과 함께하는 학원 운영</span></footer><script src="/site-library.js" defer></script></body></html>`,
+    html: `<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(site.settings.name)} · ${title}</title><meta name="description" content="${esc(profile.intro)}">${preview ? '<meta name="robots" content="noindex,nofollow">' : ""}${fonts}<link rel="stylesheet" href="/site-library.css"><link rel="stylesheet" href="/announcements.css"></head><body class="ac-site ac-${template.layout}" style="--ac-accent:${template.accent}" data-preview="${preview}">${preview ? `<div class="ac-preview">${esc(template.name)} · 적용 전 미리보기${!url.searchParams.has("embed") ? `<a href="/start?template=${template.id}">이 디자인 선택 →</a>` : ""}</div>` : ""}<header class="ac-header"><a class="ac-brand" href="${href()}">${esc(site.settings.name)}<small>GROW AT YOUR OWN PACE</small></a><nav aria-label="학원 웹사이트 메뉴">${PAGES.map(([key, label]) => `<a href="${href(key)}" ${page === key ? 'aria-current="page"' : ""}>${label}</a>`).join("")}</nav>${url.searchParams.has("embed") ? "" : `<a class="ac-office-nav" href="/#today" aria-label="원장실 홈">원장실 홈 <span aria-hidden="true">→</span></a>`}</header><main>${site.posts
+      .filter((p) => p.kind === "popup" && !preview)
+      .slice(0, 1)
+      .map((p) => announcementHtml(p))
+      .join(
+        "",
+      )}${body}</main><footer class="ac-footer"><strong>${esc(site.settings.name)}</strong><p>${esc(site.settings.address)} · ${esc(site.settings.phone)}</p><a class="ac-office-link" href="/#today">원장실 홈 →</a><span> · 배움결과 함께하는 학원 운영</span></footer><script src="/site-library.js" defer></script></body></html>`,
   };
 }

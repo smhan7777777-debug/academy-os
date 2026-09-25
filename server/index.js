@@ -18,6 +18,8 @@ import {
 } from "./studio.js";
 import { generatorStatus, generateExperience } from "./studio-generator.js";
 import { AgentWorkspace, agentPrefill } from "./agent-workspace.js";
+import { campaignPreview } from "./campaigns.js";
+import { quickInput } from "./agent-quick.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dev = process.argv.includes("--dev");
@@ -274,6 +276,28 @@ export const handler = async (req, res) => {
         return json(res, 200, project(store.load(actor.academyId), actor));
       if (path === "/api/agent-workspace" && req.method === "GET")
         return json(res, 200, agentWorkspace.summary(actor));
+      if (
+        path === "/api/agent-workspace/campaign-preview" &&
+        req.method === "POST"
+      ) {
+        check(actor.role === "owner", "원장 권한이 필요합니다.", 403);
+        return json(
+          res,
+          200,
+          campaignPreview(store.load(actor.academyId), await body(req)),
+        );
+      }
+      if (
+        path === "/api/agent-workspace/quick-input" &&
+        req.method === "POST"
+      ) {
+        check(actor.role === "owner", "원장 권한이 필요합니다.", 403);
+        return json(
+          res,
+          200,
+          quickInput(store.load(actor.academyId), await body(req)),
+        );
+      }
       if (path === "/api/agent-workspace/prefill" && req.method === "GET") {
         check(actor.role === "owner", "원장 권한이 필요합니다.", 403);
         const s = store.load(actor.academyId);
@@ -291,6 +315,9 @@ export const handler = async (req, res) => {
         const p = await body(req);
         const result = agentWorkspace.action(actor, p.id, p.action, {
           text: p.text,
+          title: p.title,
+          startsAt: p.startsAt,
+          endsAt: p.endsAt,
         });
         if (!serverless && p.action === "queue")
           void agentWorkspace.processOne().catch(() => {});

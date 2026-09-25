@@ -1,4 +1,4 @@
-import { brand, workspaceNav, schoolNav } from "./brand.js";
+import { brand, workspaceNav, workspaceTrail, schoolNav } from "./brand.js";
 import * as api from "./api.js";
 import { esc, field, area, select, checkbox, dateTime } from "./ui.js";
 import { DAYS, timeLabel, schedulesAt, today, won } from "../shared/core.js";
@@ -34,7 +34,7 @@ export async function startStudio() {
   const auth = await api.session();
   if (!auth.actor && auth.demo) await api.login("owner");
   else if (auth.actor?.role !== "owner") {
-    app.innerHTML = `<main class="st-container" id="main"><h1>원장님의 수업 스튜디오</h1><p>원장 계정으로 로그인한 뒤 이용해 주세요.</p><a class="button primary" href="/">원장실로 이동</a></main>`;
+    app.innerHTML = `<main class="st-container" id="main"><h1>원장님의 수업 스튜디오</h1><p>원장 계정으로 로그인한 뒤 이용해 주세요.</p>${schoolNav()}</main>`;
     return;
   }
   let state = await api.request("/api/studio"),
@@ -250,7 +250,7 @@ export async function startStudio() {
     const events = state.studioEvents;
     const items = state.studioItems.filter((x) => x.kind === tab);
     document.title = "배움결 수업 스튜디오 · " + state.settings.name;
-    app.innerHTML = `<div class="st-container"><header class="st-header"><a class="st-brand" href="/">${brand("수업 스튜디오")}</a>${workspaceNav("studio")}</header><main id="main"><section class="st-hero"><div><span class="eyebrow">YOUR WAY OF TEACHING</span><h1>가르치는 방식이<br>학원의 얼굴이 됩니다.</h1><p>한 번의 수업 체험, 한 가정을 위한 안내서.<br>원장님의 자료를 읽기 좋은 경험으로 준비하세요.</p></div><aside><span class="eyebrow">OUR STUDIO</span><strong>${esc(state.settings.name)}</strong><p>자료 준비 → 초안 검토 → 승인·공유</p><a class="st-work-link" href="#studio-work">자료 만들기로 이동 ↓</a><a href="/site" target="_blank" rel="noopener">우리 홈페이지 보기 ↗</a></aside></section><div class="st-stats"><div><strong>${drafts}</strong><span>검토할 초안</span></div><div><strong>${stale}</strong><span>정보 변경 · 재확인 필요</span></div><div><strong>${events.length} / ${events.filter((e) => e.completed).length}</strong><span>체험 시작 / 완료 · 세션 기준</span></div><div><strong>${events.filter((e) => e.consulted).length}</strong><span>상담 버튼 선택 · 등록 수 아님</span></div></div><nav id="studio-work" class="st-tabs" aria-label="수업 스튜디오 업무">${Object.entries(
+    app.innerHTML = `<div class="st-container"><header class="st-header"><a class="st-brand" href="/#today">${brand("수업 스튜디오")}</a>${workspaceNav("studio")}</header>${workspaceTrail("studio")}<main id="main"><section class="st-hero"><div><span class="eyebrow">YOUR WAY OF TEACHING</span><h1>가르치는 방식이<br>학원의 얼굴이 됩니다.</h1><p>한 번의 수업 체험, 한 가정을 위한 안내서.<br>원장님의 자료를 읽기 좋은 경험으로 준비하세요.</p></div><aside><span class="eyebrow">OUR STUDIO</span><strong>${esc(state.settings.name)}</strong><p>자료 준비 → 초안 검토 → 승인·공유</p><a class="st-work-link" href="#studio-work">자료 만들기로 이동 ↓</a><a href="/site" target="_blank" rel="noopener">우리 홈페이지 보기 ↗</a></aside></section><div class="st-stats"><div><strong>${drafts}</strong><span>검토할 초안</span></div><div><strong>${stale}</strong><span>정보 변경 · 재확인 필요</span></div><div><strong>${events.length} / ${events.filter((e) => e.completed).length}</strong><span>체험 시작 / 완료 · 세션 기준</span></div><div><strong>${events.filter((e) => e.consulted).length}</strong><span>상담 버튼 선택 · 등록 수 아님</span></div></div><nav id="studio-work" class="st-tabs" aria-label="수업 스튜디오 업무">${Object.entries(
       STUDIO_KINDS,
     )
       .map(([key, title]) =>

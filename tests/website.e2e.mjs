@@ -310,7 +310,9 @@ try {
   assert.ok(Math.abs((await page.locator("#about").boundingBox()).y) < 100);
   await page.goto(origin + "/#website");
   await page.waitForSelector('[data-action="website-requests"]');
-  await page.locator('[data-action="website-requests"]').click();
+  await page
+    .locator('.free-staff-card[data-action="website-requests"]')
+    .click();
   await wait(600);
   assert.ok(
     Math.abs((await page.locator("#website-requests").boundingBox()).y) < 120,

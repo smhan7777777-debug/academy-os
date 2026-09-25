@@ -1,4 +1,7 @@
 import { randomUUID, createHash } from "node:crypto";
+import { artifactFor } from "../shared/agent-teams.js";
+import { agentSourceHash } from "./agent-source.js";
+import { campaignPreview } from "./campaigns.js";
 import {
   today,
   addDays,
@@ -384,6 +387,11 @@ export function slots(s, classId, date = today(), now = new Date()) {
   return result;
 }
 function guard(s, d, date = today()) {
+  if (d.agentSource)
+    check(
+      agentSourceHash(s, d.agentSource) === d.agentSource.hash,
+      "AI 작업의 근거가 변경되었습니다. 새 초안으로 준비해 주세요.",
+    );
   if (d.kind === "website") {
     check(
       d.websiteRevision === (s.settings.websiteRevision || 0),
@@ -487,6 +495,8 @@ function approve(s, a, d) {
     source: d.source || null,
     questions: d.questions || null,
     websiteProfile: d.websiteProfile || null,
+    publication: d.publication || null,
+    title: d.title,
   };
   const snapshot = structuredClone(payload);
   const approval = {
@@ -608,11 +618,13 @@ export function tick(s, now = new Date()) {
           id: id("POST"),
           docId: d.id,
           approvalId: a.id,
-          title: d.title,
+          title: a.snapshot.title || d.title,
           body: a.snapshot.body,
           kind: d.kind,
           at: stamp(),
           active: true,
+          publicationOrder: s.posts.length + 1,
+          ...(a.snapshot.publication || {}),
         });
       }
       if (d.kind === "inquiry") {
@@ -645,12 +657,172 @@ export function tick(s, now = new Date()) {
   return changed;
 }
 
+export function prepareAgentDocument(s, a, job, options) {
+  owner(a);
+  check(
+    a.academyId === s.academyId && job.academyId === s.academyId,
+    "학원 접근 권한이 없습니다.",
+    403,
+  );
+  const existing = s.docs.find((d) => d.agentRunId === job.id);
+  if (existing) return existing;
+  const kind =
+    job.code === "academy-journal" && job.studentId
+      ? "report"
+      : artifactFor(job.code);
+  const body = txt(options.text, "검토할 본문", 12000);
+  const title = txt(options.title || job.name, "제목", 120);
+  const data = {
+    key: `agent:${job.id}`,
+    agentRunId: job.id,
+    agentSource: job.source || null,
+    kind: kind === "internal" ? "biz" : kind,
+    title,
+    body,
+    worker: job.code,
+    channel: "internal",
+    evidence: [
+      { label: "담당 AI 직원", value: job.name },
+      { label: "실행 기록", value: job.id },
+    ],
+  };
+  if (kind === "inquiry") {
+    check(
+      job.source?.type === "inquiry",
+      "답변할 홈페이지 문의를 먼저 선택해 주세요.",
+    );
+    const q = byId(s.conversations, job.source.id);
+    check(
+      q.status === "pending",
+      "이미 답변한 문의입니다. 원문을 확인해 주세요.",
+    );
+    Object.assign(data, {
+      conversationId: q.id,
+      channel: "website",
+      recipient: "해당 문의 작성자",
+    });
+  } else if (["popup", "content"].includes(kind)) {
+    check(!job.studentId, "학생 자료가 연결된 결과는 공개 게시할 수 없습니다.");
+    validContent(s, title + "\n" + body);
+    const startsAt =
+      options.startsAt ||
+      (job.input.valid_from
+        ? `${job.input.valid_from}T00:00:00+09:00`
+        : new Date().toISOString());
+    const endsAt =
+      options.endsAt ||
+      (job.input.valid_until
+        ? `${job.input.valid_until}T23:59:59+09:00`
+        : new Date(Date.now() + 14 * 86400000).toISOString());
+    check(
+      Number.isFinite(Date.parse(startsAt)) &&
+        Number.isFinite(Date.parse(endsAt)) &&
+        Date.parse(endsAt) > Date.parse(startsAt),
+      "게시 종료 시간을 시작 시간 이후로 지정해 주세요.",
+    );
+    Object.assign(data, {
+      channel: "website",
+      recipient: "홈페이지 방문자",
+      publication: {
+        startsAt,
+        endsAt,
+        cta: `/?portal=1&campaign=${encodeURIComponent(job.id)}#booking`,
+        campaignId: job.id,
+      },
+    });
+    data.evidence.push(
+      { label: "게시 기간", value: `${startsAt} ~ ${endsAt}` },
+      { label: "신청 버튼", value: "학원 상담 예약" },
+    );
+  } else if (["report", "career", "reenroll"].includes(kind)) {
+    check(job.studentId, "전달할 학생을 선택해 주세요.");
+    const st = byId(s.students, job.studentId);
+    Object.assign(data, {
+      studentId: st.id,
+      channel: "parent",
+      recipient: st.guardian,
+    });
+    if (kind === "reenroll") data.remainingAtDraft = remaining(s, st);
+  } else if (job.studentId) data.studentId = job.studentId;
+  // Validate before inserting; approval and delivery recheck the same bound source.
+  if (data.studentId)
+    data.studentContext = studentContext(byId(s.students, data.studentId));
+  guard(s, data);
+  const d = doc(s, data);
+  audit(s, a, "AI 결과 결재 요청", title);
+  return d;
+}
+
 export function execute(s, a, type, p = {}) {
   check(a && a.academyId === s.academyId, "학원 접근 권한이 없습니다.", 403);
   if (type.startsWith("studio.")) return executeStudio(s, a, type, p);
   const date = today();
   let result = { message: "저장했습니다." };
   switch (type) {
+    case "campaign.publish": {
+      owner(a);
+      const replaced = p.replaceId ? byId(s.posts, p.replaceId) : null;
+      check(
+        !replaced || (replaced.kind === "popup" && replaced.active),
+        "교체할 팝업의 상태가 바뀌었습니다. 게시 현황을 확인해 주세요.",
+        409,
+      );
+      const preview = campaignPreview(s, p.options);
+      check(
+        preview.hash === p.previewHash,
+        "미리보기 이후 자료가 바뀌었습니다. 다시 확인해 주세요.",
+        409,
+      );
+      validContent(s, preview.title + "\n" + preview.body);
+      const campaignId = id("CAM");
+      const d = doc(s, {
+        key: campaignId,
+        kind: "popup",
+        title: preview.title,
+        body: preview.body,
+        worker: "content",
+        channel: "website",
+        recipient: "홈페이지 방문자",
+        publication: {
+          startsAt: preview.startsAt,
+          endsAt: preview.endsAt,
+          tone: preview.tone,
+          layout: preview.layout,
+          classId: preview.classId,
+          campaignId,
+          cta:
+            preview.cta === "/learn"
+              ? "/learn"
+              : `/?portal=1&campaign=${encodeURIComponent(campaignId)}${preview.classId ? `&classId=${encodeURIComponent(preview.classId)}` : ""}#booking`,
+        },
+        evidence: [
+          {
+            label: "작성 방식",
+            value: "선택한 항목으로 만든 서식 · AI 생성 아님",
+          },
+          {
+            label: "게시 기간",
+            value: `${preview.startsAt} ~ ${preview.endsAt}`,
+          },
+          { label: "반영 위치", value: "현재 학원 홈페이지" },
+        ],
+      });
+      approve(s, a, d);
+      tick(s);
+      const delivery = s.deliveries.find((j) => j.docId === d.id);
+      check(
+        delivery?.status === "local_delivered",
+        delivery?.note || "홈페이지 반영을 확인하지 못했습니다.",
+        409,
+      );
+      if (replaced) replaced.active = false;
+      return {
+        message: "홈페이지에 반영했습니다.",
+        docId: d.id,
+        postId: s.posts.find((p) => p.docId === d.id).id,
+        campaignId,
+      };
+    }
     case "record.save": {
       const c = staffFor(s, a, p.classId);
       check(
@@ -1814,6 +1986,15 @@ function book(s, p, date = today()) {
     expiresAt: new Date(Date.now() + 864e5).toISOString(),
     studentId: p.studentId || null,
     quizId: quiz?.id || null,
+    campaignId: s.posts.some(
+      (post) =>
+        post.campaignId === p.campaignId &&
+        post.active &&
+        (!post.endsAt || Date.parse(post.endsAt) > Date.now()) &&
+        (!post.startsAt || Date.parse(post.startsAt) <= Date.now()),
+    )
+      ? p.campaignId
+      : null,
   };
   s.bookings.push(b);
   if (quiz) quiz.bookingId = b.id;
@@ -1827,6 +2008,16 @@ function book(s, p, date = today()) {
     channel: "internal",
     body: `상담 요청: ${dateLabel(b.date)} ${timeLabel(b.start)}–${timeLabel(b.end)}\n담당: ${c.teacher}\n장소: ${b.room}\n희망 반: ${c.name}\n연락처: ${phone}${quiz ? `\n연결한 예시 레벨 확인: ${quiz.grade} ${quiz.subject} ${quiz.score}/${quiz.questionIds.length}` : ""}\n\n원장 결재 후 로컬 예약 확인 페이지에 확정 상태가 표시됩니다. 외부 문자 발송은 연결되지 않았습니다.`,
     evidence: [
+      ...(b.campaignId
+        ? [
+            {
+              label: "신청한 모집 소식",
+              value:
+                s.posts.find((post) => post.campaignId === b.campaignId)
+                  ?.title || "홈페이지 안내",
+            },
+          ]
+        : []),
       { label: "가용 시간", value: "담당 강사·상담실의 30분 전체 구간 검사" },
       {
         label: "요청 만료",
@@ -1962,8 +2153,42 @@ export function publicState(s) {
         : null,
     })),
     posts: s.posts
-      .filter((p) => p.active)
-      .map(({ id, title, body, kind, at }) => ({ id, title, body, kind, at })),
+      .filter(
+        (p) =>
+          p.active &&
+          (!p.startsAt || Date.parse(p.startsAt) <= Date.now()) &&
+          (!p.endsAt || Date.parse(p.endsAt) > Date.now()),
+      )
+      .sort(
+        (a, b) =>
+          (b.publicationOrder || 0) - (a.publicationOrder || 0) ||
+          b.at.localeCompare(a.at),
+      )
+      .map(
+        ({
+          id,
+          title,
+          body,
+          kind,
+          at,
+          cta,
+          campaignId,
+          tone,
+          layout,
+          endsAt,
+        }) => ({
+          id,
+          title,
+          body,
+          kind,
+          at,
+          cta,
+          campaignId,
+          tone,
+          layout,
+          endsAt,
+        }),
+      ),
     reviews: s.reviews.map(({ id, rating, body, reply, date }) => ({
       id,
       rating,

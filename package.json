@@ -11,6 +11,8 @@
     "test": "node --test tests/*.test.js",
     "test:browser": "node tests/browser.e2e.mjs",
     "test:agents": "node tests/agents.e2e.mjs",
+    "test:quick-agents": "node tests/agent-quick.e2e.mjs",
+    "test:navigation": "node tests/navigation.e2e.mjs",
     "agents:check": "node scripts/check-agent-setup.mjs",
     "test:website": "node tests/website.e2e.mjs",
     "test:studio": "node tests/studio.e2e.mjs",

@@ -103,9 +103,12 @@ try {
     }
     assert.deepEqual(errors, []);
   });
-  await test("desktop inbox is visible in the first viewport", async () => {
+  await test("representative AI team is prominent and the unified inbox remains reachable", async () => {
     await go("today");
-    assert.ok((await p.locator(".layout-main").boundingBox()).y < 600);
+    assert.equal(await p.locator(".agent-featured a").count(), 5);
+    assert.ok((await p.locator(".agent-featured").boundingBox()).y < 600);
+    await p.locator(".layout-main").scrollIntoViewIfNeeded();
+    assert.ok(await p.locator('[data-action="doc"]').first().isVisible());
   });
   await test("native dialog contains keyboard focus", async () => {
     await p.locator('[data-action="doc"]').first().click();

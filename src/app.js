@@ -1,4 +1,4 @@
-import { brand } from "./brand.js";
+import { brand, workspaceNav, schoolNav } from "./brand.js";
 import * as api from "./api.js";
 import {
   esc,
@@ -56,6 +56,41 @@ export const toast = (message, error = false) => {
   setTimeout(() => item.remove(), error ? 8000 : 4500);
 };
 const nav = () => V.getNav(s.actor.role);
+function officeMenu(items, pending) {
+  const link = ([id, title, symbol]) =>
+    `<a href="#${id}" class="${id === route ? "active" : ""}" ${id === route ? 'aria-current="page"' : ""}>${icon(symbol)}<span>${esc(title)}</span>${id === "today" && pending ? `<span class="count" aria-label="확인할 서류 ${pending}건">${pending}</span>` : ""}</a>`;
+  if (s.actor.role !== "owner") return items.map(link).join("");
+  const group = (ids) =>
+    ids.map((id) => link(items.find((x) => x[0] === id))).join("");
+  return `${group(["today"])}<a href="/agents">${icon("briefcase")}<span>AI 직원팀</span></a>
+    <div class="nav-group">매일 하는 일</div>${group(["students", "lesson", "timetable", "billing"])}
+    <div class="nav-group">홈페이지와 소식</div>${group(["website", "content"])}<a href="/studio">${icon("book")}<span>수업 스튜디오</span></a>
+    <details class="nav-more" ${["staff", "biz", "settings"].includes(route) ? "open" : ""}><summary>${icon("settings")}<span>운영·설정</span>${icon("down")}</summary>${group(["staff", "biz", "settings"])}</details>`;
+}
+
+function officeShell(title, items, pending) {
+  const owner = s.actor.role === "owner";
+  return `<div class="shell">
+    <aside class="rail" id="rail" aria-label="주 메뉴">
+      <div class="rail-heading"><a class="brand" href="#${items[0][0]}" aria-label="배움결 · ${esc(items[0][1])}">${brand(owner ? "원장실 · ACADEMY OS" : "ACADEMY OS")}</a><button class="button icon-only ghost rail-close" data-action="menu-close" aria-label="메뉴 닫기">${icon("close")}</button></div>
+      <div class="academy-card">${icon("leaf")}<div><strong>${esc(s.settings.name)}</strong><small>학원의 하루를 정리하는 곳</small></div></div>
+      <nav class="nav" aria-label="업무 메뉴">${officeMenu(items, pending)}</nav>
+      <div class="rail-bottom"><div class="rail-poem">선생님은 가르침에,<br>원장님은 중요한 일에.</div><div class="rail-status"><span class="dot"></span> 서버에 기록 저장 중</div></div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar ${owner ? "owner-topbar" : ""}">
+        <div class="row"><button class="button icon-only ghost mobile-menu" data-action="menu" aria-label="메뉴 열기" aria-controls="rail" aria-expanded="false">${icon("menu")}</button><div class="breadcrumb">${route === items[0][0] ? `<strong>${esc(title)}</strong>` : `<a href="#${items[0][0]}" title="${esc(items[0][1])}">${icon("home")}<span>${owner ? "원장실 홈" : esc(items[0][1])}</span></a>${icon("chevron")}<strong>${esc(title)}</strong>`}</div></div>
+        ${owner ? workspaceNav(route === "today" ? "office" : "") : ""}
+        <div class="top-tools">${["owner", "teacher"].includes(s.actor.role) ? `<button class="global-search" data-action="search" aria-label="학생 검색" title="학생 검색 (Ctrl K)">${icon("search")}<span>학생 검색</span><kbd>Ctrl K</kbd></button>` : ""}<span class="top-date">${esc(dateLabel(s.date))}</span><button class="button icon-only ghost" data-action="refresh" aria-label="최신 기록 불러오기" title="최신 기록">${icon("refresh")}</button><div class="profile"><span class="avatar">${esc(s.actor.name.slice(0, 1))}</span>${api.auth.demo ? `<label class="sr-only" for="roleSelect">로컬 체험 계정 선택</label><select id="roleSelect" data-control="actor">${api.auth.actors.map((a) => `<option value="${a.id}" ${a.id === s.actor.id ? "selected" : ""}>${a.role === "owner" ? "원장" : a.role === "teacher" ? "강사 · " + a.name : a.role === "parent" ? "학부모 · 이서준" : "학생 · 이서준"}</option>`).join("")}</select>` : btn("로그아웃", "logout", "", "ghost")}</div></div>
+      </header>
+      <main class="content" id="main" tabindex="-1">${view()}
+        <div class="local-banner">${icon("shield")}<span>${api.auth.demo ? "예시 학원 체험 중" : "학원 업무 공간"} · 변경한 내용은 서버에 저장됩니다.</span><a href="#settings" data-action="guide">이용 안내</a></div>
+        <footer class="app-footer"><span><span class="footer-brand">배움결</span> &nbsp; 조금 더 가벼운 학원의 하루.</span><span>서버 저장 연결 · Asia/Seoul · 기록 v${s.revision}</span></footer>
+      </main>
+    </div>
+  </div>`;
+}
+
 function render() {
   if (!s) return;
   const items = nav();
@@ -65,7 +100,7 @@ function render() {
     ["review", "teacher_review"].includes(d.status),
   ).length;
   document.title = title + " · 배움결 원장실";
-  app.innerHTML = `<div class="shell"><aside class="rail" id="rail" aria-label="주 메뉴"><a class="brand" href="#today">${brand("원장실 · ACADEMY OS")}</a><div class="academy-card">${icon("leaf")}<div><strong>${esc(s.settings.name)}</strong><small>학원의 하루를 정리하는 곳</small></div></div><nav class="nav">${s.actor.role === "owner" ? `<a href="/studio">${icon("spark")}<span>수업 스튜디오</span></a>` : ""}${items.map(([id, t, ic], i) => `${i === 0 ? '<div class="nav-group">MY OFFICE</div>' : id === "website" ? '<div class="nav-group">GROW TOGETHER</div>' : id === "staff" ? '<div class="nav-group">WORKSPACE</div>' : ""}<a href="#${id}" class="${id === route ? "active" : ""}" ${id === route ? 'aria-current="page"' : ""}>${icon(ic)}<span>${esc(t)}</span>${id === "today" && pending ? `<span class="count">${pending}</span>` : ""}</a>`).join("")}</nav><div class="rail-bottom"><div class="rail-poem">선생님은 가르침에,<br>원장님은 중요한 일에.</div><div class="rail-status"><span class="dot"></span> LOCAL WORKSPACE · V4</div></div></aside><div class="workspace"><header class="topbar"><div class="row"><button class="button icon-only ghost mobile-menu" data-action="menu" aria-label="메뉴 열기" aria-expanded="false">${icon("menu")}</button><div class="breadcrumb"><span>나의 학원</span>${icon("chevron")}<strong>${esc(title)}</strong></div></div><div class="top-tools">${["owner", "teacher"].includes(s.actor.role) ? `<button class="global-search" data-action="search" aria-label="학생 검색">${icon("search")}<span>학생 이름으로 찾아보기</span><kbd>Ctrl K</kbd></button>` : ""}<span class="top-date">${esc(dateLabel(s.date))}</span><button class="button icon-only ghost" data-action="refresh" aria-label="최신 기록 불러오기" title="최신 기록">${icon("refresh")}</button><div class="profile"><span class="avatar">${esc(s.actor.name.slice(0, 1))}</span>${api.auth.demo ? `<label class="sr-only" for="roleSelect">로컬 체험 계정 선택</label><select id="roleSelect" data-control="actor">${api.auth.actors.map((a) => `<option value="${a.id}" ${a.id === s.actor.id ? "selected" : ""}>${a.role === "owner" ? "원장" : a.role === "teacher" ? "강사 · " + a.name : a.role === "parent" ? "학부모 · 이서준" : "학생 · 이서준"}</option>`).join("")}</select>` : btn("로그아웃", "logout", "", "ghost")}</div></div></header><main class="content" id="main" tabindex="-1">${s.actor.role === "owner" ? `<nav class="bg-office-links" aria-label="빠른 화면 이동"><a href="/#today">${icon("home")} 원장실 홈</a><a href="/studio">${icon("book")} 수업 스튜디오 ${icon("arrow")}</a><a href="/start">${icon("globe")} 웹사이트 제작 ${icon("arrow")}</a><a href="/site">${icon("external")} 학원 홈페이지</a></nav>` : ""}${view()}<div class="local-banner">${icon("shield")}<span>${api.auth.demo ? "로컬 체험 · 예시 학원 · 계정 전환 가능" : "로컬 계정 모드"} · 변경 내용은 서버에 저장됩니다. 문자·결제는 미연결입니다. AI 초안 연결 상태는 수업 스튜디오에서 확인하세요.</span><a href="#settings" data-action="guide">이용 안내</a></div><footer class="app-footer"><span><span class="footer-brand">배움결</span> &nbsp; 조금 더 가벼운 학원의 하루.</span><span>서버 저장 연결 · Asia/Seoul · 기록 v${s.revision}</span></footer></main></div></div>`;
+  app.innerHTML = officeShell(title, items, pending);
 }
 function view() {
   return (
@@ -111,7 +146,12 @@ function navigate(id) {
   if (route === id) render();
 }
 async function refresh(force = false) {
-  if (!s || (!force && (busy || dirty || dialog.open))) return;
+  if (
+    !s ||
+    (!force &&
+      (busy || dirty || dialog.open || document.querySelector("#rail.open")))
+  )
+    return;
   const latest = await api.getState();
   const changedActor = latest.actor.id !== s.actor.id;
   if (changedActor) {
@@ -240,8 +280,19 @@ const guide = () =>
 
 app.addEventListener("click", handleClick);
 dialog.addEventListener("click", handleClick);
+function closeMenu() {
+  document.querySelector("#rail")?.classList.remove("open");
+  document.querySelector(".nav-scrim")?.remove();
+  const workspace = document.querySelector(".workspace");
+  if (workspace) workspace.inert = false;
+  const trigger = document.querySelector('[data-action="menu"]');
+  trigger?.setAttribute("aria-expanded", "false");
+  if (trigger?.getClientRects().length) trigger.focus();
+}
 async function handleClick(event) {
   if (!s) return;
+  const menuLink = event.target.closest('#rail a[href^="#"]');
+  if (menuLink?.hash === location.hash) closeMenu();
   const b = event.target.closest("[data-action]");
   if (!b || b.disabled) return;
   const action = b.dataset.action,
@@ -271,15 +322,13 @@ async function handleClick(event) {
         scrim.ariaLabel = "메뉴 닫기";
         scrim.dataset.action = "menu-close";
         app.append(scrim);
-      } else document.querySelector(".nav-scrim")?.remove();
+        document.querySelector(".workspace").inert = true;
+        rail.querySelector(".rail-close")?.focus();
+      } else closeMenu();
       return;
     }
     if (action === "menu-close") {
-      document.querySelector("#rail")?.classList.remove("open");
-      document.querySelector(".nav-scrim")?.remove();
-      document
-        .querySelector('[data-action="menu"]')
-        ?.setAttribute("aria-expanded", "false");
+      closeMenu();
       return;
     }
     if (action === "refresh") {
@@ -1056,6 +1105,16 @@ window.addEventListener("beforeunload", (e) => {
     e.returnValue = "";
   }
 });
+window.addEventListener("resize", () => {
+  if (innerWidth > 760 && document.querySelector("#rail.open")) closeMenu();
+});
+document.querySelector(".skip")?.addEventListener("click", (event) => {
+  const main = document.querySelector("#main");
+  if (!main) return;
+  event.preventDefault();
+  main.setAttribute("tabindex", "-1");
+  main.focus();
+});
 dialog.addEventListener("cancel", (e) => {
   if (dirty && !confirm("저장하지 않은 입력을 닫을까요?")) e.preventDefault();
   else {
@@ -1064,6 +1123,26 @@ dialog.addEventListener("cancel", (e) => {
   }
 });
 document.addEventListener("keydown", (e) => {
+  const openRail = document.querySelector("#rail.open");
+  if (openRail && e.key === "Escape") {
+    e.preventDefault();
+    closeMenu();
+    return;
+  }
+  if (openRail && e.key === "Tab") {
+    const items = [
+      ...openRail.querySelectorAll("a[href],button,summary"),
+    ].filter((el) => el.getClientRects().length);
+    const current = items.indexOf(document.activeElement);
+    if (
+      current < 0 ||
+      (e.shiftKey ? current === 0 : current === items.length - 1)
+    ) {
+      e.preventDefault();
+      (e.shiftKey ? items.at(-1) : items[0])?.focus();
+    }
+    return;
+  }
   if (dialog.open && e.key === "Tab") {
     const items = [
       ...dialog.querySelectorAll(
@@ -1128,13 +1207,15 @@ async function boot() {
     s = await api.getState();
     render();
     setInterval(() => refresh().catch(() => {}), 5000);
+    const linkedDoc = new URLSearchParams(location.search).get("doc");
+    if (linkedDoc && s.docs.some((d) => d.id === linkedDoc)) openDoc(linkedDoc);
   } catch (e) {
     app.innerHTML = `<div class="boot">${brand()}<h1>기록을 불러오지 못했어요.</h1><p>${esc(e.message)}</p><button class="button primary" id="reloadApp">다시 연결</button></div>`;
     document.querySelector("#reloadApp").onclick = () => location.reload();
   }
 }
 function loginScreen() {
-  app.innerHTML = `<main class="login-card">${brand()}<h1>나의 원장실에 들어가기.</h1><p>로컬 계정 파일에 발급된 계정 ID와 암호로 로그인하세요.</p><form id="loginForm" class="form-stack">${field("계정 ID", "actorId", "", "text", 'required autocomplete="username"')}${field("암호", "password", "", "password", 'required autocomplete="current-password"')}<button class="button primary" type="submit">로그인</button></form></main>`;
+  app.innerHTML = `<main class="login-card" id="main">${brand()}<h1>나의 원장실에 들어가기.</h1><p>로컬 계정 파일에 발급된 계정 ID와 암호로 로그인하세요.</p><form id="loginForm" class="form-stack">${field("계정 ID", "actorId", "", "text", 'required autocomplete="username"')}${field("암호", "password", "", "password", 'required autocomplete="current-password"')}<button class="button primary" type="submit">로그인</button></form>${schoolNav()}</main>`;
   document.querySelector("#loginForm").onsubmit = async (e) => {
     e.preventDefault();
     const p = formData(e.target);

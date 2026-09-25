@@ -49,7 +49,7 @@ try {
   const errors = [];
   page.on("pageerror", (e) => errors.push(e.message));
   page.on("dialog", (d) => d.accept());
-  await page.goto(origin + "/agents");
+  await page.goto(origin + "/agents?view=advanced");
   await page
     .getByRole("heading", { name: "원장 로그인이 필요합니다." })
     .waitFor();
@@ -66,7 +66,7 @@ try {
     return r.status;
   }, password);
   assert.equal(login, 200);
-  await page.goto(origin + "/agents");
+  await page.goto(origin + "/agents?view=advanced");
   await page.waitForSelector("#agentInput");
   assert.equal(await page.locator("[data-agent-code]").count(), 9);
   await page.selectOption("#agentFilter", "전체");
@@ -81,7 +81,7 @@ try {
   await page.click('#agentInput button[type="submit"]');
   await page.waitForSelector('[data-agent-action="queue"]');
   await page.click('[data-agent-action="queue"]');
-  await page.waitForSelector('[data-agent-action="approve"]', {
+  await page.waitForSelector('[data-agent-action="prepare"]', {
     timeout: 15000,
   });
   await page.fill("[data-review-id]", "원장이 수정한 승인 결과입니다.");
@@ -90,24 +90,55 @@ try {
     await page.locator("[data-review-id]").inputValue(),
     "원장이 수정한 승인 결과입니다.",
   );
-  await page.click('[data-agent-action="approve"]');
-  await page.waitForSelector('[data-agent-action="download"]');
-  const approved = await page.evaluate(
+  await page.click('[data-agent-action="prepare"]');
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#agentHistory")
+      .textContent.includes("통합 결재함으로 전달됨"),
+  );
+  const submitted = await page.evaluate(
     async () => (await (await fetch("/api/agent-workspace")).json()).runs[0],
   );
-  assert.equal(approved.approvedText, "원장이 수정한 승인 결과입니다.");
+  assert.ok(submitted.docId);
+  await page.goto(origin + "/#today");
+  await page.waitForSelector('[data-doc="' + submitted.docId + '"]');
+  await page
+    .locator('[data-doc="' + submitted.docId + '"] [data-action="doc"]')
+    .click();
+  const approvalResponse = page.waitForResponse(
+    (r) => r.url().endsWith("/api/command") && r.request().method() === "POST",
+  );
+  await page.locator('[data-action="doc-approve"]').click();
+  assert.ok((await approvalResponse).ok());
+  await page.waitForFunction(async (id) => {
+    const state = await (await fetch("/api/state")).json();
+    return state.deliveries.some(
+      (d) => d.docId === id && d.status === "local_delivered",
+    );
+  }, submitted.docId);
+  await page.goto(origin + "/agents?view=advanced");
+  await page.waitForSelector("#agentHistory");
+  await page.click("#refreshAgents");
+  await page.waitForFunction(() =>
+    document
+      .querySelector("#agentHistory")
+      .textContent.includes("앱에 반영 완료"),
+  );
   assert.match(
     await page.locator("#agentHistory").innerText(),
-    /승인 완료 · 미발송/,
+    /앱에 반영 완료/,
   );
   await page.reload();
-  await page.waitForSelector('[data-agent-action="download"]');
+  await page.waitForSelector("#agentHistory");
   await page.selectOption("#agentFilter", "전체");
   await page.click('[data-agent-code="CORE-35"]');
   assert.equal(await page.locator("#agentInput").count(), 0);
   mkdirSync("test-results", { recursive: true });
   for (const width of [1440, 390, 320]) {
+    await page.goto(origin + "/agents?view=advanced");
+    await page.waitForSelector("#agentInput");
     await page.setViewportSize({ width, height: 1000 });
+    await page.evaluate(() => scrollTo(0, 0));
     assert.ok(
       await page.evaluate(
         () => document.documentElement.scrollWidth <= innerWidth + 1,

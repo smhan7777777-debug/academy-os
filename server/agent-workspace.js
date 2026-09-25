@@ -3,6 +3,11 @@ import { AGENT_CATALOG } from "../shared/agent-catalog.js";
 import { AGENT_PATHS } from "./agent-paths.js";
 import { check } from "./errors.js";
 import { today } from "../shared/core.js";
+import { agentSourceHash } from "./agent-source.js";
+import { prepareAgentDocument, execute, tick } from "./domain.js";
+import { artifactFor } from "../shared/agent-teams.js";
+import { siteDesign } from "../shared/templates.js";
+import { publicExperiences } from "./studio.js";
 
 const hash = (v) =>
   createHash("sha256").update(JSON.stringify(v)).digest("hex");
@@ -231,6 +236,28 @@ export function agentContext(s, code, studentId) {
       knowledge: s.knowledge.map(({ id, answer }) => ({ id, answer })),
     }),
   };
+  if (studentId) {
+    context.learning_records = s.records
+      .filter((r) => r.studentId === studentId)
+      .slice(-30)
+      .map((r) => ({
+        date: r.date,
+        attendance: r.att,
+        homework: r.hw || "",
+        observation: r.level || "",
+        teacher_note: r.shareMemo ? r.memo || "" : "",
+      }));
+    context.approved_learning_notes = s.docs
+      .filter(
+        (d) =>
+          d.studentId === studentId &&
+          d.agentRunId &&
+          d.status === "approved" &&
+          ["academy-ledger", "academy-study-ledger"].includes(d.worker),
+      )
+      .slice(0, 3)
+      .map((d) => ({ title: d.title, body: d.body }));
+  }
   if (["CORE-03", "CORE-04", "CORE-13", "CORE-22", "CORE-28"].includes(code))
     context.services = s.classes.map((c) => ({
       name: c.name,
@@ -314,10 +341,54 @@ export class AgentWorkspace {
     }
     return {
       catalog: AGENT_CATALOG,
+      school: {
+        name: s.settings.name,
+        address: s.settings.address,
+        phone: s.settings.phone,
+      },
+      design: {
+        id: siteDesign(s.settings).template.id,
+        name: siteDesign(s.settings).template.name,
+      },
+      classes: s.classes.map((c) => ({
+        id: c.id,
+        name: c.name,
+        subject: c.subject,
+      })),
+      experiences: publicExperiences(s).length,
+      publications: s.posts
+        .filter((p) => p.kind === "popup")
+        .map((p) => ({
+          ...p,
+          bookings: s.bookings.filter(
+            (b) => b.campaignId && b.campaignId === p.campaignId,
+          ).length,
+        })),
       connection,
-      students: s.students.map((st) => ({ id: st.id, name: st.name })),
+      students: s.students
+        .filter((st) => st.status === "active")
+        .map((st) => ({
+          id: st.id,
+          name: st.name,
+          classId: st.classId,
+          consent: st.consent,
+          records: s.records.filter((r) => r.studentId === st.id).length,
+        })),
       revision: s.revision,
       runs: this.list(actor),
+      inquiries: s.conversations
+        .filter((q) => q.status === "pending")
+        .map(({ id, question, date }) => ({ id, question, date })),
+      documents: s.docs
+        .filter((d) => d.agentRunId)
+        .map((d) => ({
+          id: d.id,
+          runId: d.agentRunId,
+          status: d.status,
+          title: d.title,
+          channel: d.channel,
+          delivery: s.deliveries.find((j) => j.docId === d.id)?.status,
+        })),
       monthlyLimit: this.limit(),
     };
   }
@@ -345,6 +416,48 @@ export class AgentWorkspace {
       409,
     );
     agentPrefill(s, request.studentId);
+    if (["report", "career"].includes(artifactFor(d.code))) {
+      check(
+        request.studentId &&
+          s.students.some(
+            (st) =>
+              st.id === request.studentId &&
+              st.status === "active" &&
+              st.consent,
+          ),
+        "동의가 확인된 재원 학생을 선택해 주세요.",
+      );
+    }
+    if (["popup", "content"].includes(artifactFor(d.code)))
+      check(
+        !request.studentId,
+        "공개 게시 업무에는 학생 자료를 연결하지 않습니다.",
+      );
+    const source = request.source
+      ? { type: request.source.type, id: request.source.id || null }
+      : null;
+    if (source) {
+      check(
+        ["school", "student", "inquiry"].includes(source.type),
+        "자료 연결을 확인해 주세요.",
+      );
+      if (source.type === "student")
+        check(source.id === request.studentId, "학생과 근거 자료가 다릅니다.");
+      source.hash = agentSourceHash(s, source);
+      if (request.studentId)
+        check(
+          source.type === "student" && source.id === request.studentId,
+          "학생의 근거 기록을 연결해 주세요.",
+        );
+      if (artifactFor(d.code) === "inquiry")
+        check(
+          source.type === "inquiry" &&
+            s.conversations.some(
+              (q) => q.id === source.id && q.status === "pending",
+            ),
+          "답변할 홈페이지 문의를 선택해 주세요.",
+        );
+    }
     const due = request.dueAt ? Date.parse(request.dueAt) : Date.now();
     check(
       Number.isFinite(due) &&
@@ -357,6 +470,7 @@ export class AgentWorkspace {
       input,
       revision: s.revision,
       studentId: request.studentId || null,
+      source,
       dueAt: request.dueAt || null,
     });
     return this.store.transaction(() => {
@@ -381,6 +495,7 @@ export class AgentWorkspace {
         code: d.code,
         name: d.name,
         studentId: request.studentId || null,
+        source,
         input,
         context: agentContext(s, d.code, request.studentId),
         sourceRevision: s.revision,
@@ -422,7 +537,7 @@ export class AgentWorkspace {
         const connection = this.summary(actor).connection;
         check(connection.ready, connection.issues.join(" · "), 503);
         check(
-          this.store.load(actor.academyId).revision === job.sourceRevision,
+          this.sourceValid(job),
           "자료가 바뀌었습니다. 새 초안으로 다시 준비해 주세요.",
           409,
         );
@@ -438,6 +553,55 @@ export class AgentWorkspace {
         );
         job.status = "queued";
         job.queuedAt = now;
+      } else if (action === "apply") {
+        if (job.docId) {
+          const existing = this.store
+            .load(actor.academyId)
+            .docs.find((d) => d.id === job.docId);
+          check(
+            existing?.status === "approved",
+            "이미 결재함으로 보낸 문서는 결재함에서 확인해 주세요.",
+            409,
+          );
+          return job;
+        }
+        check(
+          job.status === "review" && this.sourceValid(job),
+          "현재 자료로 준비한 결과를 먼저 확인해 주세요.",
+          409,
+        );
+        const s = this.store.load(actor.academyId);
+        const d = prepareAgentDocument(s, actor, job, options);
+        execute(s, actor, "doc.approve", { id: d.id });
+        tick(s);
+        const delivery = s.deliveries.find((j) => j.docId === d.id);
+        check(
+          !delivery || delivery.status === "local_delivered",
+          delivery?.note || "반영을 확인하지 못했습니다.",
+          409,
+        );
+        s.revision++;
+        this.store.save(s);
+        job.docId = d.id;
+        job.status = "submitted";
+      } else if (action === "prepare") {
+        if (job.docId) return job;
+        check(
+          job.status === "review",
+          "검토 대기 결과만 결재함으로 보낼 수 있습니다.",
+          409,
+        );
+        check(
+          this.sourceValid(job),
+          "근거 자료가 변경되었습니다. 새 초안으로 준비해 주세요.",
+          409,
+        );
+        const s = this.store.load(actor.academyId);
+        const d = prepareAgentDocument(s, actor, job, options);
+        s.revision++;
+        this.store.save(s);
+        job.docId = d.id;
+        job.status = "submitted";
       } else if (action === "approve" || action === "reject") {
         check(
           job.status === "review",
@@ -446,7 +610,7 @@ export class AgentWorkspace {
         );
         if (action === "approve")
           check(
-            this.store.load(actor.academyId).revision === job.sourceRevision,
+            this.sourceValid(job),
             "원본 자료가 변경되었습니다. 새 결과를 준비해 주세요.",
             409,
           );
@@ -476,6 +640,12 @@ export class AgentWorkspace {
       this.save(job);
       return job;
     });
+  }
+  sourceValid(job) {
+    const s = this.store.load(job.academyId);
+    return job.source
+      ? agentSourceHash(s, job.source) === job.source.hash
+      : s.revision === job.sourceRevision;
   }
   async processOne() {
     if (this.busy) return;
@@ -515,7 +685,7 @@ export class AgentWorkspace {
         503,
       );
       const s = this.store.load(job.academyId);
-      if (s.revision !== job.sourceRevision) {
+      if (!this.sourceValid(job)) {
         job.status = "stale";
         job.error =
           "예약 후 학원 자료가 변경되었습니다. 새 입력으로 확인해 주세요.";

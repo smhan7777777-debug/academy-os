@@ -20,3 +20,4 @@ local-accounts.txt
 # Internal agent asset audit; keep local, outside the public source repository.
 docs/reports/ACADEMY-AGENT-INTEGRATION-REVIEW-2026-09-25.md
 docs/reports/academy-agent-inventory-2026-09-25.json
+docs/reports/ACADEMY-AGENT-PRODUCT-STRATEGY-2026-09-25.md

@@ -3387,3 +3387,59 @@ tbody tr:hover {
 .embedded-site-preview .portal-header > .button {
   display: none;
 }
+.agent-featured {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+  gap: 14px;
+  margin: 22px 0;
+}
+.agent-featured .quick-link {
+  min-width: 0;
+  height: 100%;
+  align-items: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 20px;
+}
+.agent-featured small,
+.agent-featured span {
+  display: block;
+  margin-top: 10px;
+  line-height: 1.6;
+}
+.agent-featured span {
+  font-weight: 700;
+}
+.agent-featured .quick-link:nth-child(1) {
+  background: #dcefeb;
+  border-color: #a5cdc3;
+  color: #124f4b;
+}
+.agent-featured .quick-link:nth-child(2) {
+  background: #e6e2f3;
+  border-color: #c7bcdc;
+  color: #453568;
+}
+.agent-featured .quick-link:nth-child(3) {
+  background: #e0eaf4;
+  border-color: #b7cce0;
+  color: #234b6d;
+}
+.agent-featured .quick-link:nth-child(4) {
+  background: #f0e6dc;
+  border-color: #d9c4ad;
+  color: #67472f;
+}
+.agent-featured .quick-link:nth-child(5) {
+  background: #1b354f;
+  border-color: #1b354f;
+  color: #fff;
+}
+.agent-featured .quick-link strong {
+  font-size: 16px;
+  color: inherit;
+}
+.agent-featured .quick-link small {
+  font-size: 13px;
+  color: inherit;
+}
