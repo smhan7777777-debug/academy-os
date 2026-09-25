@@ -2376,6 +2376,24 @@ tbody tr:hover {
     scroll-behavior: auto !important;
   }
 }
+
+.public-demo-notice {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  padding: 9px 16px;
+  background: #173d30;
+  color: #fffdf7;
+  font-size: 13px;
+  font-weight: 650;
+  line-height: 1.45;
+  text-align: center;
+  letter-spacing: -0.01em;
+}
+
+.public-demo-notice[hidden] {
+  display: none;
+}
 @media print {
   .rail,
   .topbar,

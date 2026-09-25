@@ -19,6 +19,10 @@
   </head>
   <body>
     <a class="skip" href="#main">본문으로 바로 가기</a>
+    <div class="public-demo-notice" id="publicDemoNotice" hidden>
+      공개 체험 · 실제 개인정보를 입력하지 마세요 · 체험 데이터는 초기화될 수
+      있습니다
+    </div>
     <div id="app">
       <div class="boot">
         <span class="brand-mark">결</span>
@@ -29,5 +33,6 @@
     <dialog id="dialog" aria-labelledby="dialogTitle"></dialog>
     <div id="toasts" role="status" aria-live="polite"></div>
     <script type="module" src="/src/app.js"></script>
+    <script type="module" src="/src/public-demo.js"></script>
   </body>
 </html>
