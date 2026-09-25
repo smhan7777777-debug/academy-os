@@ -140,3 +140,22 @@
 
 - **DB(2026-09-20)**: 이 앱의 Supabase 프로젝트·ref·키 위치·CLI 사용법·삭제 금지 규칙은 이 폴더의 `SUPABASE.md`가 정본이다. DB 작업 전에 반드시 읽는다. 다른 앱의 프로젝트는 쓰지 않는다.
 - **운영 규칙(2026-09-20)**: Supabase 테이블 생성·수정·데이터 갱신은 오너에게 되묻지 않고 즉시 실행(SQL 파일로 남김). 삭제(drop/truncate/대량 delete/버킷·프로젝트)만 허락 필요. `gh` CLI 로그인 완료 — 오너가 요청하면 팝업 없이 `git push`, Vercel 자동 배포.
+# 2026-09-25 · Agent1000 업무실 구현 (실제 제공자 인증 전)
+
+- `/agents` 원장용 작업실 추가. 핵심 9 필터, 학원 특화 13 + 공통 27 입력/전용 webhook 계약, 추가 8은 비활성 설명. 기존 디자인 토큰 유지, 기존 업무실에서 진입.
+- `server/agent-workspace.js`, `server/agent-paths.js`, `shared/agent-catalog.js`: 입력 검증·학생별 별칭/공유 메모 prefill·서버 학원 근거 snapshot·SQLite agent_runs·멱등 키·월 한도·일회 예약·원장 검토/수정 승인·원본/승인본 분리·자료 revision 변경 차단. `processOne()`이 살아 있는 서버에서 실행되며 자동 재시도/외부 발송 없음.
+- 실제 호출은 새 ACADEMY_AGENT_* 환경변수와 ACADEMY_DEMO=0 필요. VERCEL에서는 실제 실행 차단(공개 데모/임시DB), `prof` namespace만 지원. 키 없이 입력 초안 저장 가능. 기존 8 규칙 직원 실행 결과 메시지 개선.
+- `docs/AGENT1000-SETUP.md`에 운영자 설정·첫 실검증·남은 범위 기록, `npm run agents:check`는 비밀 노출 없이 준비 상태 검사. 실제 인증·shop_id 없음은 여전하므로 실모델 검증했다고 주장하지 말 것.
+- 검증: 단위/통합 77개, 기존 브라우저15개, 새 비밀번호 로그인→모의 제공자 실행→수정 승인→reload·모바일3너비·미인증거부 E2E 통과. SQLite 파일 닫기/재열기 승인본 유지 검사. `npm run build`, format:check 통과.
+- 분석 보고서와 48개 상세 인벤토리는 로컬 보관하도록 Git 제외. 랩·비밀·프롬프트 전문 미포함. 루트 사용자 PDF 미추적 상태 보존.
+- 미완: 실제 제공자 40종 응답 검증, 8 추가 정의 엔진, 부모/학생 직접 실행, 반복 스케줄, 분산/상용 DB, 외부 발송/게시/결제, 자동 홈페이지 팝업 적용. 기존 auth/로컬 SQLite를 이용한 1차 실행 연결 기반이며 상용 운영 완성 아님.
+
+# 2026-09-25 · Agent1000 자산 전수 검토 (아래는 구현 이전 분석 기록)
+
+- 사용자 요청: 기존 라이브/로컬 원장실의 핵심 에이전트 전부를 포함하고 최대한 많은 자산을 재사용하는 해결 방안 검토. 이번에는 자료·코드·공개 라이브 화면 분석을 수행했고 실행 통합/배포는 하지 않았다.
+- 보고서: `docs/reports/ACADEMY-AGENT-INTEGRATION-REVIEW-2026-09-25.md`, 기계 판독 목록 `docs/reports/academy-agent-inventory-2026-09-25.json`.
+- 특화 13 + n8n 공통 27 + 플랫폼 LLM 8 = 48개 실행 정의 후보. 라이브 소개 역할 38개와 별도 집합이며 중복 합산 금지. CORE-06은 제거됨. 추가 8종 중 CORE-17/20에 네일 문구, CORE-TREND는 네일 추천, CORE-35는 이미지 생성이 아닌 촬영 기획.
+- 라이브 `/academy` 핵심 5종: academy-study-ledger/briefing/place/career/popup. Basic 4종 journal/ledger/reenroll/inquiry를 합쳐 첫 실제 실행 완료 대상 9종. 권장: 기존 UI 유지 + 비공개 Agent1000 게이트웨이 + 데이터/승인 어댑터. 공개 저장소로 랩/핵심 프롬프트 통째 복사 금지.
+- `agent1000-academy-lab/.env`에서 N8N_BEARER·ACADEMY_PLATFORM_SHOP_ID 비어 있음(값 존재 여부만 검사). WEBHOOK_NAMESPACE=prof. 전용 사본 wf-prof-* 기본 유지, 공유 운영 워크플로 변경하지 않음. 실제 모델/웹훅 호출 검증은 인증·학원 매핑 준비 후 필요.
+- 라이브 두 도메인은 www.agent1000.ai로 이동. `/academy`, `/core-agents`의 학원 선택 확인. `/businesses/academy` 및 직접 CORE-01 콘솔 주소는 비로그인 GET 404이므로 옛 경로 링크 이식 금지. 라이브 계정 내부 실행 성공은 이번에 독립 검증하지 못함.
+- 전체 48 코드·38 역할이 보고서에 포함되는 정적 대조 통과. 앱 소스 변경 없고 런타임 테스트를 새로 실행할 필요 없음. 기존 루트의 미추적 사용자 PDF 보존.

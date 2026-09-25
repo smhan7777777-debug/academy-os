@@ -1496,6 +1496,7 @@ export function execute(s, a, type, p = {}) {
       owner(a);
       const w = byId(s.workers, p.id);
       requireWorker(s, w.id);
+      const previousDocs = new Set(s.docs.map((d) => d.id));
       if (w.id === "billing") s.invoices.forEach((i) => billing(s, i));
       else if (w.id === "care") care(s);
       else if (w.id === "report")
@@ -1506,7 +1507,13 @@ export function execute(s, a, type, p = {}) {
       } else throw new DomainError("이 업무는 화면에서 요청할 때 실행됩니다.");
       ran(s, w.id);
       audit(s, a, "업무 실행", w.name);
-      break;
+      const created = s.docs.filter((d) => !previousDocs.has(d.id));
+      return {
+        message: created.length
+          ? `${w.name}: 검토할 문서 ${created.length}건을 준비했습니다. 결재함에서 확인하세요.`
+          : `${w.name}: 새로 준비할 문서가 없습니다. 대상 기록이 없거나 이미 준비된 문서입니다.`,
+        createdDocumentIds: created.map((d) => d.id),
+      };
     }
     case "website.configure": {
       owner(a);

@@ -508,8 +508,9 @@ export function workers(s) {
     heading(
       "WORKSPACE",
       "함께 일하는 업무실.",
-      "실제로 실행되는 업무만 켜고 끄세요. 현재는 확인 가능한 규칙과 서식으로 준비합니다.",
+      "기록 기반 자동 업무와 Agent1000 AI 직원의 실행 상태를 구분해 확인하세요.",
     ) +
+    `<section class="studio-entry"><div><span class="eyebrow">AGENT1000 · AI WORKSPACE</span><h2>학원 핵심 AI 직원에게 일을 맡기세요.</h2><p>학원 특화 13종 · 공통 27종의 입력과 실행 연결을 준비했습니다. 입력 초안, 연결 상태, 결과 검토를 한곳에서 확인합니다.</p></div><a class="button primary" href="/agents">AI 직원 업무실 열기 →</a></section>` +
     `<div class="capabilities"><span class="capability">${icon("database")} 서버 저장 연결됨</span><span class="capability">${icon("check")} 규칙·서식 업무 실행 가능</span><span class="capability">${icon("spark")} 외부 AI 모델 미연결</span><span class="capability">${icon("globe")} 외부 발송·플랫폼 미연결</span></div><div class="grid-three">${s.workers
       .filter((w) => w.id !== "inquiry")
       .map(

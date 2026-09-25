@@ -1094,6 +1094,11 @@ document.addEventListener("keydown", (e) => {
 });
 async function boot() {
   try {
+    if (location.pathname === "/agents") {
+      const { startAgents } = await import("./agents.js");
+      await startAgents();
+      return;
+    }
     if (["/studio", "/learn", "/welcome"].includes(location.pathname)) {
       const { startStudio } = await import("./studio.js");
       await startStudio();

@@ -17,6 +17,7 @@ import {
   validateStudioData,
 } from "./studio.js";
 import { generatorStatus, generateExperience } from "./studio-generator.js";
+import { AgentWorkspace, agentPrefill } from "./agent-workspace.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dev = process.argv.includes("--dev");
@@ -24,6 +25,7 @@ const serverless = Boolean(process.env.VERCEL);
 const port = Number(process.env.PORT || 5173);
 mkdirSync(dataDir, { recursive: true });
 const store = new Store(resolve(dataDir, "academy.sqlite"));
+const agentWorkspace = new AgentWorkspace(store);
 const demo = process.env.ACADEMY_DEMO !== "0";
 // Local demo identities are explicit. Disable demo mode to require generated account passwords.
 if (!store.db.prepare("SELECT id FROM accounts LIMIT 1").get()) {
@@ -270,6 +272,30 @@ export const handler = async (req, res) => {
       }
       if (path === "/api/state" && req.method === "GET")
         return json(res, 200, project(store.load(actor.academyId), actor));
+      if (path === "/api/agent-workspace" && req.method === "GET")
+        return json(res, 200, agentWorkspace.summary(actor));
+      if (path === "/api/agent-workspace/prefill" && req.method === "GET") {
+        check(actor.role === "owner", "원장 권한이 필요합니다.", 403);
+        const s = store.load(actor.academyId);
+        return json(res, 200, {
+          revision: s.revision,
+          values: agentPrefill(s, url.searchParams.get("studentId")),
+        });
+      }
+      if (path === "/api/agent-workspace/runs" && req.method === "POST") {
+        rate(req, "agent-draft", 20);
+        return json(res, 200, agentWorkspace.create(actor, await body(req)));
+      }
+      if (path === "/api/agent-workspace/action" && req.method === "POST") {
+        rate(req, "agent-action", 20);
+        const p = await body(req);
+        const result = agentWorkspace.action(actor, p.id, p.action, {
+          text: p.text,
+        });
+        if (!serverless && p.action === "queue")
+          void agentWorkspace.processOne().catch(() => {});
+        return json(res, 200, result);
+      }
       if (path === "/api/studio" && req.method === "GET") {
         check(actor.role === "owner", "원장 권한이 필요합니다.", 403);
         const s = store.load(actor.academyId);
@@ -480,6 +506,7 @@ if (dev) {
 const timer = setInterval(() => {
   try {
     store.tick();
+    if (!serverless) void agentWorkspace.processOne().catch(() => {});
   } catch (e) {
     console.error("Worker failed:", e.message);
   }
