@@ -20,6 +20,7 @@ import { generatorStatus, generateExperience } from "./studio-generator.js";
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 const dev = process.argv.includes("--dev");
+const serverless = Boolean(process.env.VERCEL);
 const port = Number(process.env.PORT || 5173);
 mkdirSync(dataDir, { recursive: true });
 const store = new Store(resolve(dataDir, "academy.sqlite"));
@@ -97,7 +98,7 @@ function rate(req, category, limit) {
     429,
   );
 }
-const server = createServer(async (req, res) => {
+export const handler = async (req, res) => {
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "same-origin");
   res.setHeader("X-Frame-Options", "DENY");
@@ -110,9 +111,11 @@ const server = createServer(async (req, res) => {
     `default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; img-src 'self' data:; connect-src 'self' ${dev ? "ws://localhost:" + port + " ws://127.0.0.1:" + port : ""}; frame-ancestors 'none'; base-uri 'self'; form-action 'self'`,
   );
   try {
+    const requestHost = req.headers.host || "";
     check(
-      req.headers.host === `localhost:${port}` ||
-        req.headers.host === `127.0.0.1:${port}`,
+      requestHost === `localhost:${port}` ||
+        requestHost === `127.0.0.1:${port}` ||
+        (serverless && /^[a-z0-9.-]+\.vercel\.app$/i.test(requestHost)),
       "허용되지 않은 호스트입니다.",
       403,
     );
@@ -132,7 +135,8 @@ const server = createServer(async (req, res) => {
     if (path.startsWith("/api/")) {
       if (req.method === "POST") {
         check(
-          origins.has(req.headers.origin),
+          origins.has(req.headers.origin) ||
+            (serverless && req.headers.origin === `https://${requestHost}`),
           "같은 로컬 앱에서 요청해 주세요.",
           403,
         );
@@ -145,7 +149,11 @@ const server = createServer(async (req, res) => {
       if (path === "/api/health")
         return json(res, 200, {
           ok: true,
-          mode: demo ? "local-demo" : "local-accounts",
+          mode: serverless
+            ? "public-demo"
+            : demo
+              ? "local-demo"
+              : "local-accounts",
           database: "sqlite",
           schema: 1,
           release: "single-academy-reviewed-v3",
@@ -161,6 +169,7 @@ const server = createServer(async (req, res) => {
           csrf: session?.csrf || null,
           demo,
           actors: demo ? ACTORS : [],
+          environment: serverless ? "public-demo" : "local",
         });
       if (path === "/api/login" && req.method === "POST") {
         rate(req, "login", 30);
@@ -191,6 +200,7 @@ const server = createServer(async (req, res) => {
           csrf: auth.csrf,
           demo,
           actors: demo ? ACTORS : [],
+          environment: serverless ? "public-demo" : "local",
         });
       }
       if (path === "/api/public" && req.method === "GET")
@@ -436,7 +446,8 @@ const server = createServer(async (req, res) => {
       });
     else res.end();
   }
-});
+};
+const server = createServer(handler);
 let vite;
 if (dev) {
   const { createServer: createVite } = await import("vite");
@@ -474,11 +485,12 @@ const timer = setInterval(() => {
   }
 }, 2000);
 timer.unref();
-server.listen(port, "127.0.0.1", () =>
-  console.log(
-    `Academy OS: http://localhost:${port} | ${demo ? "local demo identities" : "password accounts"} | durable SQLite storage`,
-  ),
-);
+if (!serverless)
+  server.listen(port, "127.0.0.1", () =>
+    console.log(
+      `Academy OS: http://localhost:${port} | ${demo ? "local demo identities" : "password accounts"} | durable SQLite storage`,
+    ),
+  );
 server.on("error", (e) => {
   console.error(
     e.code === "EADDRINUSE" ? `Port ${port} is already in use.` : e.message,
@@ -496,5 +508,7 @@ async function shutdown() {
     process.exit(0);
   });
 }
-process.on("SIGINT", shutdown);
-process.on("SIGTERM", shutdown);
+if (!serverless) {
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
+}

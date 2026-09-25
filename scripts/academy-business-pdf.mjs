@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdir } from "node:fs/promises";
+import { copyFile, mkdir, readFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 import { chromium } from "playwright";
@@ -10,7 +10,12 @@ const output = resolve(
   root,
   "docs/reports/Academy-OS-Business-Brief-2026-09.pdf",
 );
+const publicOutput = resolve(
+  root,
+  "public/Academy-OS-Business-Brief-2026-09.pdf",
+);
 const previews = resolve(root, "test-results/business-brief");
+const searchableOutput = resolve(previews, "searchable-source.pdf");
 await mkdir(previews, { recursive: true });
 
 const browser = await chromium.launch({
@@ -66,17 +71,47 @@ try {
   );
   assert.deepEqual(errors, []);
   await page.pdf({
-    path: output,
+    path: searchableOutput,
     preferCSSPageSize: true,
     printBackground: true,
     displayHeaderFooter: false,
     tagged: true,
     outline: true,
   });
+  const flattened = await browser.newPage({
+    viewport: { width: 794, height: 1123 },
+  });
+  const imagePages = (
+    await Promise.all(
+      Array.from({ length: 4 }, async (_, index) => {
+        const image = await readFile(
+          resolve(previews, `source-page-${index + 1}.png`),
+        );
+        return `<section><img alt="Academy OS 사업모델 소개서 ${index + 1}쪽" src="data:image/png;base64,${image.toString("base64")}"></section>`;
+      }),
+    )
+  ).join("");
+  await flattened.setContent(
+    `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>원장실 Academy OS · 사업모델 소개서</title><style>@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}section{width:210mm;height:297mm;break-after:page}section:last-child{break-after:auto}img{display:block;width:100%;height:100%;object-fit:fill}</style></head><body>${imagePages}</body></html>`,
+    { waitUntil: "load" },
+  );
+  await flattened.waitForFunction(() =>
+    [...document.images].every(
+      (image) => image.complete && image.naturalWidth > 0,
+    ),
+  );
+  await flattened.pdf({
+    path: output,
+    preferCSSPageSize: true,
+    printBackground: true,
+    displayHeaderFooter: false,
+  });
+  await copyFile(output, publicOutput);
   console.log(
     JSON.stringify(
       {
         output,
+        publicOutput,
         layout,
         fontsLoaded: await page.evaluate(() => document.fonts.status),
       },
