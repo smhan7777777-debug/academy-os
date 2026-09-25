@@ -451,3 +451,14 @@ main {
     scroll-behavior: auto;
   }
 }
+/* Clear return path to the academy workspace, across all website designs. */
+.ac-footer .ac-office-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 10px 18px;
+  margin-top: 14px;
+  border: 1px solid currentColor;
+  border-radius: 10px;
+  font-weight: 650;
+}

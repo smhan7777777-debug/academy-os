@@ -1,8 +1,8 @@
-# 외부 공유용 Academy OS 사업모델 소개서
+# 외부 공유용 배움결 Academy OS 사업모델 소개서
 
 - **보낼 파일:** [Academy-OS-Business-Brief-2026-09.pdf](Academy-OS-Business-Brief-2026-09.pdf)
 - **외부에서 바로 열기:** https://academy-os-five.vercel.app/Academy-OS-Business-Brief-2026-09.pdf
-- 형식: A4 세로 4쪽, 숲색·크림색 브랜드 디자인. 휴대폰·브라우저·Adobe Reader·메신저 미리보기 호환성을 우선한 평면화 PDF.
+- 형식: A4 세로 4쪽, 배움결의 네이비·청록·라벤더 브랜드 디자인. 휴대폰·브라우저·Adobe Reader·메신저 미리보기 호환성을 우선한 평면화 PDF.
 - 구성: 고객 가치 / 서비스 이용 흐름 / 수익 구조와 장기 경쟁력 / 도입 및 검증 계획.
 - 기준: 2026년 9월의 단일 학원 모델. 현재 구현과 상용 제공 전 과제, 구독 설계와 검증할 가설을 구분했다. 내부 경로·계정·연락처·비밀키·실제 학생 정보는 포함하지 않았다.
 

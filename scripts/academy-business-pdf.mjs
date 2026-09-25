@@ -92,7 +92,7 @@ try {
     )
   ).join("");
   await flattened.setContent(
-    `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>원장실 Academy OS · 사업모델 소개서</title><style>@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}section{width:210mm;height:297mm;break-after:page}section:last-child{break-after:auto}img{display:block;width:100%;height:100%;object-fit:fill}</style></head><body>${imagePages}</body></html>`,
+    `<!doctype html><html lang="ko"><head><meta charset="UTF-8"><title>배움결 Academy OS · 사업모델 소개서</title><style>@page{size:A4;margin:0}*{box-sizing:border-box}html,body{margin:0;padding:0}section{width:210mm;height:297mm;break-after:page}section:last-child{break-after:auto}img{display:block;width:100%;height:100%;object-fit:fill}</style></head><body>${imagePages}</body></html>`,
     { waitUntil: "load" },
   );
   await flattened.waitForFunction(() =>
