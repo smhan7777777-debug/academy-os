@@ -1,5 +1,12 @@
 # Academy OS — 다음 작업 시작점
 
+## 최신 외부 공유: 2026-09-25 · 공개 체험 URL과 호환성 PDF
+
+- 외부 공개 체험: **https://academy-os-five.vercel.app/studio**. Vercel 서버리스 함수에서 API·SQLite 예시 데이터를 함께 제공하며 `api/health.mode`는 `public-demo`. 화면 상단에 실제 개인정보 입력 금지와 초기화 가능성을 표시한다. 실제 운영 DB나 회원 서비스가 아니며 재배포·함수 재시작 시 체험 데이터가 초기화될 수 있다.
+- 외부 PDF: **https://academy-os-five.vercel.app/Academy-OS-Business-Brief-2026-09.pdf**. IDE 미리보기에서 한글 웹폰트 PDF를 열지 못하는 문제를 피하기 위해 A4 4쪽을 고해상도 평면화 PDF로 재생성했다. `Content-Type: application/pdf`, 인라인 열기, 522,658바이트, 서버 파일과 로컬 파일 SHA-256 일치 확인.
+- 배포 보안: 함수 산출물은 활성 서버 코드·dist·필요한 템플릿만 포함한다. `.env*`, 실험 사본, docs/tests/test-results, DB·계정 파일을 제외했고, 배포 직전 산출물에서 키 패턴과 민감 경로가 없음을 확인했다.
+- 검증: 공개 `/`, `/studio`, `/api/health`, `/api/public`, PDF 모두 200. 실제 Edge에서 `/studio`의 편집기와 공개 체험 안내가 보이며 콘솔 오류가 없었다. 마지막 커밋 기준 GitHub `Academy OS checks` 성공.
+
 ## 최신 배포 자료: 2026-09-25 · 통합 커밋·푸시 및 외부 공유 PDF
 
 - 사용자 요청: 지금까지 수정한 최신 버전을 커밋·푸시하고, 사업모델을 설명하는 외부 공유용 3~4쪽 PDF 제작. `main` → `origin/main`이 반영 대상이며 원격은 공개 저장소 `smhan7777777-debug/academy-os`다. 기존 로컬 수정 전체를 보존해 앱·디자인 자산·테스트·문서를 통합한다.

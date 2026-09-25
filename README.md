@@ -2,6 +2,8 @@
 
 **무료 프리미엄 학원 웹사이트 + 그 웹사이트를 운영하는 원장실 OS**입니다. 무료 웹사이트 제공으로 학원을 만나고, 웹사이트의 상담·문의·등록 업무와 승인한 콘텐츠를 OS에서 연결하여 관리하는 것이 제품의 핵심입니다.
 
+외부 공개 체험: **https://academy-os-five.vercel.app/studio**. 예시 학원 데이터로 기능을 검토하는 주소이며 실제 학생·학부모 개인정보를 입력하면 안 됩니다. 서버리스 체험 데이터는 재배포·재시작 때 초기화될 수 있습니다. 외부 공유용 사업모델 소개서는 **https://academy-os-five.vercel.app/Academy-OS-Business-Brief-2026-09.pdf**에서 바로 열 수 있습니다.
+
 2026-09-25 최종 검토 버전: **[수업 스튜디오](http://localhost:5177/studio)** · [웹사이트 제작](http://localhost:5177/start) · [학원 홈페이지](http://localhost:5177/site). 현재 실행 포트는 5177이며, 아래 5173은 터미널 기본 포트 예시입니다. 검토 결과는 [최종 보고서](FINAL_REVIEW_2026-09-25.md)를 참고하세요.
 
 외부 공유 자료: **[Academy OS 사업모델 소개서 · A4 4쪽 PDF](docs/reports/Academy-OS-Business-Brief-2026-09.pdf)**. 고객 가치, 이용 흐름, 수익 구조와 경쟁력, 도입 계획을 설명하며 현재 구현과 검증할 사업 가설을 구분합니다. 수정·재생성은 [소개서 안내](docs/reports/README.md)를 참고하세요.
