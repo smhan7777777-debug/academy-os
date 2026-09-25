@@ -4,7 +4,8 @@
   "outputDirectory": "dist",
   "functions": {
     "api/index.js": {
-      "includeFiles": "{dist/**,public/templates/**,public/site-library.*,public/videos/**}"
+      "includeFiles": "{dist/**,public/templates/**,public/site-library.*}",
+      "excludeFiles": "{.env,.env.*,agent1000-academy-lab/**,docs/**,tests/**,test-results/**,scripts/**,public/videos/**,public/designs/**,.git/**}"
     }
   },
   "rewrites": [
