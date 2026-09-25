@@ -1,0 +1,188 @@
+@charset "utf-8";
+/* 모눈 코딩교실 — 59 학원 ⑥
+   HOW: Abadir (https://www.abadir.net/) — 스위스 포스터식 굵은 그로테스크 · 흰 바탕 · 전폭 사진 위 흩어진 색 칩 링크 ·
+   평면 색 상자 격자(제목 위 왼쪽 · '● 더 보기' 아래 왼쪽) · 날짜 숫자 블록 + 흐르는 캡션 · 칩 제목.
+   색: 레퍼런스 노랑·빨강·파랑·분홍·회색 → 우리 주황·민트·라일락·먹·회색. */
+:root{
+  --bg:#FFFFFF; --ink:#111111; --mut:#555555; --line:#E3E3E3;
+  --or:#3FA02E; --mint:#7ADBB5; --lil:#C8B6FF; --grey:#CFCFCC; --ink2:#1F1F1F;
+  --en:"Arimo","Pretendard Variable",Helvetica,Arial,sans-serif;
+  --ui:"Pretendard Variable",system-ui,sans-serif;
+  --mm-top:60px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.6;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:break-word}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.js .pop{opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}
+.js .pop.go{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .pop{opacity:1!important;transform:none!important;transition:none!important}.mq-in{animation:none!important}}
+html.reduce .js .pop{opacity:1!important;transform:none!important}
+html.reduce .mq-in{animation:none!important}
+.in{padding:0 12px}
+
+/* 칩 — 레퍼런스의 네모 색 칩(굵은 글 · 작은 둥근 모서리) */
+.chip{display:inline-flex;align-items:center;gap:6px;border-radius:5px;padding:2px 9px 3px;font-family:var(--en);font-weight:700;font-size:22px;letter-spacing:-.02em;line-height:1.2;white-space:nowrap}
+.chip.o{background:var(--or)}.chip.m{background:var(--mint)}.chip.l{background:var(--lil)}.chip.g{background:var(--grey)}.chip.k{background:var(--ink);color:#fff}
+.chip small{font-family:var(--ui);font-size:13px;font-weight:600}
+.dot{display:inline-flex;align-items:center;gap:6px;font-family:var(--en);font-weight:700;font-size:12px}
+.dot::before{content:"";width:8px;height:8px;border-radius:50%;background:currentColor}
+.dot.pill{background:var(--ink);color:#fff;border-radius:5px;padding:4px 9px}
+.dot.pill::before{background:#fff}
+
+/* 헤더 — 왼쪽 위 작은 워드마크 · 오른쪽 위 색 칩 메뉴 */
+.hd{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:flex-start;padding:10px 12px}
+.brand{font-family:var(--en);font-weight:700;font-size:28px;letter-spacing:-.04em;line-height:1;background:#fff;border-radius:5px;padding:5px 10px 6px;display:flex;align-items:baseline;gap:8px}
+.brand small{font-size:10px;letter-spacing:.14em;text-transform:uppercase;font-weight:700;color:var(--or)}
+.dnav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end}
+.dnav a{border-radius:5px;padding:4px 10px 5px;font-family:var(--en);font-weight:700;font-size:18px;letter-spacing:-.02em}
+.dnav a span{font-family:var(--ui);font-size:12px;font-weight:600}
+.dnav .c1,.mobile-nav .c1{background:var(--or)}.dnav .c2,.mobile-nav .c2{background:var(--mint)}.dnav .c3,.mobile-nav .c3{background:var(--lil)}.dnav .c4,.mobile-nav .c4{background:var(--ink);color:#fff}
+.mobile-nav .c0{background:var(--grey)}
+.dnav a[aria-current]{outline:2px solid var(--ink);outline-offset:-2px}
+.burger{display:none;align-items:center;gap:10px;height:44px;padding:0 12px;border:0;border-radius:5px;background:var(--lil);font-family:var(--en);font-weight:700;font-size:18px;cursor:pointer}
+.burger i{display:block;width:16px;height:10px;border-top:2px solid var(--ink);border-bottom:2px solid var(--ink)}
+.mobile-nav{position:fixed;top:var(--mm-top);left:0;right:0;bottom:0;z-index:1000;background:#fff;padding:14px 12px 120px;display:none;flex-direction:column;gap:6px;overflow:auto}
+.mobile-nav.open{display:flex}
+.mobile-nav a{border-radius:6px;padding:14px 14px;font-family:var(--en);font-weight:700;font-size:28px;letter-spacing:-.03em;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.mobile-nav a span{font-family:var(--ui);font-size:13px;font-weight:600}
+.mobile-nav a svg{width:22px}
+body.mm-open{overflow:hidden}
+
+/* 히어로 — 레퍼런스 충실: 전폭 사진 + 흩어진 색 칩 링크 */
+.hero{position:relative;height:100vh;height:100svh;min-height:600px;overflow:hidden;background:#3a4a5a}
+.hero>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero .chip{position:absolute;box-shadow:0 2px 0 rgba(0,0,0,.08)}
+.hero .h1{left:9%;top:30%}.hero .h2{left:44%;top:18%}.hero .h3{right:10%;top:40%}.hero .h4{left:18%;bottom:26%}.hero .h5{left:52%;bottom:14%}.hero .h6{right:6%;bottom:30%}
+.hero h1{position:absolute;left:12px;bottom:12px;background:#fff;border-radius:5px;padding:8px 12px 10px;font-family:var(--en);font-weight:700;font-size:clamp(22px,2.2vw,32px);line-height:1.12;letter-spacing:-.03em;max-width:560px}
+.hero h1 span{display:block;font-family:var(--ui);font-size:15px;font-weight:600;letter-spacing:-.01em;margin-top:6px;color:var(--mut)}
+
+/* 과정 상자 격자 */
+.lead-s{padding:14px 12px 0;font-family:var(--en);font-weight:700;font-size:13px;max-width:760px;line-height:1.45}
+.lead-s span{font-family:var(--ui);font-weight:500;color:var(--mut)}
+.boxes{padding:12px;display:grid;gap:6px}
+.boxes.big{grid-template-columns:1.3fr 1fr}
+.boxes.small{grid-template-columns:repeat(4,1fr)}
+.bx{border-radius:6px;padding:12px 14px 12px;display:flex;flex-direction:column;justify-content:space-between;min-width:0;transition:filter .2s}
+.bx:hover{filter:brightness(1.05)}
+.boxes.big .bx{min-height:380px}
+.boxes.small .bx{min-height:230px}
+.bx h3{font-family:var(--en);font-weight:700;font-size:clamp(22px,2vw,30px);line-height:1.08;letter-spacing:-.03em}
+.bx h3 span{display:block;font-family:var(--ui);font-size:14px;font-weight:600;letter-spacing:-.01em;margin-top:6px}
+.bx ul{margin-top:auto;padding-top:20px;font-size:13.5px;font-weight:500}
+.bx li{padding:5px 0;border-top:1px solid rgba(0,0,0,.18)}
+.bx .dot{margin-top:12px}
+.bx.o{background:var(--or)}.bx.m{background:var(--mint)}.bx.l{background:var(--lil)}.bx.g{background:var(--grey)}.bx.k{background:var(--ink);color:#fff}
+.sub-h{padding:30px 12px 0;font-family:var(--en);font-weight:700;font-size:26px;letter-spacing:-.03em}
+.links{padding:26px 12px 10px;display:flex;flex-direction:column;align-items:center;gap:4px}
+.links a.chip{font-size:24px}
+
+/* 날짜 블록 + 사진 + 흐르는 캡션 — 레퍼런스 What's on */
+.whats{padding:40px 12px 20px}
+.whats .top{display:flex;align-items:center;gap:10px}
+.evs{margin-top:12px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.evc{min-width:0}
+.evc .ph{position:relative;border-radius:6px;overflow:hidden}
+.evc img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.evc .dt{position:absolute;left:0;top:0;background:#fff;border-radius:0 0 6px 0;padding:6px 10px;font-family:var(--en);font-weight:700;font-size:44px;line-height:.95;letter-spacing:-.04em}
+.evc .dt i{display:block;font-style:normal;border-top:2px solid var(--ink);margin-top:4px;padding-top:4px}
+.evc .tag{position:absolute;right:8px;top:8px}
+.mq{overflow:hidden;background:var(--grey);border-radius:0 0 6px 6px;margin-top:-6px;padding:6px 0 5px;position:relative}
+.mq-in{display:flex;width:max-content;animation:mq 22s linear infinite}
+.mq-in span{font-family:var(--en);font-weight:700;font-size:13px;padding-right:30px;white-space:nowrap}
+@keyframes mq{to{transform:translateX(-50%)}}
+.evc p{font-size:13px;font-weight:500;padding:8px 2px 0}
+
+/* 커리큘럼 사다리 — 이 가게의 구체물 */
+.ladder{padding:40px 12px}
+.lad{margin-top:12px;display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.lad li{border-radius:6px;padding:12px 12px 14px;min-width:0;min-height:170px;display:flex;flex-direction:column}
+.lad li:nth-child(1){background:var(--grey)}.lad li:nth-child(2){background:var(--mint)}.lad li:nth-child(3){background:var(--lil)}.lad li:nth-child(4){background:var(--or)}.lad li:nth-child(5){background:var(--ink);color:#fff}
+.lad .g{font-family:var(--en);font-weight:700;font-size:12px}
+.lad b{font-family:var(--en);font-weight:700;font-size:26px;letter-spacing:-.03em;line-height:1.05;margin-top:auto}
+.lad p{font-size:12.5px;margin-top:6px;font-weight:500}
+
+/* 장비실 — 칩 제목 + 짧은 글 + 큰 사진 (레퍼런스 도서관 구획) */
+.labsec{padding:40px 12px 12px}
+.labsec p.t{margin-top:10px;font-family:var(--en);font-weight:700;font-size:14px;max-width:760px;line-height:1.45}
+.labsec p.t span{font-family:var(--ui);font-weight:500}
+.labsec .big{margin-top:14px;border-radius:6px;overflow:hidden;position:relative}
+.labsec .big img{width:100%;aspect-ratio:21/9;object-fit:cover}
+.labsec .big .dot{position:absolute;left:10px;bottom:10px}
+
+/* 하위 */
+.sub-top{padding:96px 12px 20px}
+.sub-top h1{font-family:var(--en);font-weight:700;font-size:clamp(46px,7vw,110px);letter-spacing:-.05em;line-height:.95}
+.sub-top p{margin-top:14px;font-family:var(--en);font-weight:700;font-size:14px;max-width:720px}
+.sub-top p span{font-family:var(--ui);font-weight:500}
+.sec{padding:30px 12px}
+.sec h2{margin-bottom:12px}
+.tbl-w{overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+.tbl th{text-align:left;font-family:var(--en);font-weight:700;font-size:12px;padding:8px 10px;background:var(--ink);color:#fff}
+.tbl th:first-child{border-radius:6px 0 0 6px}.tbl th:last-child{border-radius:0 6px 6px 0}
+.tbl td{padding:12px 10px;border-bottom:1px solid var(--line);font-weight:500}
+.tbl td b{font-family:var(--en);font-weight:700}
+.tbl td.p{font-family:var(--en);font-weight:700;font-size:17px;white-space:nowrap}
+.fine{margin-top:10px;font-size:13px;color:var(--mut)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start}
+.pair img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:6px}
+.faq{border-top:2px solid var(--ink)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:16px 40px 16px 0;font-weight:700;font-size:16px;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:4px;top:10px;font-family:var(--en);font-size:24px}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 16px;color:var(--mut);max-width:48em}
+.info dl{margin:0}
+.info dl div{display:grid;grid-template-columns:90px 1fr;padding:12px 0;border-bottom:1px solid var(--line)}
+.info dt{font-family:var(--en);font-weight:700}
+.info dd{margin:0}
+
+/* 푸터 — 레퍼런스 흰 바탕 여러 열 */
+.ft{padding:60px 12px 30px;border-top:1px solid var(--line);margin-top:40px}
+.ft-g{display:grid;grid-template-columns:1fr 2.2fr 1fr 1fr 1fr;gap:20px;font-size:13px}
+.ft-b{font-family:var(--en);font-weight:700;font-size:22px;line-height:1.05;letter-spacing:-.03em}
+.ft-t{font-weight:600;max-width:34em}
+.ft-g div a{display:flex;align-items:center;min-height:30px;font-weight:600}
+.ft-legal{margin-top:40px;font-size:12px;color:var(--mut);line-height:1.8}
+.mbar{display:none}
+
+@media (max-width:980px){
+  .dnav{display:none}
+  .burger{display:inline-flex}
+  .brand{font-size:24px}
+  .hero{height:auto;min-height:0;padding-bottom:0}
+  .hero>img{position:relative;height:74vh;min-height:460px}
+  .hero .chip{font-size:17px;min-height:44px}
+  .dot.pill{min-height:44px;padding:4px 14px}
+  .hero .h1{left:4%;top:18%}.hero .h2{left:40%;top:30%}.hero .h3{right:4%;top:44%}.hero .h4{left:6%;bottom:auto;top:58%}.hero .h5{display:none}.hero .h6{right:6%;bottom:auto;top:70%}
+  .hero h1{position:static;margin:10px 12px 0;padding:0;max-width:none;font-size:26px}
+  .boxes.big{grid-template-columns:1fr}
+  .boxes.big .bx{min-height:260px}
+  .boxes.small{grid-template-columns:1fr 1fr}
+  .evs{grid-template-columns:1fr}
+  .lad{grid-template-columns:1fr 1fr}
+  .labsec .big img{aspect-ratio:4/3}
+  .pair{grid-template-columns:1fr}
+  .ft-g{grid-template-columns:1fr 1fr}
+  .ft-b,.ft-t{grid-column:1/-1}
+  .ft-g div a{min-height:44px}
+  .links a.chip{font-size:20px;min-height:44px}
+  .mbar{display:grid;grid-template-columns:1.3fr 1fr 1fr;position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--ink)}
+  .mbar a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:56px;color:#fff;font-size:14px;font-weight:700}
+  .mbar a.tel{background:var(--or);color:var(--ink)}
+  .mbar svg{width:17px}
+  body{padding-bottom:56px}
+  .sub-top{padding-top:80px}
+}
+@media (max-width:560px){
+  .boxes.small{grid-template-columns:1fr}
+  .lad{grid-template-columns:1fr}
+  .lad li{min-height:120px}
+}

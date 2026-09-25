@@ -1,40 +1,33 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="원장실 Academy OS v3 — AI 직원이 서류를 준비하고 원장은 확인·고치기·보류만 하는 중소형 학원 운영체제 체험판">
-<link rel="icon" href="/favicon.svg">
-<title>원장실 Academy OS</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@400;700;800&family=Cormorant+Garamond:wght@500;600;700&family=Gowun+Batang:wght@400;700&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
-<link rel="stylesheet" href="/src/styles.css">
-</head>
-<body>
-<div class="app">
-<aside class="rail" id="rail" aria-label="주 메뉴">
-  <a class="brand" href="#today" style="text-decoration:none"><span class="seal">결</span><span><b><span>원장실</span><small>AI</small></b></span></a>
-  <div class="rail-tag">Your academy office</div>
-  <div class="school"><span class="sun"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></svg></span><span><b>수학의숲 판교학원</b><span>학원 · 재원 10명 · 강사 2명</span></span></div>
-  <nav class="nav" id="nav"></nav>
-  <div class="rail-end">
-    <label for="roleSel">다른 사람의 화면으로</label>
-    <select id="roleSel"><option value="owner">원장</option><option value="teacher">강사 (김민정 선생님)</option><option value="parent">학부모 (이서준 어머니)</option><option value="student">학생 (이서준)</option></select>
-  </div>
-</aside>
-<div class="main">
-  <header class="top">
-    <div style="display:flex;align-items:center;gap:12px"><button class="menu" id="menuBtn" aria-label="메뉴 열기">☰</button><div class="crumb"><span>수학의숲 판교학원</span><i>›</i><b id="crumb">오늘 결재함</b></div></div>
-    <div class="demo"><span class="search"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>아이 이름 검색</span><span class="date">2026년 9월 14일 · 예시일</span><button class="btn-sm" id="resetBtn">처음부터</button><button class="bell" id="bellBtn" aria-label="알림" title="결재 대기"><svg viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></svg><i id="bellDot"></i></button><span class="avatar" title="원장">원</span></div>
-  </header>
-  <main class="content" id="view" tabindex="-1"></main>
-</div>
-</div>
-<div class="ov" id="ov"><div class="dr" id="dr" role="dialog" aria-modal="true"></div></div>
-<div class="toast" id="toast" role="status" aria-live="polite"></div>
-<div class="mgr" id="mgr"><div class="mgr-panel" id="mgrPanel" hidden><div class="mgr-h">AI 매니저<small>무엇이든 물어보세요. 장부와 웹사이트 내용만 알고, 모르는 것은 모른다고 합니다.</small></div><div class="mgr-log" id="mgrLog"><div class="bot">원장님, 오늘 수업 준비를 도와드릴게요. 미납·결재·잔여석·상담·살펴볼 학생·재등록·웹사이트를 물어보세요.</div></div><div class="mgr-in"><input type="text" id="mgrIn" placeholder="예: 미납 얼마야?"><button class="btn-ok btn-sm" id="mgrGo">묻기</button></div></div><button class="mgr-btn" id="mgrBtn">AI 매니저</button></div>
-
-<script type="module" src="/src/app.js"></script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#173d30" />
+    <meta
+      name="description"
+      content="원장실 — 기록부터 결재까지, 조금 더 가벼운 학원의 하루. 로컬 운영 워크스페이스."
+    />
+    <link rel="icon" href="/favicon.svg" />
+    <link
+      rel="stylesheet"
+      href="/templates/_shared/fonts/gowun-batang__wght-400-700.css"
+    />
+    <link rel="stylesheet" href="/templates/_shared/fonts/pretendard.css" />
+    <link rel="stylesheet" href="/src/styles.css" />
+    <title>원장실 · Academy OS</title>
+  </head>
+  <body>
+    <a class="skip" href="#main">본문으로 바로 가기</a>
+    <div id="app">
+      <div class="boot">
+        <span class="brand-mark">결</span>
+        <h1>학원의 하루를 준비하고 있어요.</h1>
+        <p>저장된 기록을 확인하는 중입니다.</p>
+      </div>
+    </div>
+    <dialog id="dialog" aria-labelledby="dialogTitle"></dialog>
+    <div id="toasts" role="status" aria-live="polite"></div>
+    <script type="module" src="/src/app.js"></script>
+  </body>
 </html>

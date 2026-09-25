@@ -1,0 +1,135 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{BIZ_NAME|셈틀 수학학원}} — 막힌 단원부터 다시 푸는 초5~고2 수학</title>
+<meta name="description" content="한 반 8명, 주 2회 3시간. 매주 오답 클리닉으로 막힌 단원을 다시 풀고 넘어가는 동네 수학학원.">
+<link rel="stylesheet" href="../_shared/fonts/pretendard.css">
+<link rel="stylesheet" href="../_shared/fonts/wix-madefor-text__wght-400-500-600-700.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+<main>
+
+  <!-- 히어로 — 레퍼런스 충실: 어두운 바탕 · 번지는 색 덩어리(영상 없이 CSS) · 왼쪽 큰 제목 · 아래 소개 한 단락 · 둥근 스티커 -->
+  <section class="hero" aria-label="첫 화면">
+    <span class="blob b1" aria-hidden="true"></span><span class="blob b2" aria-hidden="true"></span><span class="blob b3" aria-hidden="true"></span>
+    <div class="wrap">
+      <h1>Math, one step at a time.</h1>
+      <p class="ko">막힌 단원부터 다시 푸는 초5 – 고2 수학학원</p>
+      <p class="dash"><i></i>Semteul math lab · 목동</p>
+    </div>
+    <div class="wrap intro">
+      <p>한 반 8명, 주 2회 3시간. 매주 금요일은 그 주에 틀린 문제만 다시 푸는 클리닉입니다.</p>
+      <a class="sticker" href="tel:{{PHONE|02-2649-7308}}">Free test?<small>무료 진단 50분</small></a>
+    </div>
+  </section>
+
+  <!-- 큰 문장 + 오른쪽 짧은 단락 — 레퍼런스 구성 그대로의 언어, 문장은 우리 말 -->
+  <section class="say" aria-label="셈틀의 수업">
+    <div class="wrap">
+      <h2 class="pop">Everyone gets stuck somewhere different. We start there.</h2>
+      <p class="r pop">진단 테스트로 <b>처음 막힌 단원</b>을 찾고, 그 단원부터 다시 쌓습니다. 선행은 그다음입니다.</p>
+    </div>
+    <span class="half" aria-hidden="true"></span>
+  </section>
+
+  <!-- 종이 면 — 레퍼런스 지구 사진+지점 주소 자리를 '한 교실' 사진 + 주소 · 시간으로 -->
+  <section class="room" id="visit" aria-labelledby="rm-h">
+    <div class="wrap in">
+      <div><h2 id="rm-h">One room, eight desks.</h2><p>목동역 7번 출구 앞, 4층 교실 두 칸이 전부입니다.</p></div>
+      <div class="ph"><img src="img/desk.jpg" alt="책상 위에 풀이 종이와 문제집을 펼쳐 놓고 연필로 식을 쓰는 손"></div>
+      <dl>
+        <dt>Address</dt><dd>{{ADDRESS|서울특별시 양천구 목동동로 00, 4층}}</dd>
+        <dt>Hours</dt><dd>{{HOURS|평일 15:00–22:00 · 토 10:00–18:00}}</dd>
+        <dt>Call</dt><dd class="big"><a href="tel:{{PHONE|02-2649-7308}}">{{PHONE|02-2649-7308}}</a></dd>
+      </dl>
+    </div>
+    <div class="stripe" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+  </section>
+
+  <!-- 원장 인사 — 레퍼런스 'Welcome from the Head' 의 덩어리 모양 인물 사진을 가져오고, 바탕을 청록 그라데이션으로 -->
+  <section class="head" aria-labelledby="hd-h">
+    <div class="wrap in">
+      <div>
+        <h2 id="hd-h" class="pop">From the front of the room</h2>
+        <p class="pop">모든 반의 첫 수업과 금요일 클리닉은 원장이 직접 맡습니다. 칠판에 쓰는 것보다 아이 공책을 들여다보는 시간이 더 깁니다.</p>
+        <p class="sig">{{OWNER|장서진}}<span>원장 · 중등·고등 수학 담당</span></p>
+      </div>
+      <figure class="pop"><img src="img/director.jpg" alt="화이트보드에 방정식을 쓰다가 돌아보며 설명하는 선생님"></figure>
+    </div>
+  </section>
+
+  <!-- 학년 과정 네 칸 — 레퍼런스의 선 아이콘 네 칸. 아이콘을 수학 도형으로, 칸마다 대상 학년과 한 주 시간 -->
+  <section class="tracks" aria-labelledby="tr-h">
+    <div class="wrap">
+      <h2 id="tr-h">Four tracks</h2>
+      <p class="sub">학년이 아니라 진단 결과로 반을 정합니다.</p>
+      <ul class="trk">
+        <li><svg viewBox="0 0 54 54" aria-hidden="true"><circle cx="27" cy="27" r="22"/><path d="M27 5v44M5 27h44"/></svg><span class="g">Grade 5–6</span><h3>Number sense</h3><p>분수·소수 연산과 비와 비율. 중학교 가기 전 빈틈 메우기.</p><p class="dl">화·목 16:00–19:00</p></li>
+        <li><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M27 6 48 46H6z"/><path d="M27 6v40"/></svg><span class="g">Middle 1–2</span><h3>Equations</h3><p>방정식·함수·도형의 성질. 학교 진도 한 단원 앞.</p><p class="dl">월·수 17:00–20:00</p></li>
+        <li><svg viewBox="0 0 54 54" aria-hidden="true"><rect x="6" y="6" width="42" height="42"/><path d="M6 20h42M6 34h42M20 6v42M34 6v42"/></svg><span class="g">Middle 3 – High 1</span><h3>Bridge</h3><p>중3 이차함수에서 고1 공통수학으로 넘어가는 반.</p><p class="dl">화·목 19:00–22:00</p></li>
+        <li><svg viewBox="0 0 54 54" aria-hidden="true"><path d="M6 46C16 46 18 8 27 8s11 38 21 38"/><path d="M6 46h42"/></svg><span class="g">High 2</span><h3>Calculus basics</h3><p>수Ⅰ·수Ⅱ 내신 대비. 시험 4주 전부터 토요일 추가.</p><p class="dl">월·수 19:00–22:00</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 단원 진도표 — 레퍼런스 파트너 목록(왼쪽 이름 · 오른쪽 설명 줄)을 이번 학기 진도 줄로 -->
+  <section class="units" aria-labelledby="un-h">
+    <div class="wrap">
+      <div class="top"><h2 id="un-h">This term, week by week</h2><p>중2 Equations 반의 이번 학기 진도입니다. 반마다 같은 표를 교실 벽에 붙여 둡니다.</p></div>
+      <ol class="ulist">
+        <li><span class="wk">Week 1–3</span><b>연립방정식</b><p>가감법·대입법, 활용 문제 12유형</p><span class="st">Done</span></li>
+        <li><span class="wk">Week 4–6</span><b>일차함수와 그래프</b><p>기울기·절편, 두 직선의 교점</p><span class="st now">Now</span></li>
+        <li><span class="wk">Week 7</span><b>중간고사 대비</b><p>학교별 기출 두 회 · 토요일 추가 3시간</p><span class="st">Next</span></li>
+        <li><span class="wk">Week 8–10</span><b>도형의 성질</b><p>이등변삼각형 · 외심과 내심</p><span class="st">Next</span></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 오답 흐름 — 레퍼런스 색 칩을 가져와 '틀린 문제가 가는 길' 네 단계로 -->
+  <section class="flow" aria-labelledby="fl-h">
+    <div class="wrap">
+      <h2 id="fl-h">Where a wrong answer goes</h2>
+      <ol class="chips">
+        <li><span class="t">Mark · 채점</span><p>수업 끝나기 10분 전, 그날 푼 문제를 선생님이 바로 채점합니다.</p></li>
+        <li><span class="t">Sort · 분류</span><p>틀린 이유를 계산 · 개념 · 문제 읽기 셋 중 하나로 표시합니다.</p></li>
+        <li><span class="t">Rewrite · 오답노트</span><p>문제를 오려 붙이지 않고, 풀이만 다시 씁니다.</p></li>
+        <li><span class="t">Retry · 금요일 클리닉</span><p>일주일 뒤 숫자를 바꾼 같은 문제를 한 번 더 풉니다.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 왜 셈틀 — 레퍼런스 'Why homeschool' 종이 면 사진 + A·B·C 세 칸 -->
+  <section class="why" aria-labelledby="wy-h">
+    <div class="wrap">
+      <p class="lab" id="wy-h">처음 오시는 부모님이 가장 많이 묻는 세 가지</p>
+      <div class="in">
+        <img src="img/girl.jpg" alt="밝은 방 책상에서 연필로 문제를 푸는 학생">
+        <div><span class="k">A</span><h3>Eight desks</h3><p>한 반 8명을 넘기지 않습니다. 자리가 차면 대기 명단에 올리고 순서대로 연락드립니다.</p></div>
+        <div><span class="k">B</span><h3>Monthly call</h3><p>매달 마지막 주, 담당 선생님이 전화로 한 달 오답 분류표를 읽어 드립니다.</p></div>
+        <div><span class="k">C</span><h3>No skipping</h3><p>진단에서 빈틈이 나온 단원은 선행보다 먼저 합니다. 한 달이면 대개 메워집니다.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 마지막 — 레퍼런스 'Join a guided tour' 그라데이션 면. 폼 대신 전화 · 카톡 -->
+  <section class="join" aria-labelledby="jn-h">
+    <div class="wrap in">
+      <div>
+        <h2 id="jn-h">Find the first gap.</h2>
+        <p>진단 테스트 50분, 결과 설명 20분. 비용은 없고, 등록하지 않으셔도 결과지는 드립니다.</p>
+        <div class="btns"><a class="btn" href="tel:{{PHONE|02-2649-7308}}">전화로 시간 잡기</a><a class="btn o" href="{{KAKAO_URL|#}}">카카오톡 문의</a></div>
+      </div>
+      <img src="img/study.jpg" alt="문제집과 오답 노트를 펼쳐 놓고 선생님 손가락이 문제를 짚는 모습">
+    </div>
+  </section>
+
+</main>
+<script src="js/chrome.js"></script>
+<script src="../_shared/js/site.js"></script>
+<link rel="stylesheet" href="css/stickynav.css">
+<script src="js/stickynav.js" defer></script>
+</body>
+</html>

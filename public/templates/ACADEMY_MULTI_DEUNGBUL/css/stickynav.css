@@ -1,0 +1,170 @@
+/* ══ stickynav 2026-09-21 ══
+   스크롤을 내려도 메뉴를 찾을 수 있게 한다.
+   · 페이지 맨 위에서는 원래 헤더 그대로 (헤더·첫 화면 원본 유지 계약)
+   · 한 화면 넘게 내리면 납작한 바가 위에 붙는다
+   · 내릴 때는 숨고, 올릴 때 바로 나타난다
+   원본 규칙을 건드리지 않고 덧씌운다. */
+
+.sn-bar {
+  position: fixed;
+  left: 0; right: 0; top: 0;
+  z-index: 2147483000;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 0 clamp(14px, 3vw, 34px);
+  height: 58px;
+  background: var(--sn-bg, #ffffff);
+  color: var(--sn-fg, #111111);
+  border-bottom: 1px solid var(--sn-line, rgba(0, 0, 0, .10));
+  box-shadow: 0 6px 22px -14px rgba(0, 0, 0, .35);
+  transform: translateY(-100%);
+  transition: transform .26s cubic-bezier(.4, 0, .2, 1);
+  will-change: transform;
+  font-family: inherit;
+}
+.sn-bar[data-show="1"] { transform: translateY(0); }
+
+.sn-brand {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: .04em;
+  text-decoration: none;
+  color: inherit;
+  white-space: nowrap;
+  flex: 0 0 auto;
+  max-width: 42vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sn-links {
+  display: flex;
+  align-items: center;
+  gap: clamp(10px, 1.6vw, 24px);
+  margin-left: auto;
+  min-width: 0;
+  overflow: hidden;
+}
+.sn-links a {
+  text-decoration: none;
+  color: inherit;
+  font-size: 13.5px;
+  font-weight: 600;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  opacity: .82;
+  padding: 6px 2px;
+  border-bottom: 2px solid transparent;
+  transition: opacity .15s, border-color .15s;
+}
+.sn-links a:hover,
+.sn-links a:focus-visible { opacity: 1; border-bottom-color: currentColor; }
+.sn-links a[aria-current="page"] { opacity: 1; border-bottom-color: currentColor; }
+
+.sn-cta {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 38px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: var(--sn-accent, #111111);
+  color: var(--sn-accent-fg, #ffffff);
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .02em;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.sn-cta svg { width: 15px; height: 15px; }
+
+.sn-burger {
+  flex: 0 0 auto;
+  display: none;
+  width: 44px; height: 44px;
+  margin-left: auto;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+}
+.sn-burger i {
+  display: block;
+  width: 20px; height: 2px;
+  background: currentColor;
+  position: relative;
+}
+.sn-burger i::before,
+.sn-burger i::after {
+  content: ""; position: absolute; left: 0;
+  width: 20px; height: 2px; background: currentColor;
+}
+.sn-burger i::before { top: -6px; }
+.sn-burger i::after { top: 6px; }
+
+/* 읽은 만큼을 보여 주는 가는 진행선 */
+.sn-prog {
+  position: absolute;
+  left: 0; bottom: -1px;
+  height: 2px;
+  width: 0;
+  background: var(--sn-accent, #111111);
+  opacity: .85;
+}
+
+/* 우리 패널 */
+.sn-panel {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483001;
+  background: var(--sn-bg, #fff);
+  color: var(--sn-fg, #111);
+  padding: 76px clamp(20px, 6vw, 44px) 40px;
+  overflow-y: auto;
+  opacity: 0;
+  display: none;            /* 닫혔을 때는 아예 없는 것으로 둔다(읽기 도구·검사기에 잡히지 않게) */
+  transition: opacity .22s ease;
+  font-family: inherit;
+}
+.sn-panel[data-open="1"] { opacity: 1; display: block; }
+.sn-panel ul { list-style: none; margin: 0; padding: 0; }
+.sn-panel li + li { border-top: 1px solid var(--sn-line, rgba(0, 0, 0, .10)); }
+.sn-panel a {
+  display: flex; align-items: baseline; gap: 10px;
+  padding: 16px 2px;
+  text-decoration: none; color: inherit;
+  font-size: 20px; font-weight: 700; letter-spacing: .02em;
+}
+.sn-panel a span { font-size: 13px; font-weight: 500; opacity: .6; }
+.sn-close {
+  position: fixed; top: 12px; right: 14px;
+  width: 44px; height: 44px;
+  border: 0; background: transparent; color: inherit;
+  font-size: 26px; line-height: 1; cursor: pointer;
+}
+
+@media (max-width: 860px) {
+  .sn-links { display: none; }
+  .sn-burger { display: inline-flex; }
+  .sn-cta { display: none; }
+  .sn-bar { height: 54px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sn-bar { transition: none; }
+  .sn-panel { transition: none; }
+}
+
+@media print { .sn-bar, .sn-panel { display: none !important; } }
+
+/* 마퀴·가로 슬라이드가 문서 폭을 밀어 가로 스크롤을 만드는 사이트가 있다.
+   고정 바와 무관한 원래 결함이지만 같이 막는다. */
+html.sn-noxscroll, html.sn-noxscroll body { overflow-x: hidden; }

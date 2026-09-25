@@ -2,3 +2,17 @@ node_modules
 dist
 .DS_Store
 .vercel
+data/
+.env*
+!.env.example
+test-results/
+
+# Historical research copy; the active application lives at this repository root.
+agent1000-academy-lab/
+
+# Local operational data and credentials must not enter the public repository.
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+local-accounts.txt
+*.log

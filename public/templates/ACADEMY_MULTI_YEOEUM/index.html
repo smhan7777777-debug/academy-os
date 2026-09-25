@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{{BIZ_NAME|여음 음악교습소}} — 피아노 · 바이올린 · 기타 · 드럼 1:1 레슨</title>
+<meta name="description" content="만 5세부터 성인까지, 네 악기 1:1 레슨과 봄·가을 두 번의 작은 연주회. 노원 동네 음악교습소.">
+<link rel="stylesheet" href="../_shared/fonts/pretendard.css">
+<link rel="stylesheet" href="../_shared/fonts/encode-sans__wght-400-500-600-700.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="home">
+<main>
+
+  <!-- 히어로 — 레퍼런스 충실: 검정 위 둥근 사진 판 · 왼쪽 중간 키커+제목 · 오른쪽 아래 소개와 버튼 둘 -->
+  <section class="hero" aria-label="첫 화면">
+    <img src="img/stage.jpg" alt="피아노 건반 위에 작은 손을 올리고 어른 손이 옆에서 짚어 주는 모습" loading="eager">
+    <div class="l">
+      <p class="k">Yeoeum music room</p>
+      <h1>A small room where music stays a little longer.</h1>
+      <p class="ko">피아노 · 바이올린 · 기타 · 드럼, 한 사람에 한 선생님.</p>
+    </div>
+    <div class="r">
+      <p>방음실 다섯 칸에서 1:1 레슨만 합니다. 수업이 없는 칸은 연습실로 비워 둡니다.</p>
+      <div class="bt"><a class="btn-w" href="lessons.html">레슨 보기</a><a class="btn-y" href="tel:{{PHONE|02-905-3372}}">전화 상담</a></div>
+    </div>
+  </section>
+
+  <!-- 소개 둘 판 — 레퍼런스(노랑 덩어리 판 + 어두운 사진 판)를 좌우 바꿔 사진 판 먼저, 덩어리 판은 흰 바탕 + 파란 덩어리 -->
+  <section class="duo" id="about" aria-labelledby="ab-h">
+    <div class="ph"><img src="img/about.jpg" alt="집 부엌 옆 업라이트 피아노에서 어른이 아이를 무릎에 앉히고 함께 건반을 치는 모습"><p class="cap">첫 레슨 날에는 집에서 어떻게 연습하면 좋을지 보호자와 함께 이야기합니다.</p></div>
+    <div class="blob">
+      <h2 id="ab-h">Five rooms, one hallway</h2>
+      <p>복도 끝 방에서 드럼 소리가 새어 나와도 옆방 피아노는 조용합니다. 방마다 방음 문을 달았습니다.</p>
+      <ul class="rooms"><li>Room 1–2 · 피아노</li><li>Room 3 · 바이올린 · 기타</li><li>Room 4 · 드럼</li><li>Room 5 · 연습실</li></ul>
+    </div>
+  </section>
+
+  <!-- 과정 카드 — 레퍼런스 흰 둥근 카드 3장 → 악기 4장. 나이 칩 · 사진 · 전폭 파란 버튼, 칸마다 요금 한 줄 -->
+  <section class="offer" aria-labelledby="of-h">
+    <div class="top">
+      <div><h2 id="of-h">Pick an instrument</h2></div>
+      <p>처음 한 달은 주 1회 30분으로 시작합니다. 손에 맞으면 그때 주 2회로 늘립니다.</p>
+    </div>
+    <div class="cards">
+      <article class="cd"><div class="im"><img src="img/piano.jpg" alt="업라이트 피아노 건반을 두 손으로 누르는 남자아이"><span class="age">만 5세 +</span></div><h3>Piano 피아노</h3><p>바이엘부터 체르니 40까지, 진도표로 한 권씩.</p><p class="pr">주 2회 30분 · 월 160,000원</p><a class="go" href="lessons.html#piano">피아노 레슨</a></article>
+      <article class="cd"><div class="im"><img src="img/violin.jpg" alt="바이올린을 어깨에 얹고 활을 긋는 여자아이"><span class="age">만 6세 +</span></div><h3>Violin 바이올린</h3><p>1/8 사이즈부터. 악기는 첫 석 달 빌려 드립니다.</p><p class="pr">주 1회 40분 · 월 170,000원</p><a class="go" href="lessons.html#strings">바이올린 레슨</a></article>
+      <article class="cd"><div class="im"><img src="img/guitar.jpg" alt="회색 벽 앞 높은 의자에 앉아 선생님과 통기타를 치는 남자아이"><span class="age">초3 +</span></div><h3>Guitar 기타</h3><p>코드 세 개로 한 곡 끝내기가 첫 달 목표.</p><p class="pr">주 1회 40분 · 월 150,000원</p><a class="go" href="lessons.html#strings">기타 레슨</a></article>
+      <article class="cd"><div class="im"><img src="img/drum.jpg" alt="전자 드럼 앞에 앉은 아이에게 선생님이 손짓으로 박자를 설명하는 모습"><span class="age">초2 +</span></div><h3>Drums 드럼</h3><p>전자 드럼으로 박자 연습, 어쿠스틱은 4개월 차부터.</p><p class="pr">주 1회 40분 · 월 170,000원</p><a class="go" href="lessons.html#drum">드럼 레슨</a></article>
+    </div>
+  </section>
+
+  <!-- 연주회 흰 판 — 레퍼런스 마스터클래스 판의 추상 도형 + 동그라미 친 낱말. 내용은 봄 연주회 순서 -->
+  <section class="rec" aria-labelledby="rc-h">
+    <div class="art" aria-hidden="true"><i class="a1"></i><i class="a2"></i><i class="a3"></i><i class="a4"></i><i class="a5"></i></div>
+    <div>
+      <p class="k">Recital</p>
+      <h2 id="rc-h">Twice a year, everyone plays <em>once</em></h2>
+      <p>봄과 가을, 동네 작은 홀을 빌려 한 사람이 한 곡씩 칩니다. 틀려도 끝까지 치고 인사하는 것까지가 연주입니다.</p>
+      <ol class="prog">
+        <li><b>14:00</b><span>피아노 저학년 — 작은 별 변주, 은파 등 여섯 곡</span></li>
+        <li><b>14:40</b><span>바이올린 · 기타 — 앙상블 두 곡</span></li>
+        <li><b>15:10</b><span>드럼 — 반주 음원에 맞춰 세 명</span></li>
+        <li><b>15:30</b><span>다 함께 사진 · 꽃 한 송이씩</span></li>
+      </ol>
+      <a class="btn-y" href="recital.html">연주회 안내</a>
+    </div>
+  </section>
+
+  <!-- 진도 격자 — 레퍼런스 포스터 8칸 격자를 사진 4 + 피아노 진도 카드 4로 섞었다 -->
+  <section class="wall" aria-labelledby="wl-h">
+    <h2 id="wl-h">The piano ladder</h2>
+    <p class="wsub">피아노 진도는 네 칸. 한 칸을 마치면 연주회에서 그 칸의 곡을 칩니다.</p>
+    <div class="grid8">
+      <img src="img/g1.jpg" alt="악보를 올려 두고 피아노 건반을 치는 아이의 손">
+      <div class="stp"><span class="n">Step 1</span><b>Beyer</b><p>바이엘 1–4권 · 대개 6–10개월</p></div>
+      <img src="img/g2.jpg" alt="바이올린을 켜는 학생 뒤로 웃으며 듣는 선생님">
+      <div class="stp"><span class="n">Step 2</span><b>Czerny 100</b><p>체르니 100 · 소나티네 곁들여</p></div>
+      <div class="stp"><span class="n">Step 3</span><b>Czerny 30</b><p>체르니 30 · 쇼팽 왈츠 한 곡</p></div>
+      <img src="img/g3.jpg" alt="선생님과 나란히 앉아 통기타를 잡은 남자아이">
+      <div class="stp"><span class="n">Step 4</span><b>Czerny 40</b><p>체르니 40 · 입시 전 과정 상담</p></div>
+      <img src="img/g4.jpg" alt="노란 벽 앞에서 드럼 스틱을 들고 웃는 남자아이">
+    </div>
+    <div class="ctr"><a class="btn-y" href="lessons.html">레슨 · 요금 전체</a></div>
+  </section>
+
+</main>
+<script src="js/chrome.js"></script>
+<script src="../_shared/js/site.js"></script>
+<link rel="stylesheet" href="css/stickynav.css">
+<script src="js/stickynav.js" defer></script>
+</body>
+</html>

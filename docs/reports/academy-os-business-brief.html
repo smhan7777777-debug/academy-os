@@ -1,0 +1,960 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="author" content="Academy OS" />
+    <meta
+      name="description"
+      content="한 학원의 수업과 설명을 자산으로 만드는 Academy OS 사업모델 소개서"
+    />
+    <title>원장실 Academy OS · 사업모델 소개서</title>
+    <link
+      rel="stylesheet"
+      href="../../public/templates/_shared/fonts/gowun-batang__wght-400-700.css"
+    />
+    <style>
+      @font-face {
+        font-family: Pretendard;
+        src: url("../../public/templates/_shared/fonts/files/PretendardVariable.woff2")
+          format("woff2");
+        font-weight: 100 900;
+        font-display: block;
+      }
+      :root {
+        --ink: #233e35;
+        --forest: #183e32;
+        --muted: #58685f;
+        --sage: #e8eee6;
+        --paper: #faf8f2;
+        --line: #d5dcd1;
+        --gold: #92713f;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      @page {
+        size: A4;
+        margin: 0;
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+      }
+      body {
+        color: var(--ink);
+        font-family: Pretendard, sans-serif;
+        font-size: 11.5pt;
+        line-height: 1.65;
+        word-break: keep-all;
+        overflow-wrap: break-word;
+        background: #ddd;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .page {
+        position: relative;
+        width: 210mm;
+        height: 297mm;
+        padding: 16mm 18mm 21mm;
+        background: var(--paper);
+        break-after: page;
+      }
+      .page:last-child {
+        break-after: auto;
+      }
+      .masthead {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 4mm;
+        margin-bottom: 8mm;
+      }
+      .brand {
+        display: flex;
+        align-items: center;
+        gap: 2.5mm;
+      }
+      .brand-mark {
+        width: 8mm;
+        height: 8mm;
+        border-radius: 2mm;
+        background: var(--forest);
+        color: #fff;
+        display: grid;
+        place-items: center;
+        font-family: "Gowun Batang", serif;
+        font-size: 15pt;
+        line-height: 1;
+      }
+      .brand strong {
+        font-size: 13pt;
+        font-weight: 700;
+        letter-spacing: -0.3px;
+      }
+      .brand span:not(.brand-mark) {
+        margin-left: 1mm;
+        font-size: 10pt;
+        font-weight: 450;
+      }
+      .edition {
+        font-size: 8.8pt;
+        color: var(--muted);
+        letter-spacing: 0.3px;
+      }
+      .eyebrow {
+        margin: 0 0 3mm;
+        color: var(--gold);
+        font-size: 9pt;
+        font-weight: 750;
+        letter-spacing: 1px;
+      }
+      h1,
+      h2 {
+        font-family: "Gowun Batang", serif;
+        font-weight: 700;
+        letter-spacing: -1.1px;
+      }
+      h1 {
+        margin: 0 0 5mm;
+        font-size: 32pt;
+        line-height: 1.34;
+      }
+      h2 {
+        margin: 0 0 4mm;
+        font-size: 27pt;
+        line-height: 1.38;
+      }
+      h3 {
+        margin: 0 0 2mm;
+        font-size: 13.4pt;
+        line-height: 1.4;
+        letter-spacing: -0.3px;
+      }
+      p {
+        margin: 0;
+      }
+      .lead {
+        font-size: 12.2pt;
+        line-height: 1.8;
+        color: var(--muted);
+      }
+      .small {
+        font-size: 10pt;
+        line-height: 1.65;
+        color: var(--muted);
+      }
+      .tiny {
+        font-size: 8.8pt;
+        line-height: 1.55;
+        color: var(--muted);
+      }
+      .footer {
+        position: absolute;
+        bottom: 10mm;
+        left: 18mm;
+        right: 18mm;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-top: 1px solid var(--line);
+        padding-top: 3mm;
+        font-size: 8.5pt;
+        color: var(--muted);
+      }
+      .footer .number {
+        color: var(--forest);
+        font-weight: 700;
+        font-size: 10pt;
+      }
+      .cover .masthead {
+        margin-bottom: 10mm;
+      }
+      .cover h1 {
+        margin-bottom: 5mm;
+      }
+      .cover .lead {
+        max-width: 165mm;
+      }
+      .showcase {
+        position: relative;
+        margin-top: 8mm;
+        padding: 7mm;
+        background: var(--sage);
+        border: 1px solid #d8e1d5;
+        border-radius: 4mm;
+        display: grid;
+        grid-template-columns: 1.15fr 1fr;
+        gap: 7mm;
+        align-items: center;
+      }
+      .sample-site {
+        background: #fff;
+        border: 1px solid #d4dbd1;
+        border-radius: 3mm;
+        overflow: hidden;
+      }
+      .sample-bar {
+        padding: 2.5mm 4mm;
+        border-bottom: 1px solid #e5e8e1;
+        display: flex;
+        align-items: center;
+        gap: 1.3mm;
+      }
+      .dot {
+        width: 1.6mm;
+        height: 1.6mm;
+        border-radius: 50%;
+        background: #c3d0c0;
+      }
+      .sample-label {
+        margin-left: auto;
+        font-size: 7.5pt;
+        color: var(--muted);
+      }
+      .sample-hero {
+        padding: 5mm 5mm 4mm;
+        background: #f4f1e8;
+      }
+      .sample-hero .overline {
+        font-size: 8pt;
+        color: var(--gold);
+        margin-bottom: 2mm;
+      }
+      .sample-hero strong {
+        font-family: "Gowun Batang", serif;
+        font-size: 18pt;
+        line-height: 1.6;
+        display: block;
+      }
+      .sample-hero p {
+        font-size: 9pt;
+        color: var(--muted);
+        margin-top: 2mm;
+      }
+      .sample-bottom {
+        display: flex;
+        gap: 2mm;
+        padding: 3mm 4mm;
+      }
+      .sample-button {
+        background: var(--forest);
+        color: #fff;
+        border-radius: 1.5mm;
+        padding: 1.5mm 3mm;
+        font-size: 8pt;
+      }
+      .sample-button.secondary {
+        background: var(--sage);
+        color: var(--forest);
+      }
+      .showcase-copy h3 {
+        font-size: 16pt;
+        line-height: 1.5;
+        margin-bottom: 3mm;
+      }
+      .showcase-copy p {
+        font-size: 10.5pt;
+        color: var(--muted);
+      }
+      .showcase-copy .rule {
+        height: 1px;
+        background: #c4d0c0;
+        margin: 4mm 0;
+      }
+      .value-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6mm;
+        margin-top: 7mm;
+      }
+      .value-grid .index {
+        display: block;
+        color: var(--gold);
+        font-size: 9pt;
+        font-weight: 750;
+        margin-bottom: 1.5mm;
+      }
+      .value-grid h3 {
+        font-size: 12.4pt;
+      }
+      .value-grid p {
+        font-size: 10.5pt;
+        color: var(--muted);
+      }
+      .cover-note {
+        margin-top: 6mm;
+        border-top: 1px solid var(--line);
+        padding-top: 4mm;
+        font-size: 10.5pt;
+      }
+      .section-intro {
+        margin-bottom: 6mm;
+      }
+      .journey {
+        margin-top: 6mm;
+      }
+      .journey-row {
+        display: grid;
+        grid-template-columns: 10mm 37mm 1fr;
+        gap: 4mm;
+        padding: 5mm 0;
+        border-top: 1px solid var(--line);
+      }
+      .journey-number {
+        font-size: 18pt;
+        font-weight: 400;
+        color: var(--gold);
+        line-height: 1.3;
+      }
+      .journey-row h3 {
+        font-size: 14pt;
+        margin: 0 0 1mm;
+      }
+      .journey-row .when {
+        color: var(--gold);
+        font-size: 9.5pt;
+      }
+      .journey-row p {
+        font-size: 11pt;
+        line-height: 1.75;
+      }
+      .journey-row .benefit {
+        margin-top: 2mm;
+        color: var(--muted);
+        font-size: 10pt;
+      }
+      .workflow {
+        background: var(--forest);
+        color: #fff;
+        padding: 5mm 6mm;
+        border-radius: 3mm;
+        margin-top: 4mm;
+      }
+      .workflow h3 {
+        color: #dce7d8;
+        font-size: 11pt;
+        font-weight: 550;
+        margin-bottom: 4mm;
+      }
+      .flow-steps {
+        display: grid;
+        grid-template-columns: 1fr 5mm 1fr 5mm 1fr 5mm 1fr;
+        gap: 1mm;
+        align-items: start;
+      }
+      .flow-step strong {
+        display: block;
+        font-size: 12pt;
+        margin-bottom: 1mm;
+      }
+      .flow-step span {
+        display: block;
+        color: #d0decc;
+        font-size: 9pt;
+        line-height: 1.55;
+      }
+      .flow-arrow {
+        color: #b7c9b1;
+        padding-top: 1mm;
+      }
+      .trust-note {
+        margin-top: 5mm;
+        padding-left: 4mm;
+        border-left: 2px solid #b99b68;
+      }
+      .trust-note h3 {
+        font-size: 11.5pt;
+      }
+      .trust-note p {
+        font-size: 10pt;
+        color: var(--muted);
+      }
+      .plans {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 5mm;
+        margin: 6mm 0 4mm;
+      }
+      .plan {
+        padding: 5mm;
+        border: 1px solid var(--line);
+        border-radius: 3mm;
+        background: #fffefb;
+      }
+      .plan.emphasis {
+        background: var(--sage);
+        border-color: #ccd8c8;
+      }
+      .badge {
+        display: inline-block;
+        font-size: 8.5pt;
+        font-weight: 650;
+        color: var(--forest);
+        background: #e8eee6;
+        border-radius: 9mm;
+        padding: 1mm 2.5mm;
+        margin-bottom: 3mm;
+      }
+      .emphasis .badge {
+        background: var(--forest);
+        color: #fff;
+      }
+      .plan h3 {
+        font-size: 16pt;
+        margin-bottom: 3mm;
+      }
+      .plan p {
+        font-size: 10.8pt;
+        line-height: 1.75;
+      }
+      .plan .small {
+        margin-top: 3mm;
+        font-size: 9.5pt;
+      }
+      .subheading {
+        display: flex;
+        align-items: center;
+        gap: 3mm;
+        margin-top: 6mm;
+        margin-bottom: 3mm;
+      }
+      .subheading h3 {
+        margin: 0;
+        font-size: 14pt;
+      }
+      .subheading span {
+        font-size: 9pt;
+        color: var(--gold);
+      }
+      .advantage-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 3mm 6mm;
+      }
+      .advantage {
+        padding: 3mm 0;
+        border-top: 1px solid var(--line);
+      }
+      .advantage h3 {
+        font-size: 11.5pt;
+        margin-bottom: 1.5mm;
+      }
+      .advantage .step-no {
+        color: var(--gold);
+        margin-right: 2mm;
+        font-weight: 550;
+      }
+      .advantage p {
+        font-size: 10.3pt;
+        color: var(--muted);
+      }
+      .business-note {
+        margin-top: 4mm;
+        border-radius: 2mm;
+        background: #eee9dd;
+        padding: 4mm 5mm;
+      }
+      .business-note h3 {
+        font-size: 11pt;
+        margin-bottom: 1mm;
+      }
+      .business-note p {
+        font-size: 10pt;
+        line-height: 1.7;
+      }
+      .economics .plan {
+        padding: 4mm 5mm;
+      }
+      .economics .plan .small {
+        margin-top: 2mm;
+      }
+      .economics .plans {
+        margin-top: 5mm;
+        margin-bottom: 3mm;
+      }
+      .economics .business-note {
+        padding: 3mm 5mm;
+      }
+      .pilot {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 5mm;
+        margin: 6mm 0;
+      }
+      .pilot-step {
+        border-top: 2px solid #c7d5c1;
+        padding-top: 3mm;
+      }
+      .pilot-step .step-label {
+        color: var(--gold);
+        font-size: 9pt;
+        font-weight: 700;
+        margin-bottom: 2mm;
+      }
+      .pilot-step h3 {
+        font-size: 12pt;
+      }
+      .pilot-step p {
+        font-size: 10.3pt;
+        color: var(--muted);
+      }
+      .metrics {
+        border-radius: 3mm;
+        background: var(--forest);
+        color: #fff;
+        padding: 4mm 5mm;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 3mm;
+        margin-bottom: 6mm;
+      }
+      .metrics strong {
+        display: block;
+        font-size: 11.4pt;
+        font-weight: 600;
+      }
+      .metrics span {
+        font-size: 9.3pt;
+        color: #d4e1ce;
+      }
+      .status-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 6mm;
+      }
+      .status {
+        border-top: 1px solid var(--line);
+        padding-top: 4mm;
+      }
+      .status h3 {
+        font-size: 12pt;
+      }
+      .status .caption {
+        font-size: 9.3pt;
+        color: var(--gold);
+        margin-bottom: 3mm;
+      }
+      ul {
+        margin: 0;
+        padding-left: 4mm;
+      }
+      li {
+        padding-left: 1mm;
+        margin-bottom: 2mm;
+        font-size: 10.3pt;
+        color: var(--muted);
+      }
+      li::marker {
+        color: #809679;
+      }
+      .closing {
+        margin-top: 5mm;
+        padding-top: 4mm;
+        border-top: 1px solid var(--line);
+      }
+      .closing p {
+        font-family: "Gowun Batang", serif;
+        font-size: 17pt;
+        font-weight: 700;
+        line-height: 1.65;
+      }
+      .closing .small {
+        margin-top: 2mm;
+        font-family: Pretendard, sans-serif;
+        font-size: 10pt;
+        font-weight: 400;
+      }
+      @media screen {
+        .page {
+          margin: 8mm auto;
+          box-shadow: 0 2mm 8mm #0002;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <section class="page cover" aria-label="1쪽: 제품의 가치">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark">원</span
+          ><strong>원장실 <span>Academy OS</span></strong>
+        </div>
+        <span class="edition">사업모델 소개서 · 2026.09</span>
+      </header>
+      <main>
+        <p class="eyebrow">한 학원에서 시작하는 교육 운영 서비스</p>
+        <h1>우리 학원만의 수업이,<br />쌓이는 자산이 되도록.</h1>
+        <p class="lead">
+          고급 웹사이트로 학원의 가치를 보여 주고,<br />상담과 수업에서 확인한
+          설명을 다음에도 쉽게 쓰게 합니다.
+        </p>
+
+        <div class="showcase">
+          <div class="sample-site" aria-label="학원 홈페이지 구성 예시">
+            <div class="sample-bar">
+              <i class="dot"></i><i class="dot"></i><i class="dot"></i
+              ><span class="sample-label">홈페이지 구성 예시</span>
+            </div>
+            <div class="sample-hero">
+              <p class="overline">우리 학원은 이렇게 가르칩니다</p>
+              <strong>답을 찾기 전에,<br />생각하는 힘부터.</strong>
+              <p>작은 질문 하나로 만나는<br />우리 학원만의 수업 방식</p>
+            </div>
+            <div class="sample-bottom">
+              <span class="sample-button">수업 체험하기</span
+              ><span class="sample-button secondary">상담 알아보기</span>
+            </div>
+          </div>
+          <div class="showcase-copy">
+            <h3>학부모에게는<br />이해하기 쉬운 수업을.</h3>
+            <p>
+              어떻게 가르치는지 체험하고,<br />상담에서 확인한 내용을 읽습니다.
+            </p>
+            <div class="rule"></div>
+            <h3>원장에게는<br />다시 쓸 수 있는 설명을.</h3>
+            <p>
+              검토한 자료를 찾아 새 초안으로 쓰고,<br />우리 학원의 기준을
+              유지합니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="value-grid">
+          <div>
+            <span class="index">01 · 첫 만남</span>
+            <h3>학원의 인상을 높입니다</h3>
+            <p>프리미엄 디자인과 실제 수업 정보로 학원의 첫인상을 만듭니다.</p>
+          </div>
+          <div>
+            <span class="index">02 · 신뢰</span>
+            <h3>설명에 맥락을 더합니다</h3>
+            <p>수업 체험에서 상담으로, 상담에서 가정별 안내로 이어집니다.</p>
+          </div>
+          <div>
+            <span class="index">03 · 반복 사용</span>
+            <h3>검토한 자료를 남깁니다</h3>
+            <p>승인한 설명과 지도 기준을 보관하고 다음 업무에 활용합니다.</p>
+          </div>
+        </div>
+        <p class="cover-note">
+          <strong>출발점은 단일 학원입니다.</strong> 원장과 소수 강사가 운영하는
+          학원에서, 매주 반복되는 설명과 안내 업무부터 돕습니다.
+        </p>
+      </main>
+      <footer class="footer">
+        <span>Academy OS · 한 학원의 수업과 운영을 잇다</span
+        ><span class="number">01 / 04</span>
+      </footer>
+    </section>
+
+    <section class="page" aria-label="2쪽: 서비스 이용 흐름">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark">원</span
+          ><strong>원장실 <span>Academy OS</span></strong>
+        </div>
+        <span class="edition">고객 경험 · 운영 흐름</span>
+      </header>
+      <main>
+        <p class="eyebrow">경험을 설명으로, 설명을 다음 업무로</p>
+        <h2>수업을 보여 주고,<br />상담과 안내로 이어집니다.</h2>
+        <p class="lead">
+          웹사이트와 원장실이 같은 수업 정보를 바탕으로 움직입니다.<br />원장은
+          내용을 확인하고, 학부모는 필요한 안내를 받습니다.
+        </p>
+
+        <div class="journey">
+          <div class="journey-row">
+            <span class="journey-number">01</span>
+            <div>
+              <h3>수업 체험</h3>
+              <span class="when">상담을 알아볼 때</span>
+            </div>
+            <div>
+              <p>
+                질문 → 힌트 → 재시도 → 설명으로 수업 방식을 경험합니다. 체험한
+                반을 선택한 상태로 상담 신청에 이어집니다.
+              </p>
+              <p class="benefit">
+                짧은 체험은 학습 방식을 소개합니다. 학생의 수준을 자동 판정하지
+                않습니다.
+              </p>
+            </div>
+          </div>
+          <div class="journey-row">
+            <span class="journey-number">02</span>
+            <div>
+              <h3>상담 안내서</h3>
+              <span class="when">상담 내용을 정리할 때</span>
+            </div>
+            <div>
+              <p>
+                상담에서 확인한 목표·수업 계획·준비 사항을 가정별로 정리합니다.
+                연결된 반의 수강료·시간표도 함께 확인합니다.
+              </p>
+              <p class="benefit">
+                원장실 상담 목록에서 해당 상담의 안내서 준비로 바로 이동합니다.
+              </p>
+            </div>
+          </div>
+          <div class="journey-row">
+            <span class="journey-number">03</span>
+            <div>
+              <h3>수업 설명 카드</h3>
+              <span class="when">배운 내용을 안내할 때</span>
+            </div>
+            <div>
+              <p>
+                원장이 확인한 활동, 수업의 의미, 다음 준비를 읽기 쉽게
+                작성합니다. 기존 자료를 찾아 새 초안으로 재사용합니다.
+              </p>
+              <p class="benefit">
+                기존 승인본은 유지하고, 새 안내는 별도로 검토합니다. 내부 교사용
+                메모는 공개 내용에서 제외합니다.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="workflow">
+          <h3>모든 설명의 중심에는 원장의 확인이 있습니다</h3>
+          <div class="flow-steps">
+            <div class="flow-step">
+              <strong>초안</strong
+              ><span>직접 작성하거나<br />기존 자료 활용</span>
+            </div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">
+              <strong>검토·승인</strong
+              ><span>내용과 대상,<br />수업 정보 확인</span>
+            </div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">
+              <strong>공개·공유</strong
+              ><span>확인한 내용을<br />필요한 범위로</span>
+            </div>
+            <span class="flow-arrow">→</span>
+            <div class="flow-step">
+              <strong>다시 활용</strong
+              ><span>검색해서 찾고<br />새 초안으로 시작</span>
+            </div>
+          </div>
+        </div>
+        <div class="trust-note">
+          <h3>바뀐 정보는 다시 확인합니다.</h3>
+          <p>
+            연결된 수강료·시간표·학원 기준이 바뀌면 기존 공유를 멈추고
+            재검토합니다. 가정별 안내는 만료·중지할 수 있는 링크로 공유하며,
+            링크를 가진 사람은 열람할 수 있습니다.
+          </p>
+        </div>
+      </main>
+      <footer class="footer">
+        <span>확인한 사실을 바탕으로 작성 · 원장 승인 후 공개</span
+        ><span class="number">02 / 04</span>
+      </footer>
+    </section>
+
+    <section class="page economics" aria-label="3쪽: 수익 구조와 경쟁력">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark">원</span
+          ><strong>원장실 <span>Academy OS</span></strong>
+        </div>
+        <span class="edition">수익 구조 · 장기 경쟁력</span>
+      </header>
+      <main>
+        <p class="eyebrow">무료 진입에서 반복 업무의 가치로</p>
+        <h2>쓸수록 편해지는 운영이,<br />구독의 이유가 됩니다.</h2>
+        <p class="lead">
+          무료 웹사이트로 고객을 만나고, 학원에 맞춘 설명과 안내를<br />꾸준히
+          준비하는 편의에서 월 구독의 가치를 검증합니다.
+        </p>
+
+        <div class="plans">
+          <div class="plan">
+            <span class="badge">기본 상품 · 무료 제공 방향</span>
+            <h3>시작하기 쉬운 구성</h3>
+            <p>
+              프리미엄 학원 웹사이트<br />예약·문의 에이전트 1명<br />콘텐츠
+              에이전트 1명
+            </p>
+            <p class="small">
+              디자인·자료 입력·검토 흐름을 표준화해 도입 부담을 줄입니다.
+            </p>
+          </div>
+          <div class="plan emphasis">
+            <span class="badge">월 구독 · 파일럿 검증 예정</span>
+            <h3>매주 다시 쓰는 편의</h3>
+            <p>
+              학원별 기준을 반영한 안내 준비<br />과목·반별 설명 자료 재사용<br />변경된
+              자료의 확인과 관리
+            </p>
+            <p class="small">
+              절감한 시간과 지불 의사를 확인한 뒤 가격과 유료 범위를 정합니다.
+            </p>
+          </div>
+        </div>
+        <p class="tiny">
+          상품 구조의 설계안이며, 현재 새 과금이나 유료 제한은 적용하지
+          않았습니다.
+        </p>
+
+        <div class="subheading">
+          <h3>시간이 지날수록 쌓아 갈 경쟁력</h3>
+          <span>축적 → 재사용 → 개선</span>
+        </div>
+        <div class="advantage-grid">
+          <div class="advantage">
+            <h3><span class="step-no">01</span>학원 고유의 설명을 축적</h3>
+            <p>
+              승인한 수업 설명과 지도·피드백 기준을 남깁니다. 학원마다 가르치는
+              방식의 차이를 담습니다.
+            </p>
+          </div>
+          <div class="advantage">
+            <h3><span class="step-no">02</span>다음 업무에 다시 활용</h3>
+            <p>
+              제목·반으로 찾아 새 초안에 씁니다. 반복할수록 빈 문서부터 시작하는
+              일을 줄이는 것이 목표입니다.
+            </p>
+          </div>
+          <div class="advantage">
+            <h3><span class="step-no">03</span>검토 경험으로 품질 개선</h3>
+            <p>
+              자주 고치는 표현과 예외를 기준에 반영합니다. 수정 이유의 체계적
+              축적은 다음 고도화 과제입니다.
+            </p>
+          </div>
+          <div class="advantage">
+            <h3><span class="step-no">04</span>도입·지원 방식을 정교화</h3>
+            <p>
+              반복되는 설정과 안내를 표준화합니다. 개인 정보 없이 분야별 양식과
+              운영 노하우를 발전시킵니다.
+            </p>
+          </div>
+        </div>
+        <div class="business-note">
+          <h3>경쟁력과 수익성을 함께 검증합니다.</h3>
+          <p>
+            승인 자료의 재사용이 준비·검토 시간을 실제로 줄이는지가 핵심입니다.
+            모델·호스팅·메시지 비용에 고객지원 시간과 무료 고객 유지 비용까지
+            포함해 수익성을 계산합니다.
+          </p>
+        </div>
+        <p class="tiny" style="margin-top: 3mm">
+          장기 경쟁력은 검증할 사업 가설입니다. 자료가 쌓이는 것만으로 AI가 자동
+          학습하거나 경쟁 우위가 보장되지는 않습니다.
+        </p>
+      </main>
+      <footer class="footer">
+        <span>사업 방향 · 무료 진입 + 선택형 월 구독</span
+        ><span class="number">03 / 04</span>
+      </footer>
+    </section>
+
+    <section class="page" aria-label="4쪽: 도입과 검증 계획">
+      <header class="masthead">
+        <div class="brand">
+          <span class="brand-mark">원</span
+          ><strong>원장실 <span>Academy OS</span></strong>
+        </div>
+        <span class="edition">도입 계획 · 현재 단계</span>
+      </header>
+      <main>
+        <p class="eyebrow">작게 시작하고, 반복 사용으로 확인합니다</p>
+        <h2>한 학원, 한 업무에서<br />효과를 확인합니다.</h2>
+        <p class="lead">
+          초기에는 3~5개 학원, 4주 파일럿을 제안합니다.<br />상담 안내 또는 수업
+          설명 중 자주 하는 업무 하나부터 시작합니다.
+        </p>
+
+        <div class="pilot">
+          <div class="pilot-step">
+            <p class="step-label">STEP 01 · 기준 잡기</p>
+            <h3>원래 들던 시간을 기록</h3>
+            <p>
+              반복 업무를 고르고 준비·검토 시간을 확인합니다. 공개 가능한 수업
+              자료와 학원 기준을 정리합니다.
+            </p>
+          </div>
+          <div class="pilot-step">
+            <p class="step-label">STEP 02 · 실제 사용</p>
+            <h3>매주 작성·승인·재사용</h3>
+            <p>
+              한 번 만든 자료를 다음 상담이나 수업에 활용합니다. 수정과
+              고객지원에 든 시간도 함께 기록합니다.
+            </p>
+          </div>
+          <div class="pilot-step">
+            <p class="step-label">STEP 03 · 사업 검증</p>
+            <h3>계속 쓸 이유를 확인</h3>
+            <p>
+              줄어든 시간과 반복 사용을 비교합니다. 지불 의사와 지원 원가를
+              확인해 구독 상품을 다듬습니다.
+            </p>
+          </div>
+        </div>
+
+        <div class="metrics">
+          <div>
+            <strong>준비·검토 시간</strong><span>업무 부담이 줄었는가</span>
+          </div>
+          <div>
+            <strong>자료 재사용·지속 사용</strong
+            ><span>다음 주에도 쓰는가</span>
+          </div>
+          <div>
+            <strong>지불 의사·지원 원가</strong
+            ><span>지속 가능한 사업인가</span>
+          </div>
+        </div>
+
+        <div class="status-grid">
+          <div class="status">
+            <h3>현재 구현한 범위</h3>
+            <p class="caption">로컬 제품 검증 단계</p>
+            <ul>
+              <li>17종 웹사이트 디자인과 학원 정보 적용, 상담·문의 흐름</li>
+              <li>수업 체험·상담 안내서·수업 설명 카드의 작성과 승인</li>
+              <li>
+                자료 검색·새 초안 재사용, 공유 만료·중지, 연결 정보 변경 시
+                재검토
+              </li>
+            </ul>
+          </div>
+          <div class="status">
+            <h3>상용 제공 전 검증할 범위</h3>
+            <p class="caption">실제 운영·유료 상품의 다음 단계</p>
+            <ul>
+              <li>운영용 회원·보호자 인증, 학원별 서비스 분리와 운영 배포</li>
+              <li>실제 AI 응답 품질과 강사 기록 연계, 문자·결제 연결</li>
+              <li>도입·지원 비용, 반복 사용 효과, 구독 범위와 가격</li>
+            </ul>
+          </div>
+        </div>
+        <p class="tiny" style="margin-top: 3mm">
+          현재 기본 업무는 규칙·서식으로 처리합니다. 선택형 AI 체험 초안 생성
+          연결은 구현했으나 실제 모델 검증은 진행 전입니다. 파일럿 규모·기간은
+          제안이며 계약·운영 실적이 아닙니다.
+        </p>
+
+        <div class="closing">
+          <p>
+            한 번 잘 설명한 수업이,<br />다음 상담과 수업의 출발점이 됩니다.
+          </p>
+          <p class="small">
+            Academy OS는 한 학원의 전문성이 일상적인 운영 속에 남도록 돕습니다.
+          </p>
+        </div>
+      </main>
+      <footer class="footer">
+        <span>Academy OS · 2026년 9월 기준 · 사업모델 검증 단계</span
+        ><span class="number">04 / 04</span>
+      </footer>
+    </section>
+  </body>
+</html>

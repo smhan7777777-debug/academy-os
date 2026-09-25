@@ -1,0 +1,38 @@
+[
+  {
+    "id": "EDU_ACADEMY_MULTI_DEUNGYONG",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "11c800c7e458db9ad06ce9f506f07f768ab2c8f78df5f1fed05cee232b57be65",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  },
+  {
+    "id": "EDU_ACADEMY_MULTI_GAGYO",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "991a4b92a0d183894a9bdda58fab955041baad3120df3f8246b57ec62398283f",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  },
+  {
+    "id": "EDU_ACADEMY_MULTI_GWANMUN",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "dbfa89136e7edb59bf9e21c3868ddd68fbb9601bdaeab4eccffb790831de1260",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  },
+  {
+    "id": "EDU_ACADEMY_MULTI_HANBYEOL",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "ad3fb2ae8cc3aacfefa62d737996c6962fb541dba40efc6ce71455c4f2a874a5",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  },
+  {
+    "id": "EDU_ACADEMY_MULTI_ITDA",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "15d7a099f31c2f788331399e1f1ee347b49ebf089cb344397d96dff7cb986800",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  },
+  {
+    "id": "EDU_ACADEMY_MULTI_JEONGJIN",
+    "source": "setup/templates-db/templates.json:preview_html",
+    "sha256": "215f22a52ebded3bd7fd4e71c6cff28effef699dcb5af8197102846efc8ee9e5",
+    "adaptation": "Original CSS; six content-bound hero compositions. Demo claims and inactive controls excluded."
+  }
+]

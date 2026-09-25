@@ -1,0 +1,236 @@
+@charset "utf-8";
+/* 궁리 과학실험교실 — 59 학원 ④
+   HOW: The Quaker School at Horsham (https://www.quakerschool.org/) — 전폭 사진 히어로 위 가는 큰 산세리프 · 미색 바탕 ·
+   화면만 한 낱말 위에 흩어진 사진 · 파스텔 색면 구획 · 둥근 모서리 색 카드 · 짙은 색 푸터 위 거대한 워드마크.
+   색: 레퍼런스 버터 노랑 · 세이지 · 코랄 · 파랑 → 우리 라벤더 · 하늘 · 블러시 · 짙은 보라. */
+:root{
+  --bg:#F7F4EC; --ink:#1C1A24; --mut:#5E5A68; --line:#DAD5C8;
+  --lav:#DCD3F4; --sky:#CDE2F0; --blush:#F2D4DC; --vio:#3B2A78; --acc:#5B4BB0;
+  --en:"Noto Sans Display","Pretendard Variable",system-ui,sans-serif;
+  --ui:"Pretendard Variable",system-ui,sans-serif;
+  --mm-top:64px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.7;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:break-word}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--acc);outline-offset:3px}
+.wrap{max-width:1320px;margin:0 auto;padding:0 32px}
+.js .pop{opacity:0;transform:translateY(20px);transition:opacity .9s ease,transform .9s ease}
+.js .pop.go{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .pop{opacity:1!important;transform:none!important;transition:none!important}}
+html.reduce .js .pop{opacity:1!important;transform:none!important}
+
+.hd{position:absolute;top:0;left:0;right:0;z-index:50;display:flex;align-items:center;gap:40px;padding:18px 32px;color:#fff}
+.brand{font-family:var(--en);font-weight:500;font-size:32px;letter-spacing:-.04em;line-height:1;display:flex;align-items:baseline;gap:8px}
+.brand span{font-size:10.5px;font-weight:400;letter-spacing:.2em;text-transform:uppercase;opacity:.85}
+.dnav{display:flex;gap:30px}
+.dnav a{font-size:13px;font-weight:500;display:flex;flex-direction:column;line-height:1.35}
+.dnav a span{font-size:11px;opacity:.75}
+.dnav a[aria-current]{text-decoration:underline;text-underline-offset:6px}
+.hd-pill{margin-left:auto;display:inline-flex;align-items:center;gap:6px;background:#fff;color:var(--ink);border-radius:999px;padding:7px 16px;font-size:13px;font-weight:600}
+.hd-pill svg{width:12px}
+.sub-page .hd{color:var(--ink);position:relative}
+.sub-page .hd-pill{background:var(--ink);color:#fff}
+.burger{display:none;margin-left:auto;width:46px;height:46px;border:0;background:transparent;flex-direction:column;justify-content:center;gap:7px;padding:0 10px;cursor:pointer}
+.burger i{display:block;height:1.5px;background:currentColor}
+.mobile-nav{position:fixed;top:var(--mm-top);left:0;right:0;bottom:0;z-index:1000;background:var(--bg);padding:20px 24px 120px;display:none;flex-direction:column;overflow:auto}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-family:var(--en);font-weight:300;font-size:36px;letter-spacing:-.04em;padding:10px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.mobile-nav a span{font-family:var(--ui);font-size:13px;color:var(--mut);letter-spacing:0}
+.mobile-nav .mn-call{font-family:var(--ui);font-weight:600;font-size:17px;justify-content:center;align-items:center;gap:8px;margin-top:24px;border:0;border-radius:999px;background:var(--vio);color:#fff;min-height:52px}
+.mn-call svg{width:18px}
+body.mm-open{overflow:hidden}
+body.mm-open .hd{color:var(--ink);background:var(--bg);position:fixed}
+
+/* 히어로 — 레퍼런스 충실: 전폭 사진(영상→사진) · 왼쪽 아래 아주 큰 가는 산세리프 */
+.hero{position:relative;height:100vh;height:100svh;min-height:620px;overflow:hidden;background:#2b2433}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;animation:slowzoom 18s ease-out both}
+@keyframes slowzoom{from{transform:scale(1.08)}to{transform:scale(1)}}
+@media (prefers-reduced-motion:reduce){.hero img{animation:none}}
+html.reduce .hero img{animation:none}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(20,14,30,.45) 0%,rgba(20,14,30,0) 28%,rgba(20,14,30,0) 50%,rgba(20,14,30,.6) 100%)}
+.hero .cap{position:absolute;left:32px;right:32px;bottom:36px;z-index:2;color:#fff;display:flex;justify-content:space-between;align-items:end;gap:30px}
+.hero h1{font-family:var(--en);font-weight:300;font-size:clamp(64px,10vw,158px);line-height:.92;letter-spacing:-.05em}
+.hero .ko{font-size:16px;font-weight:500;max-width:18em;text-align:right;text-shadow:0 1px 10px rgba(0,0,0,.4)}
+.hero .ko small{display:block;margin-top:8px;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+
+/* 거대한 낱말 + 흩어진 사진 */
+.word{position:relative;padding:110px 0 70px;overflow:hidden}
+.word .w{font-family:var(--en);font-weight:400;font-size:clamp(90px,17vw,270px);line-height:.9;letter-spacing:-.06em;text-align:center;white-space:nowrap}
+.word .ph{position:absolute;object-fit:cover;box-shadow:0 20px 40px -24px rgba(0,0,0,.4)}
+.word .a{width:130px;aspect-ratio:1;top:40px;left:9%}
+.word .b{width:clamp(200px,20vw,290px);aspect-ratio:3/2;top:250px;left:58%}
+.word .c{width:150px;aspect-ratio:4/5;top:30px;right:12%}
+.word .d{width:120px;aspect-ratio:1;bottom:120px;left:22%}
+.word .say{max-width:820px;margin:90px auto 0;text-align:center;font-family:var(--en);font-weight:300;font-size:clamp(24px,2.6vw,36px);line-height:1.25;letter-spacing:-.03em;padding:0 20px}
+.word .say+p{text-align:center;color:var(--mut);margin-top:16px;padding:0 20px}
+
+/* 라벤더 색면 */
+.band{background:var(--lav);padding:90px 0 100px}
+.band h2{font-family:var(--en);font-weight:300;font-size:clamp(40px,4.4vw,64px);line-height:1.02;letter-spacing:-.045em;max-width:13ch}
+.band .rule{height:1px;background:rgba(28,26,36,.25);margin:40px 0}
+.band .cols{display:grid;grid-template-columns:.8fr 1fr;gap:60px;align-items:start}
+.band img{width:100%;aspect-ratio:3/4;object-fit:cover}
+.band .t b{display:block;font-size:17px;font-weight:600;margin-bottom:10px}
+.band .t p{color:#3F3B4A}
+.band .t p+p{margin-top:12px}
+.kit{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px}
+.kit li{border:1px solid rgba(28,26,36,.35);border-radius:999px;padding:5px 14px;font-size:13px}
+
+/* 가운데 큰 사진 */
+.wide{padding:100px 32px}
+.wide figure{max-width:900px;margin:0 auto}
+.wide img{width:100%;aspect-ratio:16/10;object-fit:cover}
+.wide figcaption{margin-top:14px;font-size:13px;color:var(--mut);text-align:center}
+
+/* 네 칸 사실 줄 + 사진 */
+.facts{padding:0 0 100px}
+.facts ul{display:grid;grid-template-columns:repeat(4,1fr);gap:30px}
+.facts li{border-top:1px solid var(--ink);padding-top:14px;min-width:0}
+.facts b{display:block;font-size:14px;font-weight:600}
+.facts p{font-size:13.5px;color:var(--mut);margin-top:4px}
+
+/* 거대한 낱말 + 색 카드 */
+.progs{padding:40px 0 110px}
+.progs .w{font-family:var(--en);font-weight:400;font-size:clamp(80px,12vw,190px);line-height:.9;letter-spacing:-.06em;padding-left:2vw}
+.progs .ko{margin:18px 0 0 2.4vw;color:var(--mut)}
+.pcards{margin-top:40px;display:grid;grid-template-columns:1fr 1.3fr 1fr 1.2fr;gap:14px;align-items:start}
+.pc:nth-child(odd) img{aspect-ratio:1/1}
+.pc{border-radius:16px;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.pc:nth-child(1){background:var(--lav)}.pc:nth-child(2){background:var(--sky)}.pc:nth-child(3){background:var(--blush)}.pc:nth-child(4){background:#E4E0D3}
+.pc .tp{padding:20px 20px 16px;display:flex;justify-content:space-between;align-items:start;gap:10px}
+.pc h3{font-family:var(--en);font-weight:400;font-size:26px;line-height:1.05;letter-spacing:-.03em}
+.pc .go{flex:none;background:var(--ink);color:#fff;border-radius:999px;font-size:11px;padding:4px 10px;display:inline-flex;align-items:center;gap:4px;min-height:28px}
+.pc .go svg{width:10px}
+.pc p{padding:0 20px;font-size:13.5px;color:#3F3B4A}
+.pc .g{padding:10px 20px 18px;font-size:12px;font-weight:600;color:var(--acc)}
+.pc img{margin-top:auto;width:100%;aspect-ratio:4/3;object-fit:cover}
+
+/* 하늘 색면 — 이달의 실험 달력 */
+.month{background:var(--sky);padding:90px 0}
+.month h2{font-family:var(--en);font-weight:300;font-size:clamp(38px,4vw,58px);letter-spacing:-.045em;line-height:1.03}
+.month .rule{height:1px;background:rgba(28,26,36,.25);margin:34px 0 40px}
+.month .in{display:grid;grid-template-columns:.8fr 1.4fr;gap:60px;align-items:start}
+.month img{width:100%;aspect-ratio:4/5;object-fit:cover}
+.cal li{display:grid;grid-template-columns:90px 1fr 110px;gap:20px;padding:16px 0;border-bottom:1px solid rgba(28,26,36,.2);align-items:baseline}
+.cal .d{font-family:var(--en);font-size:22px;font-weight:400;letter-spacing:-.03em}
+.cal b{font-weight:600;font-size:15.5px}
+.cal span.s{display:block;font-size:13px;color:#3F3B4A;margin-top:2px}
+.cal .who{font-size:12px;text-align:right;color:var(--acc);font-weight:600}
+
+/* 안전 규칙 + 사진 */
+.safe{padding:100px 0}
+.safe .in{display:grid;grid-template-columns:1fr .8fr;gap:70px;align-items:center}
+.safe h2{font-family:var(--en);font-weight:300;font-size:clamp(34px,3.4vw,50px);letter-spacing:-.04em;line-height:1.05}
+.safe ol{margin-top:26px;counter-reset:s}
+.safe li{padding:12px 0 12px 40px;border-bottom:1px solid var(--line);position:relative}
+.safe li::before{counter-increment:s;content:counter(s);position:absolute;left:0;top:10px;width:26px;height:26px;border-radius:50%;border:1px solid var(--ink);font-size:12px;display:flex;align-items:center;justify-content:center}
+.safe img{width:100%;aspect-ratio:4/5;object-fit:cover}
+
+/* 블러시 둥근 판 — 공개 실험 */
+.events{margin:0 32px;border-radius:28px 28px 0 0;background:var(--blush);padding:80px 0 90px}
+.events h2{font-family:var(--en);font-weight:300;font-size:clamp(40px,4.4vw,64px);letter-spacing:-.045em}
+.ev{margin-top:40px;display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.ev li{background:rgba(255,255,255,.55);border-radius:14px;padding:22px;min-width:0}
+.ev li:nth-child(2){background:rgba(255,255,255,.8);transform:translateY(24px)}
+.ev .date{font-family:var(--en);font-size:40px;font-weight:300;letter-spacing:-.04em;line-height:1}
+.ev .date small{font-size:15px;margin-left:6px}
+.ev b{display:block;margin-top:14px;font-size:16px}
+.ev p{font-size:13.5px;color:#3F3B4A;margin-top:4px}
+
+/* 사진 위 보라 카드 — 마지막 권유 */
+.fit{position:relative;min-height:620px;display:flex;align-items:center;background:#2b2433}
+.fit>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.fit .card{position:relative;margin-left:auto;margin-right:8%;width:min(520px,90%);background:var(--vio);color:#fff;padding:44px 40px;border-radius:6px}
+.fit h2{font-family:var(--en);font-weight:300;font-size:clamp(40px,4vw,58px);letter-spacing:-.045em;line-height:1}
+.fit p{margin-top:16px;color:#DCD6F2}
+.fit .btns{margin-top:26px;display:flex;gap:10px;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:6px;min-height:46px;padding:0 20px;border-radius:999px;background:#fff;color:var(--ink);font-weight:600;font-size:14px}
+.btn.o{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.6)}
+
+/* 하위 페이지 */
+.sub-hd{padding:60px 0 50px}
+.sub-hd h1{font-family:var(--en);font-weight:300;font-size:clamp(64px,10vw,150px);line-height:.92;letter-spacing:-.06em}
+.sub-hd p{margin-top:20px;max-width:34em;color:var(--mut);font-size:16px}
+.sec{padding:80px 0}
+.sec.lav{background:var(--lav)}.sec.sky{background:var(--sky)}.sec.blush{background:var(--blush)}
+.sec h2{font-family:var(--en);font-weight:300;font-size:clamp(34px,3.6vw,54px);letter-spacing:-.045em;line-height:1.03}
+.sec .lead{margin-top:10px;color:#3F3B4A;max-width:40em}
+.tbl-w{margin-top:34px;overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:620px}
+.tbl th{text-align:left;font-size:12px;font-weight:600;padding:0 12px 12px;border-bottom:1px solid var(--ink)}
+.tbl td{padding:15px 12px;border-bottom:1px solid rgba(28,26,36,.18);vertical-align:top}
+.tbl td.p{font-family:var(--en);font-size:19px;white-space:nowrap}
+.tbl td b{font-family:var(--en);font-weight:400;font-size:19px}
+.fine{margin-top:14px;font-size:13px;color:var(--mut)}
+.log{margin-top:40px;display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:start}
+.log img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px}
+.sheet{background:#fff;border-radius:16px;padding:28px 30px;font-size:14px;background-image:linear-gradient(90deg,rgba(91,75,176,.08) 1px,transparent 1px),linear-gradient(rgba(91,75,176,.08) 1px,transparent 1px);background-size:22px 22px}
+.sheet h3{font-family:var(--en);font-weight:400;font-size:24px;letter-spacing:-.03em}
+.sheet dl{margin:16px 0 0}
+.sheet dl div{display:grid;grid-template-columns:84px 1fr;gap:12px;padding:9px 0;border-bottom:1px dashed rgba(28,26,36,.25)}
+.sheet dt{font-weight:600;color:var(--acc)}
+.sheet dd{margin:0}
+.faq{margin-top:30px;border-top:1px solid var(--ink)}
+.faq details{border-bottom:1px solid rgba(28,26,36,.2)}
+.faq summary{list-style:none;cursor:pointer;padding:20px 40px 20px 0;font-size:16px;font-weight:600;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:14px;font-family:var(--en);font-weight:300;font-size:28px}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 20px;color:#3F3B4A;max-width:48em}
+.map{margin-top:34px;display:grid;grid-template-columns:1fr 1fr;gap:50px}
+.map dl{margin:0}
+.map dl div{display:grid;grid-template-columns:90px 1fr;padding:14px 0;border-bottom:1px solid rgba(28,26,36,.2)}
+.map dt{font-weight:600}
+.map dd{margin:0}
+.map img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px}
+
+/* 푸터 — 짙은 보라 · 거대한 워드마크 */
+.ft{background:var(--vio);color:#fff;padding:70px 32px 36px;overflow:hidden}
+.ft-top{display:flex;gap:80px;justify-content:flex-end}
+.ft-l a{display:inline-flex;min-height:34px;align-items:center;font-size:14px}
+.ft-mark{font-family:var(--en);font-weight:500;font-size:clamp(110px,22vw,340px);letter-spacing:-.07em;line-height:.8;text-align:right;margin-top:40px}
+.ft-legal{margin-top:30px;font-size:12px;color:#CFC8EC;line-height:1.8}
+.mbar{display:none}
+
+@media (max-width:980px){
+  .wrap{padding:0 20px}
+  .dnav,.hd-pill{display:none}
+  .burger{display:flex}
+  .hd{padding:10px 12px 10px 20px}
+  .brand{min-height:44px;justify-content:center}
+  .hero{min-height:560px;height:88svh}
+  .hero .cap{left:20px;right:20px;flex-direction:column;align-items:start;bottom:26px}
+  .hero .ko{text-align:left}
+  .word{padding:70px 0 50px}
+  .word .a{width:80px;top:20px;left:4%}.word .b{width:52vw;top:auto;bottom:210px;left:38%}.word .c{width:90px;top:14px;right:4%}.word .d{display:none}
+  .word .say{margin-top:130px}
+  .band .cols,.month .in,.safe .in,.log,.map{grid-template-columns:1fr;gap:30px}
+  .wide{padding:60px 20px}
+  .facts ul{grid-template-columns:1fr 1fr}
+  .pcards{grid-template-columns:1fr 1fr}
+  .pc .go{min-height:44px;padding:4px 14px}
+  .cal li{grid-template-columns:70px 1fr}
+  .cal .who{grid-column:2;text-align:left}
+  .events{margin:0 12px}
+  .ev{grid-template-columns:1fr}
+  .ev li:nth-child(2){transform:none}
+  .fit{min-height:0;padding:260px 0 30px}
+  .fit .card{margin:0 auto;padding:30px 24px}
+  .ft{padding:50px 20px 30px}
+  .ft-top{justify-content:flex-start;gap:40px}
+  .ft-l a{min-height:44px}
+  .mbar{display:grid;grid-template-columns:1.3fr 1fr 1fr;position:fixed;left:0;right:0;bottom:0;z-index:900;background:var(--ink)}
+  .mbar a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:56px;color:#fff;font-size:14px;font-weight:600}
+  .mbar a.tel{background:var(--vio)}
+  .mbar svg{width:17px}
+  body{padding-bottom:56px}
+}
+@media (max-width:560px){
+  .pcards,.facts ul{grid-template-columns:1fr}
+}

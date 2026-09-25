@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>관리 시스템 · 좌석 — {{BIZ_NAME|등불 독학관}}</title>
+<meta name="description" content="하루 시간표 · 좌석 배치도 · 전략 담임 · 생활 규정 · 기본 세 권.">
+<link rel="stylesheet" href="../_shared/fonts/pretendard.css">
+<link rel="stylesheet" href="../_shared/fonts/teko__wght-500-600-700.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="system">
+<main>
+
+  <!-- 하위 머리 — 레퍼런스 전폭 사진 머리 -->
+  <header class="sub-top">
+    <img src="img/night.jpg" alt="어두운 방 스탠드 불빛 아래 책을 펴고 공부하는 학생의 옆모습">
+    <h1><span class="en">The system</span>수업 대신 자리, 강의 대신 관리</h1>
+  </header>
+
+  <!-- 사진 + 큰 제목 + 흘림 영문 바탕 글자 — 레퍼런스 '전 과목 선택' 구획 -->
+  <section class="sec feat" id="day">
+    <img src="img/carrel.jpg" alt="칸막이 좌석이 줄지어 놓인 자습실에서 한 학생이 창가 좌석에 앉아 공부하는 모습">
+    <div>
+      <h2><em>하루 13시간</em>을<br>시간표로 나눕니다</h2>
+      <span class="wm" aria-hidden="true">DESK</span>
+      <div class="tbl-w"><table class="tbl">
+        <thead><tr><th>시간</th><th>무엇을</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">7:30</th><td>입실 · 휴대폰 보관 · 출결</td></tr>
+          <tr><th scope="row">7:50–12:00</th><td>오전 자습 1–3교시 (교시마다 10분 휴식)</td></tr>
+          <tr><th scope="row">12:00</th><td>점심(도시락 · 주변 식당)</td></tr>
+          <tr><th scope="row">13:00–17:50</th><td>오후 자습 4–7교시 · 질문 시간</td></tr>
+          <tr><th scope="row">18:00</th><td>저녁</td></tr>
+          <tr><th scope="row">19:00–22:00</th><td>야간 자습 · 순공 시간 기록</td></tr>
+        </tbody>
+      </table></div>
+    </div>
+  </section>
+
+  <!-- 짙은 판 세 칸 — 레퍼런스 검은 판 위 세 그림(둥근 받침) + 두 줄 제목. 높이를 엇갈리게 -->
+  <section class="dark" id="mentor">
+    <ul class="three">
+      <li><span class="stand"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M12 6h18l6 6v30H12z M18 20h12M18 28h12M18 36h8"/></svg></span><p>전략 담임과<br><b>주 1회 20분 면담</b></p></li>
+      <li class="up"><span class="stand"><svg viewBox="0 0 48 48" aria-hidden="true"><circle cx="24" cy="24" r="16"/><path d="M24 14v10l7 5"/></svg></span><p>학생마다<br><b>다른 주간 계획표</b></p></li>
+      <li><span class="stand"><svg viewBox="0 0 48 48" aria-hidden="true"><path d="M8 12h24v16H18l-8 7v-7H8z M34 18h6v14h-4v6l-6-6h-8"/></svg></span><p>수학 · 과학<br><b>질문 시간 평일 14–17시</b></p></li>
+    </ul>
+  </section>
+
+  <!-- 좌석 배치도 — 이 업종의 구체물 -->
+  <section class="sec" id="seats">
+    <h2 class="big-en"><span class="en">Seat map</span>좌석 배치도 — 6층 96석</h2>
+    <div class="map" role="img" aria-label="6층 좌석 배치: 창가 칸막이 24석, 가운데 칸막이 48석, 조용한 방 16석, 상담실과 휴대폰 보관함">
+      <div class="zone z1"><b>창가 칸막이</b><span>24석</span></div>
+      <div class="zone z2"><b>가운데 칸막이</b><span>48석</span></div>
+      <div class="zone z3"><b>조용한 방</b><span>16석 · 대화 금지</span></div>
+      <div class="zone z4"><b>상담실 · 보관함</b><span>입구</span></div>
+    </div>
+    <p class="fine">좌석은 입실 순서대로 고르고, 한 달마다 한 번 바꿀 수 있습니다.</p>
+  </section>
+
+  <section class="sec" id="rules">
+    <h2 class="big-en"><span class="en">House rules</span>생활 규정</h2>
+    <div class="tbl-w"><table class="tbl">
+      <thead><tr><th>항목</th><th>규정</th><th>이어지는 것</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">지각</th><td>7:30 이후 입실</td><td>3회 = 담임 면담</td></tr>
+        <tr><th scope="row">휴대폰</th><td>입실 때 보관함 · 퇴실 때 찾기</td><td>무단 사용 = 보호자 연락</td></tr>
+        <tr><th scope="row">자리 비움</th><td>한 교시 이상 비우면 사유 기록</td><td>주간 출결표에 기재</td></tr>
+        <tr><th scope="row">소음</th><td>조용한 방은 대화 금지</td><td>두 번째부터 좌석 이동</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="sec kit" id="kit">
+    <img src="img/kit.jpg" alt="책상 가득 펼친 공책과 플래너 위에 메모지를 붙이며 계획을 적는 두 손">
+    <div>
+      <h2 class="big-en"><span class="en">Three books</span>기본 세 권</h2>
+      <dl class="kd">
+        <div><dt>Planner</dt><dd>주간 계획 · 순공 시간 기록 — 월요일에 담임 확인</dd></div>
+        <div><dt>Test</dt><dd>토요 실전 모의고사지 — 채점 뒤 오답 번호 기록</dd></div>
+        <div><dt>Notes</dt><dd>오답 노트 — 틀린 이유를 한 줄로</dd></div>
+      </dl>
+    </div>
+  </section>
+
+</main>
+<script src="js/chrome.js"></script>
+<script src="../_shared/js/site.js"></script>
+<link rel="stylesheet" href="css/stickynav.css">
+<script src="js/stickynav.js" defer></script>
+</body>
+</html>

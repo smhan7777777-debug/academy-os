@@ -1,0 +1,280 @@
+import { today, addDays, WORKERS } from "../shared/core.js";
+export const ACTORS = [
+  { id: "owner", name: "김원장", role: "owner", academyId: "forest" },
+  { id: "teacher-kim", name: "김민정", role: "teacher", academyId: "forest" },
+  { id: "teacher-park", name: "박준호", role: "teacher", academyId: "forest" },
+  {
+    id: "parent-s1",
+    name: "이서준 보호자",
+    role: "parent",
+    studentId: "S1",
+    academyId: "forest",
+  },
+  {
+    id: "student-s1",
+    name: "이서준",
+    role: "student",
+    studentId: "S1",
+    academyId: "forest",
+  },
+];
+export const BANK = [
+  {
+    id: "Q1",
+    grade: "중2",
+    subject: "수학",
+    unit: "일차함수",
+    q: "일차함수 y = 2x + 1의 기울기는?",
+    choices: ["1", "2", "3"],
+    answer: 1,
+    explanation:
+      "y = ax + b에서 기울기는 x의 계수 a입니다. 따라서 기울기는 2입니다.",
+  },
+  {
+    id: "Q2",
+    grade: "중2",
+    subject: "수학",
+    unit: "일차함수",
+    q: "일차함수 y = −2x + 1의 y절편은?",
+    choices: ["1", "−2", "2"],
+    answer: 0,
+    explanation: "x = 0을 대입하면 y = 1입니다. 따라서 y절편은 1입니다.",
+  },
+  {
+    id: "Q3",
+    grade: "중2",
+    subject: "수학",
+    unit: "연립방정식",
+    q: "x + y = 5, x − y = 1을 동시에 만족하는 x의 값은?",
+    choices: ["2", "3", "5"],
+    answer: 1,
+    explanation: "두 식을 더하면 2x = 6이므로 x = 3입니다.",
+  },
+  {
+    id: "Q4",
+    grade: "초6",
+    subject: "수학",
+    unit: "분수",
+    q: "3/4 + 1/6을 계산하면?",
+    choices: ["11/12", "4/10", "5/12"],
+    answer: 0,
+    explanation: "분모를 12로 맞추면 9/12 + 2/12 = 11/12입니다.",
+  },
+  {
+    id: "Q5",
+    grade: "초6",
+    subject: "수학",
+    unit: "비율",
+    q: "20명의 25%는 몇 명일까요?",
+    choices: ["4명", "5명", "10명"],
+    answer: 1,
+    explanation: "25%는 1/4입니다. 20 ÷ 4 = 5입니다.",
+  },
+  {
+    id: "Q6",
+    grade: "초6",
+    subject: "수학",
+    unit: "소수",
+    q: "0.6 × 0.5의 값은?",
+    choices: ["3", "0.03", "0.3"],
+    answer: 2,
+    explanation: "6 × 5 = 30에서 소수점을 두 자리 옮기면 0.30입니다.",
+  },
+  {
+    id: "Q7",
+    grade: "중3",
+    subject: "영어",
+    unit: "시제",
+    q: "She ___ to school every day.",
+    choices: ["go", "goes", "going"],
+    answer: 1,
+    explanation:
+      "주어가 3인칭 단수이고 현재의 습관을 나타내므로 goes를 씁니다.",
+  },
+  {
+    id: "Q8",
+    grade: "중3",
+    subject: "영어",
+    unit: "시제",
+    q: "I have lived here since 2020.의 시제는?",
+    choices: ["과거", "현재완료", "미래"],
+    answer: 1,
+    explanation:
+      "have + 과거분사는 현재완료이며, 여기서는 과거부터 현재까지의 계속을 나타냅니다.",
+  },
+  {
+    id: "Q9",
+    grade: "중3",
+    subject: "영어",
+    unit: "태",
+    q: "The book was written by her.는?",
+    choices: ["능동태", "수동태", "명령문"],
+    answer: 1,
+    explanation: "be동사 + 과거분사로 책이 쓰였다는 수동의 의미를 나타냅니다.",
+  },
+].map((q) => ({
+  ...q,
+  source: "이 로컬 버전을 위해 작성한 예시 문항 · 교사 검수 필요",
+}));
+export function seed(date = today()) {
+  const classes = [
+    {
+      id: "A",
+      name: "중2 수학 A",
+      grade: "중2",
+      subject: "수학",
+      teacherId: "teacher-kim",
+      teacher: "김민정",
+      capacity: 8,
+      fee: 320000,
+      sessions: [
+        { day: 1, start: 960, end: 1050, room: "1강의실" },
+        { day: 3, start: 960, end: 1050, room: "1강의실" },
+      ],
+    },
+    {
+      id: "B",
+      name: "초6 수학 B",
+      grade: "초6",
+      subject: "수학",
+      teacherId: "teacher-kim",
+      teacher: "김민정",
+      capacity: 6,
+      fee: 280000,
+      sessions: [
+        { day: 2, start: 900, end: 990, room: "2강의실" },
+        { day: 4, start: 900, end: 990, room: "2강의실" },
+      ],
+    },
+    {
+      id: "C",
+      name: "중3 영어 C",
+      grade: "중3",
+      subject: "영어",
+      teacherId: "teacher-park",
+      teacher: "박준호",
+      capacity: 6,
+      fee: 320000,
+      sessions: [
+        { day: 1, start: 1080, end: 1170, room: "1강의실" },
+        { day: 3, start: 1080, end: 1170, room: "1강의실" },
+      ],
+    },
+  ].map(({ sessions, ...c }) => ({
+    ...c,
+    version: 1,
+    scheduleVersions: [
+      { version: 1, effectiveFrom: addDays(date, -60), sessions },
+    ],
+  }));
+  const names = [
+    "이서준",
+    "김지우",
+    "박하린",
+    "최도윤",
+    "정서연",
+    "한유진",
+    "윤지호",
+    "오민서",
+    "강시우",
+    "임수아",
+  ];
+  const students = names.map((name, i) => {
+    const c = classes[i < 5 ? 0 : i < 8 ? 1 : 2];
+    return {
+      id: "S" + (i + 1),
+      name,
+      classId: c.id,
+      grade: c.grade,
+      guardian: name + " 보호자",
+      phone: "010-0000-" + String(i + 1).padStart(4, "0"),
+      consent: i !== 4,
+      consentAt: i !== 4 ? date : null,
+      status: "active",
+      termStart: addDays(date, -30),
+      termEnd: addDays(date, i === 0 ? 21 : i === 8 ? 14 : 60),
+      termTotal: 24,
+      personal: [],
+      career:
+        i === 8
+          ? "게임 만들기와 영상 편집에 관심이 있습니다. 학교 코딩 동아리에서 활동했습니다."
+          : "",
+      version: 1,
+    };
+  });
+  const invoices = students.map((s, i) => ({
+    id: "INV" + (i + 1),
+    studentId: s.id,
+    label: date.slice(0, 7) + " 수강료",
+    amount: classes.find((c) => c.id === s.classId).fee,
+    credit: 0,
+    due: addDays(date, -6),
+    version: 1,
+    date,
+  }));
+  const payments = invoices
+    .filter((i) => !["INV3", "INV7"].includes(i.id))
+    .map((i) => ({
+      id: "PAY-" + i.id,
+      invoiceId: i.id,
+      amount: i.id === "INV9" ? 200000 : i.amount,
+      date,
+      method: "예시 이월",
+      reference: "seed-" + i.id,
+      actor: "샘플 데이터",
+      at: new Date().toISOString(),
+    }));
+  return {
+    academyId: "forest",
+    revision: 0,
+    settings: {
+      id: "settings",
+      name: "수학의숲 판교학원",
+      address: "판교역 인근 · 예시 학원",
+      phone: "연락처 설정 전",
+      rooms: ["1강의실", "2강의실", "상담실"],
+      weights: { absent: 3, homework: 2, feedback: 2, billing: 1 },
+      threshold: 5,
+      showTeachers: true,
+      showSeats: true,
+      lastDaily: null,
+    },
+    classes,
+    students,
+    invoices,
+    payments,
+    records: [],
+    docs: [],
+    approvals: [],
+    deliveries: [],
+    bookings: [],
+    conversations: [],
+    surveys: [],
+    posts: [],
+    quizzes: [],
+    answers: [],
+    reviews: [],
+    workers: WORKERS.map(([id, name, description, trigger]) => ({
+      id,
+      name,
+      description,
+      trigger,
+      enabled: true,
+      lastRun: null,
+      runs: 0,
+    })),
+    knowledge: [
+      {
+        id: "location",
+        answer:
+          "판교역 인근의 예시 학원입니다. 실제 주소는 원장실 설정에서 확인해 주세요.",
+        version: 1,
+      },
+    ],
+    websiteRequests: [],
+    studioItems: [],
+    studioEvents: [],
+    studioApprovals: [],
+    audit: [],
+  };
+}

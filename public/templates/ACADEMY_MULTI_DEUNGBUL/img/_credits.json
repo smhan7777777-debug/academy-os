@@ -1,0 +1,37 @@
+{
+ "carrel.jpg": {
+  "id": "18795395",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/18795395/",
+  "w": 1600
+ },
+ "night.jpg": {
+  "id": "8921700",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/8921700/",
+  "w": 1100
+ },
+ "plan.jpg": {
+  "id": "5185081",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/5185081/",
+  "w": 1000
+ },
+ "lamp.jpg": {
+  "id": "33940743",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/33940743/",
+  "w": 1000
+ },
+ "kit.jpg": {
+  "id": "5185092",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/5185092/",
+  "w": 1600
+ }
+}

@@ -1,0 +1,30 @@
+{
+ "reader.jpg": {
+  "id": "6958647",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/6958647/",
+  "w": 1600
+ },
+ "pair.jpg": {
+  "id": "32279024",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/32279024/",
+  "w": 1100
+ },
+ "write.jpg": {
+  "id": "5425609",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/5425609/",
+  "w": 1000
+ },
+ "note.jpg": {
+  "id": "37822452",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/37822452/",
+  "w": 1000
+ }
+}

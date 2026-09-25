@@ -1,0 +1,65 @@
+{
+ "puzzle.jpg": {
+  "id": "7296819",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/7296819/",
+  "w": 1600
+ },
+ "tangram.jpg": {
+  "id": "5442706",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/5442706/",
+  "w": 1000
+ },
+ "chess.jpg": {
+  "id": "8465499",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/8465499/",
+  "w": 1000
+ },
+ "blocks.jpg": {
+  "id": "7117502",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/7117502/",
+  "w": 1000
+ },
+ "girl.jpg": {
+  "id": "6974741",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/6974741/",
+  "w": 1000
+ },
+ "game.jpg": {
+  "id": "8111328",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/8111328/",
+  "w": 1000
+ },
+ "wood.jpg": {
+  "id": "7296661",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/7296661/",
+  "w": 1000
+ },
+ "hands.jpg": {
+  "id": "7780770",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/7780770/",
+  "w": 1000
+ },
+ "build.jpg": {
+  "id": "7269707",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/7269707/",
+  "w": 1000
+ }
+}

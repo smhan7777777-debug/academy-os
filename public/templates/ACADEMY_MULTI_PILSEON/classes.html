@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>수업안내 · 모집요강 — {{BIZ_NAME|필선 재수학원}}</title>
+<meta name="description" content="과목 선택표 · 교시 시간표 · 반수반 · 논술 · 수강료.">
+<link rel="stylesheet" href="../_shared/fonts/pretendard.css">
+<link rel="stylesheet" href="../_shared/fonts/bowlby-one.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="classes">
+<main>
+
+  <!-- 하위 머리 — 레퍼런스 하위 페이지의 알약 탭 줄(검은 알약 = 현재) -->
+  <header class="sub-top">
+    <h1>Classes<span>수업안내 · 모집요강</span></h1>
+    <nav class="pills" aria-label="이 페이지">
+      <a class="on" href="#pick">과목 선택</a><a href="#slot">교시 시간표</a><a href="#half">반수반</a><a href="#essay">논술</a><a href="#fee">수강료</a>
+    </nav>
+  </header>
+
+  <!-- 탭 표 — 레퍼런스 세 칸 탭 + 가운데 강조 제목 + 과목 표. 탭 이름·표 내용을 우리 반 운영으로 -->
+  <section class="sec" id="pick" data-tabs>
+    <div class="tabbar" role="tablist">
+      <button type="button" data-tab="pick1">나만의 과목 선택</button>
+      <button type="button" data-tab="pick2">담임 코칭</button>
+      <button type="button" data-tab="pick3">생활 관리</button>
+    </div>
+    <div class="tabbox">
+      <div data-panel="pick1">
+        <p class="hl">필요한 과목만 고릅니다</p>
+        <p class="c">8과목부터 14과목까지. 상담 때 모의고사 성적표를 보고 같이 정합니다.</p>
+        <p class="cap">[정규 종합반 과목 선택표 예시]</p>
+        <div class="tbl-w"><table class="tbl">
+          <thead><tr><th>과목</th><th>개설 강좌</th><th>선택</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">국어</th><td>문학 · 독서 · 언어와 매체 또는 화법과 작문 · 종합</td><td>0–4과목</td></tr>
+            <tr><th scope="row">수학</th><td>수학Ⅰ · 수학Ⅱ · 미적분 또는 확률과 통계 · 종합</td><td>0–4과목</td></tr>
+            <tr><th scope="row">영어</th><td>독해 · 유형 종합</td><td>0–2과목</td></tr>
+            <tr><th scope="row">과학탐구</th><td>물리학Ⅰ · 화학Ⅰ · 생명과학Ⅰ · 지구과학Ⅰ</td><td rowspan="2">0–2과목</td></tr>
+            <tr><th scope="row">사회탐구</th><td>생활과 윤리 · 사회·문화 · 한국지리</td></tr>
+            <tr><th scope="row">한국사</th><td>한국사 정리 8주</td><td>0–1과목</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div data-panel="pick2">
+        <p class="hl">담임이 매주 봅니다</p>
+        <p class="c">반마다 담임 한 명. 매주 월요일 주간 계획표를 받고, 토요일 테스트 뒤 15분 면담을 합니다.</p>
+        <div class="tbl-w"><table class="tbl">
+          <thead><tr><th>요일</th><th>담임이 하는 일</th><th>학생이 내는 것</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">월</th><td>주간 계획표 확인 · 교시 조정</td><td>주간 계획표</td></tr>
+            <tr><th scope="row">수</th><td>질문 교실 배정</td><td>오답 노트 2장</td></tr>
+            <tr><th scope="row">토</th><td>주간 테스트 채점 · 15분 면담</td><td>주간 테스트</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+      <div data-panel="pick3">
+        <p class="hl">생활은 규칙표대로</p>
+        <p class="c">입실 07:40. 휴대폰은 보관함에 두고 퇴실 때 찾아갑니다.</p>
+        <div class="tbl-w"><table class="tbl">
+          <thead><tr><th>항목</th><th>규칙</th><th>보호자 연락</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">지각</th><td>07:40 이후 입실 · 사유서</td><td>당일 문자</td></tr>
+            <tr><th scope="row">결석</th><td>전날까지 담임에게 연락</td><td>당일 전화</td></tr>
+            <tr><th scope="row">자습</th><td>19:00–22:00 지정 좌석</td><td>주간 출결표</td></tr>
+          </tbody>
+        </table></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 교시 판 — 레퍼런스 강사 칸 고르기(선택 = 검은 칸 + 체크). 사람 대신 요일 × 교시 판으로 -->
+  <section class="sec slotsec" id="slot">
+    <h2 class="big-en">Pick your periods<span>교시 시간표 — 수학 반 예시</span></h2>
+    <div class="slots-w"><div class="slots" role="table" aria-label="수학 교시 선택 예시">
+      <div role="row" class="sh"><span role="columnheader"></span><span role="columnheader">월</span><span role="columnheader">화</span><span role="columnheader">수</span><span role="columnheader">목</span><span role="columnheader">금</span></div>
+      <div role="row"><span role="rowheader" class="p">1–2교시</span><span role="cell">수학Ⅰ A</span><span role="cell" class="sel">수학Ⅰ B<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10l4 4 8-9"/></svg></span><span role="cell">수학Ⅰ A</span><span role="cell">미적분 A</span><span role="cell">수학Ⅰ B</span></div>
+      <div role="row"><span role="rowheader" class="p">3–4교시</span><span role="cell">수학Ⅱ A</span><span role="cell">확률과 통계 A</span><span role="cell" class="sel">미적분 B<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10l4 4 8-9"/></svg></span><span role="cell">수학Ⅱ B</span><span role="cell">확률과 통계 B</span></div>
+      <div role="row"><span role="rowheader" class="p">5–6교시</span><span role="cell" class="sel">수학Ⅱ B<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10l4 4 8-9"/></svg></span><span role="cell">미적분 A</span><span role="cell">수학 종합</span><span role="cell">수학Ⅰ A</span><span role="cell">질문 교실</span></div>
+      <div role="row"><span role="rowheader" class="p">7–8교시</span><span role="cell">질문 교실</span><span role="cell">수학 종합</span><span role="cell">수학Ⅱ A</span><span role="cell" class="sel">수학 종합<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10l4 4 8-9"/></svg></span><span role="cell">미적분 B</span></div>
+    </div></div>
+    <p class="fine">같은 강좌가 주 2회 열리고, 둘 중 한 교시를 고릅니다. 나머지 과목도 같은 방식입니다. 강좌 배치는 학기마다 바뀔 수 있습니다.</p>
+  </section>
+
+  <section class="sec half" id="half">
+    <img src="img/book.jpg" alt="안경을 벗어 둔 학생이 펼친 문제집의 한 줄을 연필 끝으로 짚는 모습">
+    <div>
+      <h2 class="big-en">Half-season<span>반수반</span></h2>
+      <ul class="facts">
+        <li><b>합류</b>6월 모의평가 뒤 · 6월 15일(월)</li>
+        <li><b>과목</b>국어 · 수학 · 영어 · 탐구 2 — 5과목 고정</li>
+        <li><b>시간</b>평일 08:30–22:00 · 토 08:30–17:00</li>
+        <li><b>상담</b>휴학 · 복학 일정표를 가져오시면 됩니다</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sec" id="essay">
+    <h2 class="big-en">Essay<span>논술 단과 — 10주</span></h2>
+    <div class="tbl-w"><table class="tbl">
+      <thead><tr><th>반</th><th>대상</th><th>요일 · 시간</th><th>정원</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">수리논술 A</th><td>고3 · N수 · 미적분 선택</td><td>토 09:00–12:00</td><td>14명</td></tr>
+        <tr><th scope="row">수리논술 B</th><td>고3 · N수</td><td>일 13:00–16:00</td><td>14명</td></tr>
+        <tr><th scope="row">인문논술</th><td>고3 · N수</td><td>토 13:00–16:00</td><td>14명</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="sec" id="fee">
+    <h2 class="big-en">Fees<span>수강료 · 모집요강</span></h2>
+    <div class="tbl-w"><table class="tbl fee">
+      <thead><tr><th>반</th><th>기간</th><th>월 수강료</th><th>포함</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">정규 종합반</th><td>2월–11월</td><td class="p">월 198만원</td><td>교재 · 주간 테스트 · 점심·저녁</td></tr>
+        <tr><th scope="row">반수반</th><td>6월–11월</td><td class="p">월 185만원</td><td>교재 · 주간 테스트 · 점심·저녁</td></tr>
+        <tr><th scope="row">윈터 프리반</th><td>12월 · 5주</td><td class="p">5주 120만원</td><td>교재</td></tr>
+        <tr><th scope="row">주말 단과</th><td>한 달 · 4회</td><td class="p">과목당 32만원</td><td>교재 별도</td></tr>
+        <tr><th scope="row">논술 단과</th><td>10주</td><td class="p">96만원</td><td>첨삭 10회</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fine">학원 등록 교습비 기준(부가세 없음). 교습비 반환은 학원법 시행령 기준을 따릅니다. 상담은 전화로 먼저 잡아 주세요.</p>
+    <a class="st wide" href="tel:{{PHONE|02-555-4180}}">전화 상담 {{PHONE|02-555-4180}}</a>
+  </section>
+
+</main>
+<script src="js/chrome.js"></script>
+<script src="../_shared/js/site.js"></script>
+<link rel="stylesheet" href="css/stickynav.css">
+<script src="js/stickynav.js" defer></script>
+</body>
+</html>

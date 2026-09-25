@@ -1,14 +1,29 @@
 {
   "name": "academy-os",
   "private": true,
-  "version": "3.0.0",
+  "version": "4.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node server/index.js --dev",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "node server/index.js",
+    "start": "node server/index.js",
+    "test": "node --test tests/*.test.js",
+    "test:browser": "node tests/browser.e2e.mjs",
+    "test:website": "node tests/website.e2e.mjs",
+    "test:studio": "node tests/studio.e2e.mjs",
+    "test:final-flow": "node tests/final-flow.e2e.mjs",
+    "test:final-design": "node tests/final-design.e2e.mjs",
+    "docs:pdf": "node scripts/academy-business-pdf.mjs",
+    "format:check": "prettier --check \"src/**/*.{js,css}\" \"server/**/*.js\" \"shared/**/*.js\" \"tests/**/*.{js,mjs}\" index.html package.json",
+    "backup": "node server/backup.js"
+  },
+  "engines": {
+    "node": ">=24.14.0"
   },
   "devDependencies": {
+    "@playwright/test": "^1.63.0",
+    "prettier": "^3.9.7",
     "vite": "^6.3.5"
   }
 }

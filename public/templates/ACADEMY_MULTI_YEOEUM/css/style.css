@@ -1,0 +1,221 @@
+@charset "utf-8";
+/* 여음 음악교습소 — 59 학원 ⑤
+   HOW: Ethos Music Academy (https://ethosmusicacademy.it/) — 검정 바탕 위 둥근 모서리 판들 · 사진 판 안 왼쪽 글 · 노랑 덩어리 · 흰 둥근 카드 + 전폭 버튼 · 흰 판 속 추상 도형 · 포스터 격자.
+   색: 레퍼런스 노랑 → 우리 코발트 파랑. 검정 바탕은 레퍼런스처럼. */
+:root{
+  --bg:#0E0F12; --panel:#17191E; --wt:#F5F5F2; --mut:#9EA2AB; --line:rgba(255,255,255,.12);
+  --acc:#4A6CFF; --acc-d:#2F4FE0; --acc-l:#C9D3FF; --ink:#101114;
+  --en:"Encode Sans","Pretendard Variable",system-ui,sans-serif;
+  --ui:"Pretendard Variable",system-ui,sans-serif;
+  --mm-top:70px;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--wt);font-family:var(--ui);font-size:15px;line-height:1.7;letter-spacing:-.015em;word-break:keep-all;overflow-wrap:break-word}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+h1,h2,h3,p{margin:0}
+ul,ol{margin:0;padding:0;list-style:none}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--acc-l);outline-offset:3px}
+.js .pop{opacity:0;transform:translateY(20px);transition:opacity .8s ease,transform .8s ease}
+.js .pop.go{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.js .pop{opacity:1!important;transform:none!important;transition:none!important}}
+html.reduce .js .pop{opacity:1!important;transform:none!important}
+.pad{padding:0 14px}
+
+.btn-y{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;border-radius:999px;background:var(--acc);color:#fff;font-weight:600;font-size:13px;font-family:var(--en)}
+.btn-w{display:inline-flex;align-items:center;justify-content:center;min-height:36px;padding:0 18px;border-radius:999px;background:var(--wt);color:var(--ink);font-weight:600;font-size:13px}
+
+.hd{position:sticky;top:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:12px 28px;background:linear-gradient(var(--bg) 60%,rgba(14,15,18,0))}
+.brand{font-family:var(--en);font-weight:700;font-size:28px;letter-spacing:-.03em;line-height:1;display:flex;align-items:baseline;gap:8px}
+.brand span{font-size:11px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-l)}
+.dnav{display:flex;align-items:center;gap:28px}
+.dnav a{font-family:var(--en);font-size:12.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;display:flex;flex-direction:column;line-height:1.3;align-items:center}
+.dnav a span{font-family:var(--ui);font-size:11px;font-weight:400;letter-spacing:0;text-transform:none;color:var(--mut)}
+.dnav a[aria-current]{color:var(--acc-l)}
+.dnav .btn-y{flex-direction:row}
+.burger{display:none;width:46px;height:46px;border:0;background:transparent;flex-direction:column;justify-content:center;gap:7px;padding:0 10px;cursor:pointer}
+.burger i{display:block;height:2px;background:var(--wt);border-radius:2px}
+.mobile-nav{position:fixed;top:var(--mm-top);left:10px;right:10px;bottom:10px;z-index:1000;background:var(--panel);border-radius:22px;padding:20px 22px 30px;display:none;flex-direction:column;overflow:auto}
+.mobile-nav.open{display:flex}
+.mobile-nav a{font-family:var(--en);font-weight:600;font-size:30px;letter-spacing:-.03em;padding:12px 0;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline}
+.mobile-nav a span{font-family:var(--ui);font-weight:400;font-size:13px;color:var(--mut);letter-spacing:0}
+.mobile-nav .mn-call{font-family:var(--ui);font-size:17px;justify-content:center;align-items:center;gap:8px;margin-top:22px;border:0;background:var(--acc);color:#fff;border-radius:999px;min-height:52px}
+.mn-call svg{width:18px}
+body.mm-open{overflow:hidden}
+
+/* 히어로 — 레퍼런스 충실: 검정 위 둥근 사진 판 · 왼쪽 중간 제목 · 오른쪽 아래 소개 + 버튼 두 개 */
+.hero{margin:0 14px;position:relative;border-radius:26px;overflow:hidden;height:calc(100vh - 84px);height:calc(100svh - 84px);min-height:560px;background:#1a1b20}
+.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,11,14,.85) 0%,rgba(10,11,14,.45) 45%,rgba(10,11,14,.1) 75%),linear-gradient(0deg,rgba(10,11,14,.7),rgba(10,11,14,0) 45%)}
+.hero .l{position:absolute;left:44px;top:50%;transform:translateY(-50%);z-index:2;max-width:640px}
+.hero .k{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-l)}
+.hero h1{font-family:var(--en);font-weight:500;font-size:clamp(42px,4.8vw,68px);line-height:1.04;letter-spacing:-.035em;margin-top:14px}
+.hero .ko{margin-top:16px;font-size:17px;font-weight:600}
+.hero .r{position:absolute;right:44px;bottom:40px;z-index:2;max-width:360px}
+.hero .r p{font-size:14px;color:#D8DAE0}
+.hero .r .bt{margin-top:16px;display:flex;gap:10px}
+
+/* 소개 둘 판 — 파란 덩어리 판 + 사진 판 (레퍼런스 좌우 바꿈) */
+.duo{margin:14px;display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.duo>*{border-radius:26px;overflow:hidden;min-height:520px;position:relative}
+.duo .ph img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0}
+.duo .ph .cap{position:absolute;left:28px;right:28px;bottom:26px;z-index:2;font-size:14px;color:#fff;max-width:26em}
+.duo .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.65),rgba(0,0,0,0) 50%)}
+.duo .blob{background:var(--wt);color:var(--ink);padding:44px 44px}
+.duo .blob::before{content:"";position:absolute;right:-30%;bottom:-34%;width:72%;aspect-ratio:1;background:var(--acc);border-radius:58% 42% 50% 50%/46% 55% 45% 54%}
+.duo .blob::after{content:"";position:absolute;right:-6%;top:-10%;width:24%;aspect-ratio:1;background:var(--acc);border-radius:50%;opacity:.9}
+.duo .blob>*{position:relative;z-index:1}
+.duo .blob .k{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-d)}
+.duo .blob h2{font-family:var(--en);font-weight:500;font-size:clamp(32px,3vw,44px);line-height:1.08;letter-spacing:-.03em;margin-top:12px;max-width:12ch}
+.duo .blob p{margin-top:14px;max-width:21em;font-size:15px;color:#2E3036}
+.duo .blob .rooms{position:absolute;left:44px;bottom:40px;z-index:1;color:var(--ink);font-family:var(--en);font-size:14px;font-weight:600}
+.duo .blob .rooms li{padding:6px 0;border-top:1px solid rgba(16,17,20,.15);min-width:220px}
+
+/* 과정 카드 — 흰 둥근 카드 · 사진 위 나이 칩 · 전폭 파란 버튼 */
+.offer{margin:14px;border-radius:26px;background:var(--panel);padding:50px 34px 40px;position:relative;overflow:hidden}
+.offer::before{content:"";position:absolute;left:30%;bottom:-40%;width:60%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(74,108,255,.45),rgba(74,108,255,0) 70%)}
+.offer .top{position:relative;display:flex;justify-content:space-between;gap:30px;align-items:end}
+.offer .k{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-l)}
+.offer h2{font-family:var(--en);font-weight:500;font-size:clamp(34px,3.4vw,50px);letter-spacing:-.035em;margin-top:8px}
+.offer .top p{max-width:30em;color:var(--mut);font-size:14.5px}
+.cards{position:relative;margin-top:34px;display:grid;grid-template-columns:1.15fr 1fr 1fr 1.15fr;gap:14px}
+.cd{background:var(--wt);color:var(--ink);border-radius:20px;padding:8px 8px 10px;display:flex;flex-direction:column;min-width:0}
+.cd .im{position:relative;border-radius:14px;overflow:hidden}
+.cd img{width:100%;aspect-ratio:4/3;object-fit:cover}
+.cd .age{position:absolute;left:10px;top:10px;background:#fff;color:var(--ink);font-size:11.5px;font-weight:700;border-radius:999px;padding:3px 10px}
+.cd h3{font-family:var(--en);font-weight:600;font-size:20px;letter-spacing:-.02em;margin:14px 10px 4px}
+.cd p{font-size:13.5px;color:#4A4D55;margin:0 10px}
+.cd .pr{margin:10px 10px 14px;font-size:13px;font-weight:700;color:var(--acc-d)}
+.cd .go{margin-top:auto;display:flex;align-items:center;justify-content:center;min-height:42px;border-radius:999px;background:var(--acc);color:#fff;font-weight:600;font-size:13.5px}
+
+/* 연주회 흰 판 — 레퍼런스 마스터클래스 판(추상 도형 + 글, 동그라미 친 낱말) */
+.rec{margin:14px;border-radius:26px;background:var(--wt);color:var(--ink);display:grid;grid-template-columns:.8fr 1fr;gap:50px;padding:24px 50px 24px 24px;align-items:center}
+.art{position:relative;aspect-ratio:1/1.05;border-radius:18px;background:var(--ink);overflow:hidden}
+.art i{position:absolute;display:block}
+.art .a1{left:10%;top:8%;width:44%;aspect-ratio:1;border-radius:50%;background:var(--acc)}
+.art .a2{right:-6%;top:30%;width:40%;height:70%;background:var(--wt);border-radius:0 0 0 999px}
+.art .a3{left:12%;bottom:0;width:30%;height:44%;background:var(--wt);border-radius:999px 999px 0 0}
+.art .a4{left:48%;top:12%;width:6px;height:52%;background:var(--wt)}
+.art .a5{left:20%;bottom:44%;width:16%;aspect-ratio:1;border-radius:50%;background:var(--acc-l)}
+.rec .k{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-d)}
+.rec h2{font-family:var(--en);font-weight:500;font-size:clamp(32px,3vw,44px);line-height:1.1;letter-spacing:-.03em;margin-top:10px}
+.rec h2 em{font-style:normal;position:relative;white-space:nowrap}
+.rec h2 em::after{content:"";position:absolute;left:-8%;right:-8%;top:-10%;bottom:-14%;border:2px solid var(--acc);border-radius:50%;transform:rotate(-4deg)}
+.rec p{margin-top:14px;color:#3A3D44;max-width:30em}
+.prog{margin-top:22px;border-top:1px solid #D9DADE}
+.prog li{display:grid;grid-template-columns:90px 1fr auto;gap:14px;padding:12px 0;border-bottom:1px solid #D9DADE;font-size:14px;align-items:baseline}
+.prog b{font-family:var(--en);font-weight:600}
+.prog span{color:#5A5D66;font-size:13px}
+.rec .btn-y{margin-top:22px;min-height:44px}
+
+/* 진도 격자 — 레퍼런스 포스터 8칸 격자를 사진 4 + 진도 카드 4로 */
+.wall{margin:14px;border-radius:26px;border:1px solid var(--line);padding:44px 34px 40px}
+.wall h2{font-family:var(--en);font-weight:500;font-size:clamp(30px,2.8vw,40px);letter-spacing:-.03em;text-align:center}
+.wall .wsub{text-align:center;color:var(--mut);margin-top:8px}
+.grid8{margin-top:30px;display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.grid8>*{aspect-ratio:1/1;border-radius:12px;overflow:hidden;min-width:0}
+.grid8 img{width:100%;height:100%;object-fit:cover}
+.stp{padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+.stp:nth-of-type(1){background:var(--acc)}.stp:nth-of-type(2){background:var(--wt);color:var(--ink)}.stp:nth-of-type(3){background:#2A2D35}.stp:nth-of-type(4){background:var(--acc-l);color:var(--ink)}
+.stp .n{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;opacity:.85}
+.stp b{font-family:var(--en);font-weight:600;font-size:26px;line-height:1.1;letter-spacing:-.02em}
+.stp p{font-size:13px;opacity:.9}
+.wall .ctr{text-align:center;margin-top:26px}
+.wall .ctr .btn-y{min-height:44px}
+
+/* 하위 */
+.sub{margin:0 14px;border-radius:26px;background:var(--panel);padding:90px 44px 70px;position:relative;overflow:hidden}
+.sub::after{content:"";position:absolute;right:-10%;top:-40%;width:50%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,rgba(74,108,255,.55),rgba(74,108,255,0) 70%)}
+.sub .k{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--acc-l);position:relative}
+.sub h1{position:relative;font-family:var(--en);font-weight:500;font-size:clamp(44px,5vw,72px);letter-spacing:-.04em;line-height:1.02;margin-top:10px}
+.sub p{position:relative;margin-top:14px;color:#C9CCD4;max-width:34em}
+.block{margin:14px;border-radius:26px;background:var(--wt);color:var(--ink);padding:50px 44px}
+.block.dk{background:var(--panel);color:var(--wt)}
+.block h2{font-family:var(--en);font-weight:500;font-size:clamp(30px,3vw,44px);letter-spacing:-.03em;line-height:1.08}
+.block .lead{margin-top:10px;color:#50535B;max-width:40em}
+.block.dk .lead{color:var(--mut)}
+.split{display:grid;grid-template-columns:1fr 1fr;gap:44px;align-items:start;margin-top:30px}
+.split img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:18px}
+.split>*,.duo>*,.cards>*{min-width:0}
+.cd .go{min-height:44px}
+.tbl-w{overflow-x:auto;margin-top:26px}
+.tbl{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}
+.tbl th{text-align:left;font-family:var(--en);font-size:12px;letter-spacing:.1em;text-transform:uppercase;padding:0 12px 12px;border-bottom:2px solid var(--ink)}
+.block.dk .tbl th{border-color:var(--wt)}
+.tbl td{padding:14px 12px;border-bottom:1px solid #D9DADE}
+.block.dk .tbl td{border-color:var(--line)}
+.tbl td.p{font-family:var(--en);font-weight:600;font-size:17px;white-space:nowrap;color:var(--acc-d)}
+.block.dk .tbl td.p{color:var(--acc-l)}
+.fine{margin-top:12px;font-size:13px;color:#6A6D75}
+.block.dk .fine{color:var(--mut)}
+.steps{margin-top:26px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.steps li{background:#E9EBF3;color:var(--ink);border-radius:999px;padding:8px 16px;font-size:13.5px;font-weight:600}
+.steps li.arw{background:none;padding:0;color:var(--acc-d)}
+.faq{margin-top:24px;border-top:1px solid var(--line)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{list-style:none;cursor:pointer;padding:18px 40px 18px 0;font-size:16px;font-weight:600;position:relative}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";position:absolute;right:6px;top:12px;font-size:24px;color:var(--acc-l)}
+.faq details[open] summary::after{content:"–"}
+.faq details p{padding:0 0 18px;color:var(--mut);max-width:48em}
+.map dl{margin:0}
+.map dl div{display:grid;grid-template-columns:90px 1fr;padding:13px 0;border-bottom:1px solid #D9DADE}
+.map dt{font-family:var(--en);font-weight:600;font-size:13px;color:var(--acc-d)}
+.map dd{margin:0}
+
+/* 푸터 — 둥근 판 */
+.ft{padding:14px}
+.ft-panel{border-radius:26px;background:var(--panel);padding:40px 36px 26px;display:grid;grid-template-columns:1.3fr .8fr .8fr 1.2fr;gap:30px}
+.ft-b{font-family:var(--en);font-weight:700;font-size:26px;display:flex;gap:8px;align-items:baseline}
+.ft-b span{font-size:10.5px;font-weight:500;letter-spacing:.18em;text-transform:uppercase;color:var(--acc-l)}
+.ft-a p:not(.ft-b){margin-top:10px;font-size:12.5px;color:var(--mut);line-height:1.8}
+.ft-btn{display:flex;gap:8px;margin-top:16px}
+.ft-col .h,.ft-box .h{font-family:var(--en);font-size:12px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--acc-l);margin-bottom:6px}
+.ft-col a{display:flex;align-items:center;min-height:32px;font-size:13.5px}
+.ft-box{background:#20232A;border-radius:16px;padding:18px 20px;font-size:13px;color:#C9CCD4}
+.ft-box .h+p{margin-bottom:12px}
+.ft-legal{grid-column:1/-1;border-top:1px solid var(--line);padding-top:16px;font-size:12px;color:var(--mut)}
+.mbar{display:none}
+
+@media (max-width:980px){
+  .dnav{display:none}
+  .burger{display:flex}
+  .hd{padding:10px 8px 10px 20px}
+  .brand{min-height:44px;align-items:center}
+  .hero{height:auto;min-height:0;aspect-ratio:auto;padding:0}
+  .hero img{position:relative;height:320px}
+  .hero::after{display:none}
+  .hero .l,.hero .r{position:static;transform:none;max-width:none;padding:24px 22px 0}
+  .hero .r{padding-bottom:26px}
+  .hero h1{font-size:40px}
+  .duo{grid-template-columns:1fr}
+  .duo>*{min-height:420px}
+  .duo .blob{padding:34px 26px}
+  .duo .blob .rooms{left:26px}
+  .offer{padding:40px 18px 26px}
+  .offer .top{flex-direction:column;align-items:start}
+  .cards{grid-template-columns:1fr 1fr}
+  .rec{grid-template-columns:1fr;padding:18px 18px 30px;gap:26px}
+  .wall{padding:34px 14px}
+  .grid8{grid-template-columns:1fr 1fr}
+  .stp{padding:12px}.stp b{font-size:19px}.stp p{font-size:11.5px;line-height:1.45}
+  .sub{padding:60px 22px 44px}
+  .block{padding:36px 20px}
+  .split{grid-template-columns:1fr}
+  .ft-panel{grid-template-columns:1fr 1fr;padding:30px 20px}
+  .ft-a,.ft-box{grid-column:1/-1}
+  .ft-col a{min-height:44px}
+  .btn-y,.btn-w{min-height:44px}
+  .mbar{display:grid;grid-template-columns:1.3fr 1fr 1fr;position:fixed;left:0;right:0;bottom:0;z-index:900;background:#000}
+  .mbar a{display:flex;align-items:center;justify-content:center;gap:6px;min-height:56px;font-size:14px;font-weight:600}
+  .mbar a.tel{background:var(--acc)}
+  .mbar svg{width:17px}
+  body{padding-bottom:56px}
+}
+@media (max-width:560px){
+  .cards{grid-template-columns:1fr}
+  .prog li{grid-template-columns:70px 1fr}
+  .prog li span:last-child{grid-column:2}
+}

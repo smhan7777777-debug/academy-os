@@ -1,0 +1,23 @@
+{
+ "desk.jpg": {
+  "id": "6671685",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/6671685/",
+  "w": 1600
+ },
+ "book.jpg": {
+  "id": "6958557",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/6958557/",
+  "w": 1000
+ },
+ "room.jpg": {
+  "id": "5905434",
+  "source": "Pexels",
+  "license": "Pexels License (free commercial use)",
+  "page": "https://www.pexels.com/photo/5905434/",
+  "w": 1600
+ }
+}

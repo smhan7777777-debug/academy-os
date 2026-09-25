@@ -1,36 +1,40 @@
-# 원장실 Academy OS — 작업 정본 (2026-09-15 기준)
+﻿# 원장실 Academy OS — 현재 작업 정본 (2026-09-16)
 
-이 파일이 학원 OS 작업의 정본이다. 설계 결정과 변경 이력은 `DESIGN.md`, 실행법은 `README.md`.
+## 제품의 핵심 — 2026-09-17 사용자 정정
 
-## 무엇인가
-- agent1000.kr 플랫폼과 연동해 사업하는 학원 운영체제. 플랫폼이 무료로 주는 프리미엄 웹사이트의 **뒷면 사무실**이다.
-- 원칙 한 줄: **AI 직원이 서류를 준비하고 원장은 확인(결재)·고치기·보류만 한다. 웹사이트는 결재함의 입구이고, 결재된 것만 밖으로 나간다.**
-- Vite 바닐라 앱: `index.html`(셸) + `src/styles.css`(토큰·스타일) + `src/app.js`(엔진+화면, 단일 파일). 외부 AI·발송·결제·플랫폼 API는 아직 미연결(모의). 상태는 localStorage `wonjangsil-v3`.
+**다음 세션은 `MEMORY.md`부터 읽는다.** 최신 인계·실행 상태·검증 결과·미완료 작업을 정리했다. 상세 변경은 `SESSION_MEMORY_2026-09-17_WEBSITE.md`가 기준이며 이전 날짜 문서는 배경 자료다.
 
-## 실행·배포
-- `START.cmd` 더블클릭 또는 `npm run dev` → http://localhost:5173. 빌드 `npm run build`.
-- GitHub `smhan7777777-debug/academy-os` main → Vercel 자동 배포(URL은 아직 사용자에게 못 받음).
-- 브라우저 확인은 Playwright MCP로 localStorage.clear() 후 DOM 검사, 스크린샷은 확인 뒤 삭제.
+**추가 정정: 6개 기본 템플릿 선택 + 선택한 사이트의 히어로 영상 + 예약·문의 직원 및 콘텐츠 생성 직원 두 명이 무료 기본 상품이다.** 단일 포털에 무료 배지를 넣는 것으로 이를 복원했다고 설명하지 않는다. 이번 구현과 한계는 `SESSION_MEMORY_2026-09-17_WEBSITE.md`를 먼저 읽는다. `/start`는 디자인 선택, `/site`는 연결된 로컬 웹사이트다. 과거 플랫폼의 직원·템플릿 코드가 존재하는 것과 라이브 실행 검증을 구분한다.
 
-## 현재 상태(커밋 순)
-- 67a60bb 2차 리뷰 4건: 학생·수납 우선순위/필터, 오답 작업→강사 화면 탭, 브리핑 줄 나눔.
-- 5074f39 웹사이트 연동: 웹사이트·예약 담당, 모의 사이트, 상담 신청·문의·후기→서류, 결재→공개(`afterApprove`).
-- 0581d99 플랫폼 장점 이식: 바로 쓰기 카드 4장, 오늘 노동·절감 추정, 광고비 0원 KPI, 트리거 3종, 월요 브리핑, 무료 AI 레벨 테스트, 지식 슬롯 9칸, 콘텐츠 담당 5면 초안, 플레이스 꾸러미, 공유 도구 4종, 재등록 담당, 학부모 페이지 확장, 경영지원, AI 매니저 채팅, 직원 요금제 표시. 직원 18명.
-- 5c3f218 프리미엄 UI: Pet Care OS 결(숲색 사이드바·크림 활성 탭·금색 눈썹·세이지 히어로·Pretendard+Nanum Myeongjo).
+**무료 프리미엄 학원 웹사이트 제공이 마케팅의 핵심이며, OS는 그 웹사이트의 뒷면 사무실이다.** 무료 웹사이트 → 상담·문의 유입 → 원장 결재·학생 등록 → 승인된 소개·소식·답변·일정의 웹사이트 반영이 한 제품의 흐름이다. 웹사이트·예약 담당과 콘텐츠 담당은 무료 제공 항목으로 유지한다.
 
-## 코드 지도(app.js)
-- 데이터: `STAFF`, `seed()`, `seedSite()`, `KSLOT`(지식 슬롯), `LEVEL_Q`, `MATERIALS`, `BIZ_*`.
-- 엔진: `addDoc/approve/hold/editDoc/guard/invalidate`, `afterApprove`(결재→웹 반영), `careScore/attention`, `consultSlots`, `webBook/webAsk/webReview`, `prepareContent/preparePlace/prepareReenroll/parentBook/parentSurvey/prepareBizDoc`, `laborToday/triggers/mondayBrief/managerAnswer`, `morningPrep`.
-- 화면: `NAV` → `vToday vStudents vLesson vTimetable vWrong(원장 요약)/vWrongGrid(강사) vBilling vWebsite vContent vBiz vStaff vRules vGuide`, 역할별 `vTeacher vParent vStudent`, `openDoc/openStudent`, 모든 클릭은 `bind()`.
+외부 연동이 아직 없다는 이유로 이 구조를 삭제하거나 단순한 부가 공개 페이지로 축소하지 않는다. 미연결/예시 상태를 정확히 알리면서 제품 구조와 제공 가치를 보존한다. 범위를 바꾸기 전에 사용자의 제품 의도를 확인한다. 이번 복구는 `SESSION_MEMORY_2026-09-17.md`를 읽는다.
 
-## 지켜야 할 규칙
-- 이모지 금지, "발송했다/게시했다" 완료형 금지(초안·모의 전송만), 성적·합격 실적 표현 금지(초안 자체를 만들지 않음), "확정"은 원장이 결재한 뒤에만(웹은 "요청이 접수됐어요"), 확률·이유 추측 금지(신호 점수만), 미성년자 기록에 공유 버튼 없음, 환불은 계산표로만.
-- 새 목록 화면은 "확인 필요 먼저 + 학년·반 필터" 패턴, 운영 작업 화면은 담당 역할 화면에 두고 원장에게는 요약만.
-- UI 손질은 DESIGN.md "프리미엄 UI" 토큰(`--forest --cream --gold --sage`)을 유지한다.
+이 폴더는 별도 academy-os 저장소다. 다른 sermon/worship/pet-care 앱을 수정하지 않는다.
+먼저 `README.md`와 `SESSION_MEMORY_2026-09-16.md`를 읽는다. `AUDIT_2026-09-16.md`는 수정 전 감사 기록이며, `DESIGN.md`의 과거 기능 계획보다 이번 실제 구현과 세션 메모리가 우선한다.
 
-## 다음 작업 후보(우선순위)
-1. 학생 페이지 9종(틀린 문제 체크·AI에게 물어보기·시험 대비 스케줄러·멘탈 케어 연결).
-2. 손님 광장 피드·동네 랭킹(dong 기준, 측정 전이면 "집계 안 됨").
-3. 승인 스냅샷(본문·수신자 해시)과 7단계 전송 상태기계.
-4. 스탬프·소개 쿠폰(양쪽 쿠폰), 학부모 초대 흐름.
-5. 실제 플랫폼 연결: `POST /api/booking/request`, `/api/booking/slots`, academy-review/popup/inquiry/place-report(대응표는 DESIGN.md).
+## 현재 구조
+
+Node.js 24.14+ HTTP 서버 + SQLite + Vite 바닐라 UI. 역할·검수·결재·금액·시간표 규칙은 서버에서 검사한다. 업무 로직은 `server/domain.js`, 저장은 `server/store.js`, 순수 계산은 `shared/core.js`, UI는 `src/` 모듈로 분리했다. localStorage는 업무 저장소가 아니다.
+
+`START.cmd` 또는 `npm.cmd run dev`로 http://localhost:5173. `npm.cmd run build` 후 `npm.cmd start`는 같은 API와 빌드 파일을 제공한다. 정적 Vercel 배포만으로 동작하지 않는다. 시작 전 포트를 확인한다. 숨김 서버 로그와 DB는 `%LOCALAPPDATA%/AcademyOS/` 아래에 둔다.
+
+## 작업 원칙
+
+- 기존 미커밋 작업, 로컬 SQLite, `wonjangsil-v3` 원본을 보존한다. 브라우저 저장소를 초기화하지 않는다.
+- 모든 텍스트는 UTF-8. PowerShell 파이프로 Python에 한글 코드를 보내면 인코딩 손실이 날 수 있으므로 한글 수정은 apply_patch 또는 UTF-8 네이티브 쓰기를 사용한다.
+- 외부 AI·문자·결제·플랫폼 미연결 상태를 실제 실행으로 설명하지 않는다. 로컬 처리기는 규칙·서식 작업이다. 예약·문의 처리기를 직원 한 명으로 묶어 표시한다.
+- 결재는 본문·수신자·채널 스냅샷에 묶는다. 수정 시 재검수·재결재. 출결 미입력은 미관찰. 관찰·통계·학습 성과를 만들지 않는다.
+- 서버 권한 검사와 학생·교사·학원 범위 필터를 유지한다. 기본 계정 전환은 명시적인 로컬 체험 모드다. 실제 회원·보호자 인증을 구현한 것으로 주장하지 않는다.
+- 수납·승인·감사 기록은 덮어쓰거나 삭제하지 않는다. 금액 변경은 명시적인 장부 이벤트로 남긴다.
+- 숲색·크림·세이지 중심 디자인, 읽을 수 있는 금색 보조 문구, 실제 결재 작업을 먼저 보이는 레이아웃을 유지한다. 이모지 대신 SVG 아이콘, 한국어 안내, 키보드 접근성을 사용한다.
+- 회귀 테스트는 격리 DB에서 실행한다. 스크린샷은 확인 후 삭제한다. 코드 형식을 유지하고 `npm.cmd test`, `npm.cmd run format:check`, `npm.cmd run build`를 확인한다. 화면 흐름 변경 시 `npm.cmd run test:browser`도 실행한다.
+- 실제 외부 발송·게시·결제·배포는 이번 로컬 수정 요청의 범위가 아니다. 변경한 기능, 실제 검증, 남은 제한을 세션 메모리에 기록한다.
+
+## 데이터베이스 — 앱마다 Supabase 프로젝트 하나 (2026-09-19)
+- 4개 앱(sermon / worship / academy-os / pet-care)은 **각자 다른 Supabase 프로젝트**를 쓴다. 정본은 루트 `DATABASE.md`.
+- 자기 앱 줄의 ref·키만 쓴다. 다른 앱의 DB·테이블·키를 읽거나 쓰지 않는다. 키는 `.env`(gitignore)에만.
+- 4개 프로젝트 **생성 완료**(2026-09-19). ref·상태·다음 일은 `DATABASE.md` §1. 테이블·SQL·키 조회는 `node tools/supa.mjs`(토큰: 루트 `.supabase.env`, 복사 금지). 옛 프로젝트는 폐기 — 다시 넣지 않는다.
+
+- **DB(2026-09-20)**: 이 앱의 Supabase 프로젝트·ref·키 위치·CLI 사용법·삭제 금지 규칙은 이 폴더의 `SUPABASE.md`가 정본이다. DB 작업 전에 반드시 읽는다. 다른 앱의 프로젝트는 쓰지 않는다.
+- **운영 규칙(2026-09-20)**: Supabase 테이블 생성·수정·데이터 갱신은 오너에게 되묻지 않고 즉시 실행(SQL 파일로 남김). 삭제(drop/truncate/대량 delete/버킷·프로젝트)만 허락 필요. `gh` CLI 로그인 완료 — 오너가 요청하면 팝업 없이 `git push`, Vercel 자동 배포.

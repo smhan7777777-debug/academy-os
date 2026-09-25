@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>학원안내 · 오시는 길 — {{BIZ_NAME|필선 재수학원}}</title>
+<meta name="description" content="층별 시설 · 하루 일과 · 담임 역할 · 주간 식단 · 자주 묻는 질문 · 오시는 길.">
+<link rel="stylesheet" href="../_shared/fonts/pretendard.css">
+<link rel="stylesheet" href="../_shared/fonts/bowlby-one.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body data-page="about">
+<main>
+
+  <header class="sub-top">
+    <h1>About<span>학원안내</span></h1>
+    <nav class="pills" aria-label="이 페이지">
+      <a class="on" href="#floor">층별 안내</a><a href="#day">하루 일과</a><a href="#staff">담임 · 강사</a><a href="#meal">식단</a><a href="#faq">질문</a><a href="#visit">오시는 길</a>
+    </nav>
+  </header>
+
+  <!-- 층별 안내 — 사진 한 장 + 층 목록(레퍼런스 시설안내의 표 조판) -->
+  <section class="sec floor" id="floor">
+    <img src="img/room.jpg" alt="빈 교실 책상 위에 펼친 공책과 필통, 의자에 걸린 가방">
+    <div>
+      <h2 class="big-en">Three floors<span>세 개 층이 전부입니다</span></h2>
+      <dl class="fl">
+        <div><dt>5F</dt><dd>자습실 96석 · 칸막이 좌석 · 휴대폰 보관함</dd></div>
+        <div><dt>4F</dt><dd>강의실 6실(24–30석) · 질문 교실 · 담임실</dd></div>
+        <div><dt>3F</dt><dd>상담실 · 큰 강의실(설명회) · 식당 · 휴게실</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <section class="sec" id="day">
+    <h2 class="big-en">The whole day<span>평일 하루 — 토요일은 17:00 퇴실</span></h2>
+    <div class="tbl-w"><table class="tbl">
+      <thead><tr><th>시간</th><th>무엇을</th><th>어디서</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">07:40</th><td>입실 · 휴대폰 보관 · 출결 체크</td><td>5F</td></tr>
+        <tr><th scope="row">08:00</th><td>아침 영단어 테스트 20문항</td><td>각 강의실</td></tr>
+        <tr><th scope="row">08:30–12:00</th><td>1–4교시 (교시당 50분)</td><td>4F</td></tr>
+        <tr><th scope="row">12:10</th><td>점심</td><td>3F 식당</td></tr>
+        <tr><th scope="row">13:10–17:50</th><td>5–8교시 · 수업 없는 교시는 자습</td><td>4F · 5F</td></tr>
+        <tr><th scope="row">18:10</th><td>저녁</td><td>3F 식당</td></tr>
+        <tr><th scope="row">19:00–22:00</th><td>야간 자습 · 담임 면담(주 1회)</td><td>5F · 담임실</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- 담임·강사 — 실명·사진 없이 역할만 -->
+  <section class="sec" id="staff">
+    <h2 class="big-en">Who does what<span>담임 · 과목 강사 · 조교</span></h2>
+    <ul class="roles">
+      <li><b>반 담임</b><p>반 하나에 한 명. 주간 계획표 · 출결 · 15분 면담.</p></li>
+      <li><b>과목 강사</b><p>국어 · 수학 · 영어 · 탐구. 교시마다 이동 수업.</p></li>
+      <li><b>질문 교실 조교</b><p>평일 13:10–22:00 상주. 수학 · 과학 풀이 질문.</p></li>
+      <li><b>입시 상담</b><p>6월 · 9월 모의평가 뒤 성적표로 지원 전략 상담.</p></li>
+    </ul>
+  </section>
+
+  <section class="sec" id="meal">
+    <h2 class="big-en">This week's menu<span>주간 식단 — 11월 넷째 주</span></h2>
+    <div class="tbl-w"><table class="tbl menu">
+      <thead><tr><th></th><th>월</th><th>화</th><th>수</th><th>목</th><th>금</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">점심</th><td>제육볶음 · 콩나물국</td><td>닭갈비덮밥 · 미소국</td><td>돈가스 · 양배추 샐러드</td><td>소고기무국 · 계란말이</td><td>카레라이스 · 요구르트</td></tr>
+        <tr><th scope="row">저녁</th><td>김치볶음밥 · 어묵국</td><td>고등어구이 · 된장국</td><td>잔치국수 · 유부초밥</td><td>불고기 · 시금치무침</td><td>짜장밥 · 군만두</td></tr>
+      </tbody>
+    </table></div>
+    <p class="fine">식단은 사정에 따라 바뀔 수 있습니다. 알레르기가 있으면 등록 때 알려 주세요.</p>
+  </section>
+
+  <section class="sec" id="faq">
+    <h2 class="big-en">Questions<span>자주 묻는 질문</span></h2>
+    <div class="faq">
+      <details><summary>과목 선택은 언제 바꿀 수 있나요?</summary><p>매달 마지막 주에 한 번 바꿀 수 있습니다. 교시가 차면 다음 달로 넘어갑니다.</p></details>
+      <details><summary>외부생도 논술이나 주말 단과만 들을 수 있나요?</summary><p>네. 논술 · 주말 단과는 외부생도 받습니다. 정원이 차면 대기 순서로 연락드립니다.</p></details>
+      <details><summary>기숙사가 있나요?</summary><p>없습니다. 걸어서 다닐 수 있는 주변 학사 목록을 상담 때 드립니다.</p></details>
+      <details><summary>결석하면 수업은 어떻게 되나요?</summary><p>교재와 판서 사진을 담임이 전해 주고, 질문 교실에서 이어 봅니다.</p></details>
+    </div>
+  </section>
+
+  <section class="sec" id="members">
+    <h2 class="big-en">Members<span>재원생 안내</span></h2>
+    <ul class="roles two">
+      <li><b>휴대폰 보관</b><p>입실 때 보관함에 넣고 퇴실 때 찾아갑니다.</p></li>
+      <li><b>외출 · 조퇴</b><p>담임에게 말하고 보호자 문자 확인 뒤 나갑니다.</p></li>
+    </ul>
+  </section>
+
+  <section class="sec visit" id="visit">
+    <h2 class="big-en">Visit<span>오시는 길</span></h2>
+    <div class="info"><dl>
+      <div><dt>주소</dt><dd>{{ADDRESS|서울 강남구 역삼로 00, 3–5층}}</dd></div>
+      <div><dt>지하철</dt><dd>2호선 역삼역 3번 출구 도보 6분</dd></div>
+      <div><dt>상담</dt><dd>{{HOURS|평일 09:00–18:00 · 토 09:00–15:00 상담}}</dd></div>
+      <div><dt>전화</dt><dd><a href="tel:{{PHONE|02-555-4180}}">{{PHONE|02-555-4180}}</a></dd></div>
+    </dl></div>
+    <p class="links2"><a class="st" href="{{NAVER_MAP_URL|#}}">네이버 지도로 보기</a><a class="st ghost" href="{{KAKAO_URL|#}}">카카오톡 상담</a></p>
+    <div class="policy">
+      <p id="privacy"><b>개인정보 처리방침</b> 상담 기록은 등록 여부가 정해지면 1년 안에 지웁니다.</p>
+      <p id="cctv"><b>영상정보처리기기</b> 복도 · 자습실 출입구에만 설치합니다.</p>
+      <p id="terms"><b>이용약관</b> 교습비 반환은 학원법 시행령 기준을 따릅니다.</p>
+    </div>
+  </section>
+
+</main>
+<script src="js/chrome.js"></script>
+<script src="../_shared/js/site.js"></script>
+<link rel="stylesheet" href="css/stickynav.css">
+<script src="js/stickynav.js" defer></script>
+</body>
+</html>

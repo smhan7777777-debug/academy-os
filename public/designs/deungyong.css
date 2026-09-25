@@ -1,0 +1,948 @@
+
+/* ============================================================
+   EDU_ACADEMY_MULTI_DEUNGYONG — 등용학원 (登龍)
+   대입 재수 종합학원
+
+   DESIGN SYSTEM — measured from apple.com/kr (1440px, 2026-08-05)
+   ------------------------------------------------------------
+   Not "inspired by". The values below were read off Apple's live
+   pages with a headless browser and used directly:
+
+     ground      #ffffff   ·  bands #000000 and #f5f5f7
+     text        #1d1d1f   ·  secondary #6e6e73  ·  tertiary #86868b
+     hairline    #d2d2d7
+     body        17px      ·  display 80 / 56 / 32, weight 600
+     tracking    normal    ·  display line-height 1.08–1.18
+     buttons     44px tall, padding 11px 21px, radius 980px, 17px
+     sections    112px top and bottom
+     container   1260px, text column 980px
+
+   Three principles carried over from that reading:
+     1. FEWER, BIGGER. Apple's whole product page uses three display
+        sizes. Hierarchy comes from scale, not from weight or colour.
+     2. NO TINT. Pure white, pure black, one neutral grey. Warm
+        beige grounds are the current machine-made default; Apple
+        has none, and neither does this.
+     3. ONE COLOUR. Red carries action and 모집중 status. Nothing else
+        is coloured, ever.
+   ============================================================ */
+
+/* ============================================================
+   1. TOKENS
+   ============================================================ */
+:root{
+  --white:#fff;
+  --grey:#f5f5f7;          /* Apple's exact band / tile grey */
+  --black:#000;
+  --ink:#1d1d1f;           /* primary text on light */
+  --ink-2:#6e6e73;         /* body copy — 5.1:1 */
+  --mute:#86868b;          /* tertiary, large or decorative only */
+  --line:#d2d2d7;
+  --line-2:#e8e8ed;
+
+  --on-dark:#f5f5f7;       /* text on black */
+  --on-dark-2:#a1a1a6;     /* secondary on black — 7.0:1 */
+
+  --red:#d70015;           /* the one colour — 5.4:1 on white */
+  --red-d:#b0000f;
+  --red-l:#ff453a;         /* on black — 6.2:1 */
+
+  /* type — three display steps, exactly like the reference */
+  --t-hero:clamp(2.375rem,1.45rem + 3.3vw,4.5rem);  /* 38 → 72 */
+  --t-h2:clamp(2rem,1.35rem + 2.3vw,3.5rem);       /* 32 → 56 */
+  --t-h3:clamp(1.5rem,1.25rem + .85vw,2rem);       /* 24 → 32 */
+  --t-lead:clamp(1.1875rem,1.13rem + .2vw,1.3125rem); /* 19 → 21 */
+  --t-body:1.0625rem;      /* 17 */
+  --t-sm:.875rem;          /* 14 */
+  --t-xs:.75rem;           /* 12 */
+
+  /* rhythm */
+  --sec:clamp(64px,7.8vw,112px);
+  --gap:clamp(20px,2vw,28px);
+  --edge:clamp(20px,3vw,40px);
+  --wrap:1260px;
+  --text-col:980px;
+
+  --r-tile:18px;
+  --r-hero:28px;
+  --r-pill:980px;
+
+  /* Apple's entrance curve, and a firm ease-out for interactions */
+  --ease:cubic-bezier(.28,.11,.32,1);
+  --ease-out:cubic-bezier(.23,1,.32,1);
+
+  --z-sticky:200; --z-fab:150; --z-toast:400;
+}
+
+/* ============================================================
+   2. BASE
+   ============================================================ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--white);color:var(--ink);
+  /* SF Pro on Apple hardware; Pretendard is its Korean equivalent everywhere else */
+  font-family:-apple-system,BlinkMacSystemFont,"Pretendard Variable",Pretendard,
+    "Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  font-size:var(--t-body);font-weight:400;line-height:1.6;letter-spacing:-.01em;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  word-break:keep-all;overflow-x:hidden;
+}
+img{max-width:100%;display:block}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:0;background:none;color:inherit}
+/* balance stops Korean headlines from orphaning a two-syllable last line */
+h1,h2,h3,h4{margin:0;font-weight:600;letter-spacing:-.015em;text-wrap:balance}
+.lead,.page-desc{text-wrap:pretty}
+
+p{margin:0}
+:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:4px}
+
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--edge)}
+.col{max-width:var(--text-col);margin:0 auto}
+.num{font-variant-numeric:tabular-nums lining-nums}
+
+/* ============================================================
+   3. TYPE
+   ============================================================ */
+.hero-t{font-size:var(--t-hero);line-height:1.08;letter-spacing:-.022em;font-weight:600}
+.h2{font-size:var(--t-h2);line-height:1.14;letter-spacing:-.018em;font-weight:600}
+.h3{font-size:var(--t-h3);line-height:1.25;letter-spacing:-.012em;font-weight:600}
+.lead{font-size:var(--t-lead);line-height:1.5;color:var(--ink-2);font-weight:400}
+.on-black .lead,.lead.on-black{color:var(--on-dark-2)}
+.eyebrow{
+  font-size:var(--t-lead);line-height:1.4;font-weight:600;color:var(--red);
+  letter-spacing:-.012em;display:block;
+}
+.on-black .eyebrow{color:var(--red-l)}
+.kicker{
+  font-size:var(--t-sm);font-weight:600;letter-spacing:.02em;color:var(--mute);
+  text-transform:uppercase;display:block;
+}
+.r{color:var(--red)}
+.on-black .r{color:var(--red-l)}
+
+/* ============================================================
+   4. BUTTONS — 44px pills, straight off the reference
+   ============================================================ */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  min-height:44px;padding:11px 22px;border-radius:var(--r-pill);
+  font-size:var(--t-body);font-weight:400;letter-spacing:-.012em;line-height:1.2;
+  white-space:nowrap;
+  transition:background-color .22s var(--ease-out),color .22s var(--ease-out),
+             border-color .22s var(--ease-out),opacity .22s var(--ease-out),
+             transform .14s var(--ease-out);
+}
+.btn:active{transform:scale(.97)}
+.btn-red{background:var(--red);color:var(--white)}
+.btn-ink{background:var(--ink);color:var(--white)}
+.btn-light{background:var(--white);color:var(--ink)}
+.btn-line{border:1px solid var(--line);color:var(--ink)}
+.btn-line-d{border:1px solid rgba(245,245,247,.32);color:var(--on-dark)}
+@media (hover:hover) and (pointer:fine){
+  .btn-red:hover{background:var(--red-d)}
+  .btn-ink:hover{background:#000}
+  .btn-light:hover{opacity:.88}
+  .btn-line:hover{background:var(--ink);border-color:var(--ink);color:var(--white)}
+  .btn-line-d:hover{background:var(--on-dark);border-color:var(--on-dark);color:var(--ink)}
+}
+.btn-lg{min-height:52px;padding:14px 30px;font-size:var(--t-lead)}
+
+/* Apple's other CTA: a coloured text link with a chevron */
+.alink{
+  display:inline-flex;align-items:center;gap:4px;color:var(--red);
+  font-size:var(--t-lead);letter-spacing:-.012em;line-height:1.4;
+  transition:opacity .2s var(--ease-out);
+}
+.on-black .alink{color:var(--red-l)}
+.alink svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2.4;
+  stroke-linecap:round;stroke-linejoin:round;margin-top:1px;
+  transition:transform .26s var(--ease-out)}
+@media (hover:hover) and (pointer:fine){
+  .alink:hover{text-decoration:underline;text-underline-offset:4px}
+  .alink:hover svg{transform:translateX(3px)}
+}
+.alink-row{display:flex;flex-wrap:wrap;gap:28px;align-items:center}
+
+/* ============================================================
+   5. SECTIONS
+   ============================================================ */
+.sec{padding:var(--sec) 0}
+.sec-sm{padding:calc(var(--sec) * .58) 0}
+.on-grey{background:var(--grey)}
+.on-black{background:var(--black);color:var(--on-dark)}
+.on-black h1,.on-black h2,.on-black h3{color:var(--on-dark)}
+
+/* section head: centred, big, the way the reference does it */
+.shead{text-align:center;max-width:820px;margin:0 auto calc(var(--sec) * .5)}
+.shead .h2{margin-top:6px}
+.shead .lead{margin:18px auto 0;max-width:62ch}
+.shead .alink-row{justify-content:center;margin-top:24px}
+.shead-l{text-align:left;margin-left:0}
+.shead-l .lead,.shead-l .alink-row{margin-left:0;justify-content:flex-start}
+
+/* ============================================================
+   6. MOTION
+   ------------------------------------------------------------
+   Framer Motion semantics, zero dependencies (the platform
+   contract forbids third-party <script src>):
+     .m-*   ≈ whileInView   — main.js adds .is-in
+     --p    ≈ useScroll     — element progress, written per frame
+     --i    ≈ staggerChildren
+   Restrained to match the reference: a fade-up, a tile scale-in,
+   and parallax. Nothing bounces, nothing flies.
+   ============================================================ */
+.m-up{
+  opacity:0;transform:translate3d(0,32px,0);
+  transition:opacity .9s var(--ease),transform .9s var(--ease);
+  transition-delay:calc(var(--i,0) * 90ms);
+}
+.m-up.is-in{opacity:1;transform:none}
+
+.m-tile{
+  opacity:0;transform:translate3d(0,28px,0) scale(.965);
+  transition:opacity .85s var(--ease),transform .85s var(--ease);
+  transition-delay:calc(var(--i,0) * 80ms);
+}
+.m-tile.is-in{opacity:1;transform:none}
+
+.m-stag>*{--i:0}
+.m-stag>*:nth-child(2){--i:1}  .m-stag>*:nth-child(3){--i:2}
+.m-stag>*:nth-child(4){--i:3}  .m-stag>*:nth-child(5){--i:4}
+.m-stag>*:nth-child(6){--i:5}  .m-stag>*:nth-child(7){--i:6}
+.m-stag>*:nth-child(8){--i:7}
+
+[data-scrub]{will-change:transform}
+
+.scrollbar-line{
+  position:fixed;left:0;top:0;height:2px;width:100%;z-index:calc(var(--z-sticky) + 5);
+  background:var(--red);transform:scaleX(var(--p,0));transform-origin:left;pointer-events:none;
+}
+
+/* Native scroll timeline: where the browser has it, the parallax layers run
+   off the main thread and main.js skips them (they carry data-native).
+   Everywhere else the --p declarations stay in charge. */
+@supports (animation-timeline:view()){
+  @media (prefers-reduced-motion:no-preference){
+    .ps-media[data-native]{
+      animation:scrubMedia linear both;
+      animation-timeline:view();animation-range:entry 0% exit 100%;
+    }
+    .consult-band .bgimg[data-native]{
+      animation:scrubBanner linear both;
+      animation-timeline:view();animation-range:entry 0% exit 100%;
+    }
+    @keyframes scrubMedia{ from{transform:scale(1.12)} to{transform:scale(1)} }
+    @keyframes scrubBanner{ from{transform:scale(1.16)} to{transform:scale(1)} }
+  }
+}
+
+/* ============================================================
+   7. CHROME
+   ============================================================ */
+.topbar{background:var(--black);color:var(--on-dark-2);font-size:var(--t-xs)}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;height:34px;gap:20px}
+.topbar .tl{display:flex;gap:22px}
+.topbar .tr{display:flex;gap:12px;align-items:center}
+.topbar .tr b{color:var(--on-dark);font-weight:500}
+@media (hover:hover) and (pointer:fine){.topbar a:hover{color:var(--on-dark)}}
+
+/* Apple's translucent sticky bar */
+.site-head{
+  position:sticky;top:0;z-index:var(--z-sticky);
+  background:rgba(255,255,255,.78);backdrop-filter:saturate(180%) blur(20px);
+  -webkit-backdrop-filter:saturate(180%) blur(20px);
+  border-bottom:1px solid var(--line-2);
+  transition:transform .4s var(--ease);
+}
+.site-head.hide{transform:translateY(-100%)}
+.hbar{display:flex;align-items:center;gap:40px;height:56px}
+
+.brandwrap{display:flex;align-items:center}
+.brandwrap .txt{display:flex;flex-direction:column;line-height:1}
+.brand{font-size:1.25rem;font-weight:600;letter-spacing:-.03em;color:var(--ink)}
+.brand em{color:var(--red);font-style:normal}
+.brand-sub{font-size:.5625rem;letter-spacing:.14em;color:var(--mute);margin-top:4px;
+  font-weight:500;text-transform:uppercase;white-space:nowrap}
+
+.gnav{display:flex;gap:34px}
+.gnav a{font-size:var(--t-sm);font-weight:400;color:var(--ink);opacity:.86;
+  transition:opacity .2s var(--ease-out),color .2s var(--ease-out)}
+.gnav a.active{color:var(--red);opacity:1}
+@media (hover:hover) and (pointer:fine){.gnav a:hover{opacity:1}}
+
+.head-r{display:flex;align-items:center;gap:16px;margin-left:auto}
+.head-tel{display:flex;flex-direction:column;line-height:1.15;text-align:right}
+.head-tel .lb{font-size:.5625rem;letter-spacing:.12em;color:var(--mute);font-weight:500;text-transform:uppercase}
+.head-tel .no{font-size:.9375rem;font-weight:600;color:var(--ink)}
+.head-r .btn{min-height:32px;padding:6px 15px;font-size:var(--t-sm)}
+
+.icon-btn{width:44px;height:44px;display:none;align-items:center;justify-content:center;color:var(--ink)}
+.icon-btn svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round}
+.mobile-nav{display:none;flex-direction:column;background:var(--white);border-bottom:1px solid var(--line-2)}
+.mobile-nav.open{display:flex}
+.mobile-nav a{padding:16px var(--edge);font-size:var(--t-body);border-top:1px solid var(--line-2)}
+.mobile-nav a:first-child{border-top:0}
+
+/* ============================================================
+   8. HERO — black stage, headline above the photograph
+   ------------------------------------------------------------
+   Text is never laid over the image. The reference puts the
+   headline on solid colour and the product beneath it.
+   ============================================================ */
+.hero{background:var(--black);color:var(--on-dark)}
+.promo{position:relative}
+.promo-view{overflow:hidden}
+.promo-track{display:flex;transition:transform .85s var(--ease)}
+.promo-slide{
+  min-width:100%;display:flex;flex-direction:column;align-items:center;
+  padding-top:clamp(40px,4.4vw,68px);
+}
+.pc{
+  text-align:center;max-width:820px;padding:0 var(--edge);
+  display:flex;flex-direction:column;align-items:center;gap:16px;
+}
+.pc .eyebrow{color:var(--red-l)}
+
+/* ------------------------------------------------------------
+   HERO MOTION
+   Three separate jobs, deliberately not one shared class:
+     1. INTRO   — the first slide's content arrives in sequence
+                  on load (eyebrow → headline → copy → CTAs → photo)
+     2. RE-ENTRY— every slide replays that sequence when it becomes
+                  active, so a slide change is a composed cut and
+                  not just a horizontal shove
+     3. DEPART  — the content lifts and fades as the hero scrolls
+                  away, so the photograph is what hands over to the
+                  next section
+   ------------------------------------------------------------ */
+/* 🔴 The resting state is VISIBLE. The intro is an animation applied by the
+   .is-live class, never an opacity:0 base that JS has to undo — if main.js
+   fails to load, a hidden base would leave the hero permanently blank.
+   Motion here is additive, never load-bearing. */
+@keyframes heroIn{
+  from{opacity:0;transform:translate3d(0,26px,0)}
+  to{opacity:1;transform:none}
+}
+@keyframes heroShotIn{
+  from{opacity:0;transform:translate3d(0,34px,0) scale(.985)}
+  to{opacity:1;transform:none}
+}
+.promo-slide.is-live .pc>*{animation:heroIn .8s var(--ease) both}
+.promo-slide.is-live .pc>*:nth-child(1){animation-delay:.06s}
+.promo-slide.is-live .pc>*:nth-child(2){animation-delay:.15s}
+.promo-slide.is-live .pc>*:nth-child(3){animation-delay:.24s}
+.promo-slide.is-live .pc>*:nth-child(4){animation-delay:.33s}
+.promo-slide.is-live .ps-shot{animation:heroShotIn 1s var(--ease) .3s both}
+
+/* DEPART — main.js writes --dp on .hero and these inherit it.
+   No local `--dp:0` here: a local declaration would shadow the
+   inherited value and the departure would never move. */
+.promo-ui,.pc{
+  transform:translate3d(0,calc(var(--dp,0) * -44px),0);
+  opacity:calc(1 - var(--dp,0) * 1.15);
+}
+
+@media (prefers-reduced-motion:reduce){
+  .promo-slide.is-live .pc>*,.promo-slide.is-live .ps-shot{animation:none}
+  .promo-ui,.pc{transform:none;opacity:1}
+}
+.promo-slide h2{
+  font-size:var(--t-hero);line-height:1.08;letter-spacing:-.022em;
+  font-weight:600;color:var(--on-dark);
+}
+/* red never carries display type — it lives on eyebrows, buttons and badges.
+   A 72px neon headline is the tell that separates a template from a product page. */
+.promo-slide h2 .hl,.promo-slide h2 .rd{color:inherit}
+.promo-slide p{font-size:var(--t-lead);line-height:1.5;color:var(--on-dark-2);max-width:52ch}
+.pmeta{font-size:var(--t-lead);color:var(--on-dark-2)}
+.pcta{display:flex;gap:14px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+
+/* the photograph: full-bleed, fading up into the black stage */
+.ps-shot{
+  width:100%;height:clamp(240px,30vw,420px);margin-top:clamp(28px,3.2vw,48px);
+  overflow:hidden;position:relative;
+}
+.ps-media{
+  position:absolute;inset:0;background-size:cover;background-position:center;
+  transform:scale(calc(1.12 - .12 * var(--p,0)));
+}
+.ps-shot::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 16%,rgba(0,0,0,0) 46%);
+}
+
+/* controls: quiet, centred, the way a gallery index reads */
+.promo-ui{
+  display:flex;align-items:center;justify-content:center;gap:22px;
+  padding:26px var(--edge) 0;
+}
+.promo-nav{
+  width:36px;height:36px;border-radius:50%;background:rgba(245,245,247,.14);
+  color:var(--on-dark);display:flex;align-items:center;justify-content:center;
+  transition:background-color .22s var(--ease-out),transform .14s var(--ease-out);
+}
+.promo-nav svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.8;
+  stroke-linecap:round;stroke-linejoin:round}
+.promo-nav:active{transform:scale(.92)}
+@media (hover:hover) and (pointer:fine){.promo-nav:hover{background:rgba(245,245,247,.28)}}
+.promo-dots{display:flex;gap:8px;align-items:center}
+.promo-dots button{
+  width:8px;height:8px;border-radius:50%;background:rgba(245,245,247,.3);
+  transition:background-color .3s var(--ease-out),width .4s var(--ease),border-radius .4s var(--ease);
+}
+.promo-dots button.on{background:var(--on-dark);width:26px;border-radius:4px}
+.promo-count,.promo-pause{
+  font-size:var(--t-sm);color:var(--on-dark-2);letter-spacing:.01em;
+  display:inline-flex;align-items:center;gap:6px;
+}
+.promo-pause svg{width:10px;height:10px;fill:currentColor}
+@media (hover:hover) and (pointer:fine){.promo-pause:hover{color:var(--on-dark)}}
+
+/* ============================================================
+   9. 모집중 RAIL
+   ============================================================ */
+.rail{background:var(--white);border-bottom:1px solid var(--line-2)}
+.rail .wrap{display:flex;align-items:center;gap:10px;overflow-x:auto;
+  scrollbar-width:none;-ms-overflow-style:none;padding-block:16px}
+.rail .wrap::-webkit-scrollbar{display:none}
+.rail .rh{flex:none;font-size:var(--t-sm);font-weight:600;color:var(--ink);padding-right:8px;white-space:nowrap}
+.rail a{
+  flex:none;display:inline-flex;align-items:center;gap:7px;white-space:nowrap;
+  min-height:34px;padding:7px 15px;border-radius:var(--r-pill);background:var(--grey);
+  font-size:var(--t-sm);color:var(--ink);
+  transition:background-color .22s var(--ease-out),color .22s var(--ease-out);
+}
+.rail a::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--red);flex:none}
+.rail a .st{color:var(--mute);font-size:var(--t-xs)}
+@media (hover:hover) and (pointer:fine){
+  .rail a:hover{background:var(--ink);color:var(--white)}
+  .rail a:hover .st{color:rgba(255,255,255,.7)}
+}
+
+/* ============================================================
+   10. HORIZONTAL CARD RAIL — the reference's 라인업 pattern
+   ============================================================ */
+.hrail-head{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+  margin-bottom:calc(var(--sec) * .34)}
+.hrail-nav{display:flex;gap:10px;flex:none}
+.hrail-nav button{
+  width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,.05);color:var(--ink);
+  display:flex;align-items:center;justify-content:center;
+  transition:background-color .22s var(--ease-out),opacity .22s var(--ease-out),transform .14s var(--ease-out);
+}
+.hrail-nav button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.9;
+  stroke-linecap:round;stroke-linejoin:round}
+.hrail-nav button:active{transform:scale(.92)}
+.hrail-nav button[disabled]{opacity:.32;pointer-events:none}
+@media (hover:hover) and (pointer:fine){.hrail-nav button:hover{background:rgba(0,0,0,.1)}}
+
+.hrail{
+  display:grid;grid-auto-flow:column;gap:var(--gap);
+  overflow-x:auto;scroll-snap-type:x mandatory;scroll-behavior:smooth;
+  scrollbar-width:none;-ms-overflow-style:none;
+  padding-inline:var(--edge);margin-inline:calc(-1 * var(--edge));
+  scroll-padding-left:var(--edge);padding-bottom:4px;
+}
+.hrail::-webkit-scrollbar{display:none}
+.hrail>*{scroll-snap-align:start}
+
+/* ============================================================
+   11. BRANCH TILES
+   ============================================================ */
+.branch-grid{grid-auto-columns:minmax(260px,1fr)}
+.branch-card{display:block;position:relative}
+.branch-card .ph{
+  aspect-ratio:4/5;overflow:hidden;border-radius:var(--r-hero);background:var(--grey);position:relative;
+}
+.branch-card .ph img{width:100%;height:100%;object-fit:cover;
+  transition:transform .8s var(--ease-out)}
+.branch-card .ph::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 52%,rgba(0,0,0,.62) 100%);
+}
+.branch-card .bd{position:absolute;left:22px;right:22px;bottom:20px;z-index:2;color:var(--white)}
+.branch-card .bd b{display:block;font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em}
+.branch-card .bd .go{display:inline-flex;align-items:center;gap:4px;font-size:var(--t-sm);
+  color:rgba(255,255,255,.82);margin-top:4px}
+@media (hover:hover) and (pointer:fine){
+  .branch-card:hover .ph img{transform:scale(1.04)}
+}
+
+/* ============================================================
+   12. GRADE-CUT — sticky headline, table scrolls past it
+   ============================================================ */
+.gradeband{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.55fr);gap:var(--sec);
+  align-items:start}
+.gradeband .gb-l{position:sticky;top:120px}
+.gradeband .gb-l .lead{margin-top:16px}
+.gradeband .gb-cta{margin-top:26px;display:flex;gap:14px;flex-wrap:wrap}
+
+.gtable{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums lining-nums}
+.gtable thead th{
+  font-size:var(--t-sm);font-weight:400;color:var(--mute);text-align:center;
+  padding:0 6px 16px;border-bottom:1px solid var(--line);letter-spacing:-.005em;
+}
+.gtable thead th:first-child{text-align:left}
+.gtable tbody td{
+  font-size:clamp(1.0625rem,.9rem + .5vw,1.375rem);font-weight:400;color:var(--ink);
+  text-align:center;padding:20px 6px;border-bottom:1px solid var(--line-2);
+}
+.gtable tbody td.gd{text-align:left;font-weight:600;letter-spacing:-.015em}
+.gtable tbody tr:first-child td{color:var(--red);font-weight:600}
+
+/* ============================================================
+   13. STORY TILES
+   ============================================================ */
+.storyrow{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.story-card{
+  position:relative;overflow:hidden;border-radius:var(--r-tile);cursor:pointer;
+  background:var(--grey);aspect-ratio:16/11;border-radius:var(--r-hero);
+}
+.story-card img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out)}
+.story-card::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 42%,rgba(0,0,0,.72) 100%)}
+.story-card .play{
+  position:absolute;top:22px;left:22px;width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.24);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  display:flex;align-items:center;justify-content:center;z-index:3;
+  transition:background-color .26s var(--ease-out),transform .3s var(--ease-out);
+}
+.story-card .play svg{width:15px;height:15px;fill:var(--white);margin-left:2px}
+.story-card .cap{position:absolute;left:26px;right:26px;bottom:24px;z-index:3;color:var(--white)}
+.story-card .cap .k{font-size:var(--t-sm);color:rgba(255,255,255,.76);display:block;margin-bottom:6px}
+.story-card .cap b{display:block;font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;line-height:1.24}
+@media (hover:hover) and (pointer:fine){
+  .story-card:hover img{transform:scale(1.04)}
+  .story-card:hover .play{background:var(--red);transform:scale(1.06)}
+}
+
+/* ============================================================
+   14. PRODUCT RAIL — white cards on the grey band
+   ============================================================ */
+.prod-grid{grid-auto-columns:minmax(250px,1fr)}
+.prod-card{
+  display:flex;flex-direction:column;background:var(--white);border-radius:var(--r-tile);
+  overflow:hidden;transition:transform .4s var(--ease-out);
+}
+.prod-card .ph{aspect-ratio:1/1;overflow:hidden;background:var(--grey);position:relative}
+.prod-card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out)}
+.prod-card .pbadge{
+  position:absolute;top:14px;left:14px;z-index:2;background:var(--red);color:var(--white);
+  font-size:var(--t-xs);font-weight:600;padding:5px 11px;border-radius:var(--r-pill);
+}
+.prod-card .pbadge.new{background:var(--ink)}
+.prod-card .pbadge.best{background:var(--ink)}
+.prod-card .bd{padding:22px 24px 26px;display:flex;flex-direction:column;gap:6px;flex:1}
+.prod-card .bd .cat{font-size:var(--t-sm);color:var(--mute)}
+.prod-card .bd b{font-size:var(--t-lead);font-weight:600;letter-spacing:-.015em;line-height:1.32}
+.prod-card .bd .price{display:flex;align-items:baseline;gap:9px;margin-top:auto;padding-top:14px;
+  font-variant-numeric:tabular-nums}
+.prod-card .bd .price .dc{color:var(--red);font-weight:600;font-size:var(--t-sm)}
+.prod-card .bd .price .now{font-size:var(--t-lead);font-weight:600;color:var(--ink)}
+.prod-card .bd .price .was{font-size:var(--t-sm);color:var(--mute);text-decoration:line-through}
+@media (hover:hover) and (pointer:fine){
+  .prod-card:hover{transform:translateY(-4px)}
+  .prod-card:hover .ph img{transform:scale(1.04)}
+}
+
+/* filter bar (subpages) */
+.filterbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:calc(var(--sec) * .4);justify-content:center}
+.filterbar button{
+  min-height:34px;padding:7px 17px;border-radius:var(--r-pill);background:var(--grey);
+  font-size:var(--t-sm);color:var(--ink);
+  transition:background-color .22s var(--ease-out),color .22s var(--ease-out);
+}
+.filterbar button.on{background:var(--ink);color:var(--white)}
+@media (hover:hover) and (pointer:fine){.filterbar button:hover{background:var(--line)}}
+.filterbar button.on:hover{background:var(--ink)}
+
+/* ============================================================
+   15. MARQUEE — a quiet keyword band, speed follows scroll
+   ============================================================ */
+.marq{background:var(--black);overflow:hidden;padding:22px 0}
+.marq__row{
+  display:flex;gap:52px;white-space:nowrap;width:max-content;
+  animation:marq 46s linear infinite;animation-duration:calc(46s / var(--vel,1));
+}
+.marq span{color:var(--on-dark-2);font-size:var(--t-body);display:inline-flex;align-items:center;gap:52px}
+.marq span::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--red-l);flex:none}
+.marq__row.rev{animation-direction:reverse}
+@keyframes marq{to{transform:translate3d(-50%,0,0)}}
+
+/* ============================================================
+   16. TRI-COLUMN
+   ============================================================ */
+.tri-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sec) var(--gap)}
+.tri-col{min-width:0}
+.tri-col>h3{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;
+  padding-bottom:18px;border-bottom:1px solid var(--line);
+  display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.tri-col>h3 .plus{font-size:var(--t-sm);font-weight:400;color:var(--red);flex:none}
+.mini-card{display:flex;gap:18px;padding:22px 0;border-bottom:1px solid var(--line-2);align-items:center}
+.mini-card:last-child{border-bottom:0}
+.mini-card .th{width:84px;height:84px;border-radius:12px;overflow:hidden;flex:none;background:var(--grey)}
+.mini-card .th img{width:100%;height:100%;object-fit:cover;transition:transform .7s var(--ease-out)}
+.mini-card .mc{display:flex;flex-direction:column;gap:3px;min-width:0}
+.mini-card .mc .k{font-size:var(--t-sm);color:var(--red)}
+.mini-card .mc b{font-size:var(--t-body);font-weight:600;letter-spacing:-.015em;line-height:1.4}
+.mini-card .mc .d{font-size:var(--t-sm);color:var(--mute)}
+@media (hover:hover) and (pointer:fine){
+  .mini-card:hover .th img{transform:scale(1.06)}
+  .mini-card:hover .mc b{color:var(--red)}
+}
+
+/* ============================================================
+   17. SATISFACTION — two very large figures on black
+   ============================================================ */
+.statsband{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sec) var(--gap);
+  text-align:center}
+.statsband .sc{display:flex;flex-direction:column;align-items:center;gap:10px}
+.statsband .fig{
+  font-size:clamp(4rem,2rem + 8vw,9rem);font-weight:600;line-height:.94;letter-spacing:-.04em;
+  color:var(--on-dark);font-variant-numeric:tabular-nums lining-nums;
+}
+.statsband .sc .k{font-size:var(--t-lead);color:var(--red-l);font-weight:600}
+.statsband .sc h3{font-size:var(--t-h3);font-weight:600;color:var(--on-dark);margin-top:4px}
+.statsband .sc .sub{font-size:var(--t-sm);color:var(--on-dark-2);max-width:34ch}
+
+/* ============================================================
+   18. CONSULTING — full-bleed image, headline on solid ground
+   ============================================================ */
+.consult-band{position:relative;overflow:hidden;background:var(--black);
+  min-height:clamp(460px,58vw,660px);display:flex;align-items:flex-end}
+.consult-band .bgimg{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  transform:scale(calc(1.16 - .16 * var(--p,0)));
+}
+.consult-band::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.32) 0%,rgba(0,0,0,.28) 26%,rgba(0,0,0,.78) 62%,rgba(0,0,0,.95) 100%)}
+.consult-band>.wrap{width:100%;position:relative;z-index:2;padding-bottom:var(--sec)}
+.consult-band .cb{max-width:640px;color:var(--white)}
+.consult-band .cb h2{color:var(--white);margin:10px 0 16px}
+.consult-band .cb h2 em{color:inherit;font-style:normal}
+.consult-band .cb p{color:rgba(255,255,255,.82);font-size:var(--t-lead);margin-bottom:26px}
+.consult-band .cb .eyebrow{color:#fff}
+.consult-band .cb p{text-shadow:0 1px 24px rgba(0,0,0,.5)}
+.consult-band .cb h2{text-shadow:0 2px 30px rgba(0,0,0,.45)}
+
+/* ============================================================
+   19. FORM — large fields on the grey band
+   ============================================================ */
+.consult-form{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:var(--sec);
+  align-items:start}
+/* 56px display needs a full-width column. In the two-up blocks the text
+   column is ~430px, where it orphans a line — step it down there. */
+.consult-form .cf-l .h2,.gradeband .gb-l .h2{
+  font-size:clamp(1.75rem,1.25rem + 1.55vw,2.5rem);line-height:1.18;
+}
+.consult-form .cf-l .lead{margin-top:16px}
+.consult-form .cf-l .tel{margin-top:32px}
+.consult-form .cf-l .tel .k{font-size:var(--t-sm);color:var(--mute);display:block}
+.consult-form .cf-l .tel b{display:block;font-size:var(--t-h3);font-weight:600;color:var(--ink);
+  letter-spacing:-.02em;margin-top:2px}
+
+.cf-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.cf-form .row-full{grid-column:1/-1}
+.field{display:flex;flex-direction:column;gap:7px}
+.field>span.lb{font-size:var(--t-sm);color:var(--mute);padding-left:2px}
+.cf-form input,.cf-form select{
+  width:100%;min-height:52px;padding:14px 17px;border:1px solid transparent;border-radius:12px;
+  font-family:inherit;font-size:var(--t-body);letter-spacing:-.01em;
+  background:var(--white);color:var(--ink);appearance:none;-webkit-appearance:none;
+  transition:border-color .2s var(--ease-out),box-shadow .2s var(--ease-out);
+}
+.cf-form select{
+  background-image:linear-gradient(45deg,transparent 50%,var(--mute) 50%),
+    linear-gradient(135deg,var(--mute) 50%,transparent 50%);
+  background-position:calc(100% - 20px) calc(50% + 1px),calc(100% - 15px) calc(50% + 1px);
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat;padding-right:44px;
+}
+.cf-form input:focus,.cf-form select:focus{
+  outline:none;border-color:var(--red);box-shadow:0 0 0 3px rgba(215,0,21,.14);
+}
+.cf-form .chk{display:flex;align-items:center;gap:11px;font-size:var(--t-sm);color:var(--ink-2);
+  cursor:pointer;padding:6px 2px}
+.cf-form .chk input[type=checkbox]{
+  width:18px;height:18px;flex:none;min-height:0;padding:0;border:0;border-radius:0;
+  appearance:auto;-webkit-appearance:checkbox;accent-color:var(--red);cursor:pointer;background:none;
+}
+.cf-form .chk a{color:var(--red);text-decoration:underline;text-underline-offset:3px}
+.cf-form .submit{
+  grid-column:1/-1;justify-self:start;margin-top:6px;
+  min-height:52px;padding:14px 34px;border-radius:var(--r-pill);
+  background:var(--red);color:var(--white);font-size:var(--t-lead);font-family:inherit;
+  transition:background-color .22s var(--ease-out),transform .14s var(--ease-out);
+}
+.cf-form .submit:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){.cf-form .submit:hover{background:var(--red-d)}}
+
+/* ============================================================
+   20. NEWS
+   ============================================================ */
+.news-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--sec) var(--gap)}
+.news-col{min-width:0}
+.news-col h3{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;
+  padding-bottom:18px;border-bottom:1px solid var(--line);
+  display:flex;justify-content:space-between;align-items:baseline;gap:12px}
+.news-col h3 .plus{font-size:var(--t-sm);font-weight:400;color:var(--red);flex:none}
+.news-col ul{list-style:none;margin:0;padding:0}
+.news-col li{display:flex;justify-content:space-between;gap:16px;align-items:baseline;
+  padding:18px 0;border-bottom:1px solid var(--line-2);min-width:0}
+.news-col li a{font-size:var(--t-body);color:var(--ink);min-width:0;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  transition:color .2s var(--ease-out)}
+.news-col li .dt{font-size:var(--t-sm);color:var(--mute);flex:none;font-variant-numeric:tabular-nums}
+.news-col li .badge-n{font-size:var(--t-xs);font-weight:600;color:var(--red);margin-right:7px}
+@media (hover:hover) and (pointer:fine){.news-col li a:hover{color:var(--red)}}
+
+/* ============================================================
+   21. SUBPAGE SHARED BLOCKS
+   ============================================================ */
+.page-head{background:var(--grey);padding:calc(var(--sec) * .62) 0 calc(var(--sec) * .5);text-align:center}
+.crumb{font-size:var(--t-sm);color:var(--mute);margin-bottom:12px}
+.crumb .sep{margin:0 8px;opacity:.5}
+.page-title{font-size:var(--t-h2);font-weight:600;letter-spacing:-.018em;line-height:1.14}
+.page-title .r{color:var(--red)}
+.page-desc{color:var(--ink-2);margin:16px auto 0;font-size:var(--t-lead);max-width:58ch}
+@media (hover:hover) and (pointer:fine){.crumb a:hover{color:var(--red)}}
+
+.prose{max-width:68ch}
+.prose p{color:var(--ink-2);margin-bottom:20px}
+
+.split{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--sec);align-items:center}
+.split img{width:100%;border-radius:var(--r-tile)}
+.split.rev .txt{order:2}
+
+.pillar-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.pillar{background:var(--grey);border-radius:var(--r-tile);padding:32px 28px}
+.pillar .no{font-size:var(--t-sm);color:var(--red);font-weight:600}
+.pillar h4{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;margin:12px 0 10px}
+.pillar p{font-size:var(--t-body);color:var(--ink-2)}
+
+.course-list{display:grid;gap:var(--gap)}
+.course-row{display:grid;grid-template-columns:220px minmax(0,1fr) auto;gap:var(--gap);
+  align-items:center;background:var(--grey);border-radius:var(--r-tile);padding:26px 30px;
+  transition:background-color .3s var(--ease-out)}
+.course-row .cimg{aspect-ratio:16/10;border-radius:12px;overflow:hidden}
+.course-row .cimg img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out)}
+.course-row .cinfo .tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap}
+.course-row .cinfo .tags span{font-size:var(--t-xs);color:var(--mute)}
+.course-row .cinfo .tags span.rec{color:var(--red);font-weight:600}
+.course-row .cinfo h4{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;margin-bottom:8px}
+.course-row .cinfo p{font-size:var(--t-body);color:var(--ink-2)}
+.course-row .cinfo .feat{display:flex;gap:24px;margin-top:14px;flex-wrap:wrap}
+.course-row .cinfo .feat div{font-size:var(--t-sm);color:var(--mute)}
+.course-row .cinfo .feat b{color:var(--ink);font-weight:600}
+.course-row .cbtn{display:flex;flex-direction:column;gap:10px;min-width:150px}
+@media (hover:hover) and (pointer:fine){.course-row:hover .cimg img{transform:scale(1.04)}}
+
+.review-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--gap)}
+.review-card{background:var(--grey);border-radius:var(--r-tile);padding:32px}
+.review-card .rtop{display:flex;align-items:center;gap:14px;margin-bottom:20px}
+.review-card .rtop .av{width:48px;height:48px;border-radius:50%;overflow:hidden;flex:none;background:var(--line-2)}
+.review-card .rtop .av img{width:100%;height:100%;object-fit:cover}
+.review-card .rtop .who b{display:block;font-weight:600}
+.review-card .rtop .who .uni{font-size:var(--t-sm);color:var(--red)}
+.review-card .rq{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;line-height:1.32;margin-bottom:14px}
+.review-card p{font-size:var(--t-body);color:var(--ink-2)}
+.review-card .score{display:inline-block;margin-top:18px;font-size:var(--t-sm);color:var(--red);font-weight:600}
+
+.faculty-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--gap)}
+.fac-card .ph{aspect-ratio:3/4;overflow:hidden;border-radius:var(--r-tile);background:var(--grey)}
+.fac-card .ph img{width:100%;height:100%;object-fit:cover;transition:transform .8s var(--ease-out)}
+.fac-card .bd{padding-top:18px}
+.fac-card .bd .subj{font-size:var(--t-sm);color:var(--red)}
+.fac-card .bd b{display:block;font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;margin:4px 0 8px}
+.fac-card .bd p{font-size:var(--t-sm);color:var(--ink-2)}
+@media (hover:hover) and (pointer:fine){.fac-card:hover .ph img{transform:scale(1.04)}}
+
+.loc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--gap)}
+.loc-card{background:var(--grey);border-radius:var(--r-tile);overflow:hidden}
+.loc-card .lmap{aspect-ratio:16/8;overflow:hidden}
+.loc-card .lmap img{width:100%;height:100%;object-fit:cover}
+.loc-card .lbd{padding:28px 30px 32px}
+.loc-card .lbd h4{font-size:var(--t-h3);font-weight:600;letter-spacing:-.015em;margin-bottom:14px}
+.loc-card .lbd .lrow{display:flex;gap:12px;font-size:var(--t-body);color:var(--ink-2);padding:5px 0}
+.loc-card .lbd .lrow .lk{color:var(--mute);min-width:56px;flex:none;font-size:var(--t-sm);padding-top:3px}
+.loc-card .lbd .tel{font-size:var(--t-h3);font-weight:600;color:var(--ink);margin-top:12px;letter-spacing:-.02em}
+
+/* ============================================================
+   22. FOOTER / FAB / TOAST
+   ============================================================ */
+.social-band{background:var(--white);border-top:1px solid var(--line-2);padding:36px 0}
+.social-band .wrap{display:flex;align-items:center;justify-content:center;gap:16px}
+.social-band a{width:44px;height:44px;border-radius:50%;background:var(--grey);
+  display:flex;align-items:center;justify-content:center;
+  transition:background-color .24s var(--ease-out)}
+.social-band a svg{width:19px;height:19px;fill:var(--ink-2);transition:fill .24s var(--ease-out)}
+@media (hover:hover) and (pointer:fine){
+  .social-band a:hover{background:var(--ink)}
+  .social-band a:hover svg{fill:var(--white)}
+}
+
+.site-foot{background:var(--grey);color:var(--ink-2);padding:calc(var(--sec) * .5) 0 32px;font-size:var(--t-sm)}
+.foot-top{display:grid;grid-template-columns:1.6fr 1fr 1fr 1fr;gap:var(--gap);
+  padding-bottom:36px;border-bottom:1px solid var(--line)}
+.foot-brand .nm{font-size:1.25rem;font-weight:600;color:var(--ink);
+  display:flex;flex-direction:column;line-height:1.1;letter-spacing:-.03em}
+.foot-brand .nm em{color:var(--red);font-style:normal;display:inline}
+.foot-brand .nm .sub{font-size:.5625rem;letter-spacing:.14em;color:var(--mute);margin-top:8px;
+  font-weight:500;text-transform:uppercase}
+.foot-brand p{margin-top:16px;max-width:34ch}
+.foot-col h4{color:var(--ink);font-size:var(--t-sm);font-weight:600;margin-bottom:12px}
+.foot-col a{display:block;padding:5px 0;color:var(--ink-2);transition:color .18s var(--ease-out)}
+.foot-body{padding-top:28px;color:var(--mute);line-height:1.9;font-size:var(--t-xs)}
+.foot-body b{color:var(--ink-2);font-weight:500}
+.foot-legal{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:12px;font-size:var(--t-sm)}
+.foot-legal a{color:var(--ink-2)}
+.foot-copy{margin-top:14px;padding-top:14px;border-top:1px solid var(--line)}
+@media (hover:hover) and (pointer:fine){
+  .foot-col a:hover,.foot-legal a:hover{color:var(--red)}
+}
+
+.fab{
+  position:fixed;right:24px;bottom:24px;z-index:var(--z-fab);
+  background:var(--ink);color:var(--white);min-height:48px;padding:12px 22px;
+  border-radius:var(--r-pill);font-size:var(--t-sm);
+  display:flex;align-items:center;gap:9px;
+  box-shadow:0 8px 28px rgba(0,0,0,.22);
+  transition:background-color .24s var(--ease-out),opacity .4s var(--ease),transform .4s var(--ease);
+}
+.fab svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.7;
+  stroke-linecap:round;stroke-linejoin:round}
+.fab.tuck{opacity:0;transform:translateY(14px) scale(.96);pointer-events:none}
+@media (hover:hover) and (pointer:fine){.fab:hover{background:var(--red)}}
+
+.toast{
+  position:fixed;left:50%;bottom:34px;transform:translateX(-50%) translateY(12px) scale(.97);
+  z-index:var(--z-toast);background:rgba(29,29,31,.94);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  color:var(--white);padding:15px 26px;border-radius:14px;font-size:var(--t-body);
+  opacity:0;pointer-events:none;box-shadow:0 12px 40px rgba(0,0,0,.3);
+  transition:opacity .3s var(--ease-out),transform .3s var(--ease-out);
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0) scale(1)}
+
+/* ============================================================
+   22b. TYPOGRAPHY ON DARK
+   ------------------------------------------------------------
+   🔴 This block lives HERE, near the end, on purpose. It is a
+   cross-cutting override of the component rules in sections 8,
+   17 and 18, and it ties with them on specificity (0,1,1) —
+   so placing it up in the BASE section silently lost every
+   declaration to the later rule. Cascade order is the fix;
+   do not "tidy" this back up to the top.
+   ============================================================ */
+/* ------------------------------------------------------------
+   OPTICAL COMPENSATION FOR LIGHT-ON-DARK
+   White type on black blooms: stems read thinner and Hangul
+   counters (ㅇ ㅁ ㅎ) close up, so the same weight that looks
+   right on white looks weak and slightly furry on black.
+   Apple gets away with weight 600 because SF Pro ships a Display
+   optical size that thickens stems at large sizes. Pretendard has
+   one optical size, so the compensation is manual:
+     · pure #fff, not #f5f5f7   (that grey is for body, not display)
+     · weight 600 → 700 at display sizes only
+     · tracking relaxed -.022 → -.014em, because bloom already
+       closes the gaps that tight tracking is meant to close
+     · grayscale smoothing kept, which counteracts the bloom
+   Body copy on black keeps weight 400 — this applies to display
+   type only, where the effect is visible.
+   ------------------------------------------------------------ */
+.on-black h2,.on-black h3,.promo-slide h2,.consult-band .cb h2,.statsband .fig{
+  color:#fff;font-weight:700;letter-spacing:-.014em;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+/* the hero subhead is a primary read, not a caption — take it up a step */
+.promo-slide p{color:#e8e8ed}
+
+/* ============================================================
+   23. LEGACY ALIASES — the other seven pages are not migrated yet
+   ============================================================ */
+.stitle{font-size:var(--t-h2);font-weight:600;letter-spacing:-.018em;line-height:1.14}
+.stitle .r{color:var(--red)}
+.btn-seal{background:var(--red);color:var(--white)}
+.btn-dark{background:var(--ink);color:var(--white)}
+.btn-ghost{border:1px solid rgba(245,245,247,.32);color:var(--on-dark)}
+.btn-sm{min-height:34px;padding:7px 16px;font-size:var(--t-sm)}
+.badge{font-size:var(--t-sm);color:var(--red);font-weight:600}
+.smore,.tlink{display:inline-flex;align-items:center;gap:5px;color:var(--red);font-size:var(--t-body)}
+@media (hover:hover) and (pointer:fine){
+  .btn-seal:hover{background:var(--red-d)}
+  .btn-dark:hover{background:#000}
+  .smore:hover,.tlink:hover{text-decoration:underline;text-underline-offset:4px}
+}
+.reveal{opacity:0;transform:translate3d(0,32px,0);
+  transition:opacity .9s var(--ease),transform .9s var(--ease)}
+.reveal.in{opacity:1;transform:none}
+.stag>*{opacity:0;transform:translate3d(0,28px,0);
+  transition:opacity .85s var(--ease),transform .85s var(--ease)}
+.stag.in>*{opacity:1;transform:none}
+.stag.in>*:nth-child(2){transition-delay:.09s}
+.stag.in>*:nth-child(3){transition-delay:.18s}
+.stag.in>*:nth-child(4){transition-delay:.27s}
+.stag.in>*:nth-child(5){transition-delay:.36s}
+.stag.in>*:nth-child(6){transition-delay:.45s}
+.stag.in>*:nth-child(7){transition-delay:.54s}
+.stag.in>*:nth-child(8){transition-delay:.63s}
+
+/* ============================================================
+   24. REDUCED MOTION
+   ============================================================ */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}
+  .m-up,.m-tile,.reveal,.stag>*{opacity:1;transform:none;transition:opacity .25s linear}
+  .ps-media,.consult-band .bgimg{transform:none!important}
+  .marq__row{animation:none}
+  .promo-track,.hrail{transition:none;scroll-behavior:auto}
+}
+
+/* ============================================================
+   25. RESPONSIVE
+   ============================================================ */
+@media(max-width:1080px){
+  .gradeband{grid-template-columns:1fr;gap:calc(var(--sec) * .5)}
+  .gradeband .gb-l{position:static}
+  .consult-form{grid-template-columns:1fr;gap:calc(var(--sec) * .5)}
+  .pillar-grid,.faculty-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .review-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .gnav,.head-tel{display:none}
+  .icon-btn{display:flex}
+  .hbar{gap:16px}
+}
+@media(max-width:860px){
+  .topbar .tl{display:none}
+  .topbar .wrap{justify-content:center}
+  .tri-cols,.news-cols{grid-template-columns:1fr;gap:calc(var(--sec) * .5)}
+  .split{grid-template-columns:1fr;gap:calc(var(--sec) * .5)}
+  .split.rev .txt{order:0}
+  .foot-top{grid-template-columns:1fr 1fr;gap:32px}
+  .course-row{grid-template-columns:1fr}
+  .course-row .cbtn{flex-direction:row}
+  .loc-grid{grid-template-columns:1fr}
+  .statsband{gap:calc(var(--sec) * .55)}
+}
+@media(max-width:680px){
+  .storyrow{grid-template-columns:1fr}
+  .statsband{grid-template-columns:1fr}
+  .review-grid,.faculty-grid,.pillar-grid{grid-template-columns:1fr}
+  .cf-form{grid-template-columns:1fr}
+  .hrail-head{flex-direction:column;align-items:flex-start;gap:20px}
+  .hrail-nav{display:none}
+  .branch-grid{grid-auto-columns:minmax(210px,72vw)}
+  .prod-grid{grid-auto-columns:minmax(200px,68vw)}
+  .promo-ui{gap:14px;flex-wrap:wrap}
+  .promo-count{display:none}
+  .fab{right:16px;bottom:16px;min-height:44px;padding:10px 18px}
+  .foot-top{grid-template-columns:1fr}
+}
+
+
+
+video.a1k-hv{display:block;object-fit:cover;background:#000}
+.a1k-hv-host{position:relative;overflow:hidden}
+.a1k-hv-host>*:not(video.a1k-hv){position:relative;z-index:2}
+video.a1k-hv-abs{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:0;pointer-events:none}
