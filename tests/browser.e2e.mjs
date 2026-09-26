@@ -352,7 +352,7 @@ try {
       ),
     );
   });
-  await test("dark buttons use readable dark foreground", async () => {
+  await test("brand buttons retain accessible light palette in system dark mode", async () => {
     await p.setViewportSize({ width: 1440, height: 1000 });
     await p.emulateMedia({ colorScheme: "dark" });
     await p.goto(origin + "/#content");
@@ -362,7 +362,7 @@ try {
       .locator(".button.primary")
       .first()
       .evaluate((e) => getComputedStyle(e).color);
-    assert.notEqual(color, "rgb(255, 255, 255)");
+    assert.equal(color, "rgb(255, 255, 255)");
     const contrast = await p.evaluate(() => {
       const luminance = (color) => {
         const c = color

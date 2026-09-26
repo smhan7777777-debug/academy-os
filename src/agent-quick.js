@@ -1,7 +1,7 @@
 import * as api from "./api.js";
 import { esc, icon } from "./ui.js";
 import { brand, workspaceNav, workspaceTrail, schoolNav } from "./brand.js";
-import { AGENT_TEAMS, FEATURED_AGENTS } from "../shared/agent-teams.js";
+import { renderTeamHub } from "./agent-directory.js";
 import { announcementHtml } from "../shared/announcements.js";
 import "./agent-quick.css";
 
@@ -61,23 +61,7 @@ export async function startQuickAgents() {
     return `<div class="qa-heading"><div><span class="eyebrow">${label}</span><h1>${title}</h1><p>${description}</p></div>${code ? '<a class="button secondary" href="/agents">← AI 직원팀으로</a>' : ""}</div>`;
   }
   function hub() {
-    content.innerHTML =
-      heading(
-        "오늘은 어떤 일을 맡길까요?",
-        "수업과 홈페이지에 있는 자료를 가져옵니다. 필요한 항목만 선택하세요.",
-      ) +
-      `<div class="qa-featured">${FEATURED_AGENTS.map((a, i) => `<a class="qa-task tone-${i}" href="/agents?agent=${a.code}"><span class="qa-task-icon">${icon(["book", "file", "compass", "globe", "leaf"][i])}</span><h2>${esc(a.name)}</h2><p>${esc(a.when)}</p><small>${a.code === "academy-popup" ? "안내 선택 → 홈페이지 확인 → 바로 게시" : esc(a.result)}</small><strong>${esc(a.action)} →</strong></a>`).join("")}</div><div class="qa-home-bottom"><section class="qa-panel"><h2>자주 하는 일</h2><div class="qa-shortcuts"><a href="/agents?agent=academy-journal">${icon("file")} 수업 기록으로 리포트 만들기 <span>→</span></a><a href="/agents?agent=academy-inquiry">${icon("chat")} 홈페이지 문의 답변 <span>${state.inquiries.length}건 →</span></a><a href="/agents?agent=academy-reenroll">${icon("users")} 재등록 안내 <span>→</span></a><a href="/agents?agent=academy-ledger">${icon("book")} 진도·출결 정리 <span>→</span></a></div></section><section class="qa-panel qa-panel-navy"><span class="eyebrow">CONNECTED WEBSITE</span><h2>우리 홈페이지에서<br>바로 보이는 변화.</h2><p>팝업을 고르고 미리 본 뒤 게시하세요.<br>게시 기간과 상담 신청까지 연결됩니다.</p><a class="button" href="/agents?agent=academy-popup">홈페이지 팝업 관리 →</a><a class="qa-light-link" href="/site" target="_blank" rel="noopener">현재 홈페이지 보기 ↗</a></section></div><details class="qa-library"><summary>업무팀별 전체 직원 찾기 · ${state.catalog.filter((a) => a.available).length}개 업무</summary><div class="qa-team-list">${AGENT_TEAMS.map(
-        (t) =>
-          `<section><h3>${t.name}</h3><p>${t.description}</p>${state.catalog
-            .filter((a) => t.codes.includes(a.code))
-            .map(
-              (a) =>
-                `<a href="/agents?${a.priority ? "" : "view=advanced&"}agent=${a.code}">${esc(a.name)} →</a>`,
-            )
-            .join("")}</section>`,
-      ).join(
-        "",
-      )}</div><a href="/agents?view=advanced&all=1">연결 준비 중인 직원과 상세 입력 보기 →</a></details>`;
+    renderTeamHub(content, state);
   }
   async function popup() {
     let options = {

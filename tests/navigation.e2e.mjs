@@ -74,7 +74,10 @@ try {
     });
     const box = await website.boundingBox();
     assert.ok(
-      box && box.y + box.height < 180,
+      box &&
+        (width > 760
+          ? box.y + box.height < 180
+          : box.y >= 0 && box.y + box.height <= 950),
       "Website button is visible without opening a menu",
     );
     await fits("office");

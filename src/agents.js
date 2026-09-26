@@ -86,6 +86,7 @@ export async function startAgents() {
   }
   let state = await api.request("/api/agent-workspace");
   const params = new URLSearchParams(location.search);
+  document.body.classList.toggle("agent-focused", !!params.get("agent"));
   let sourceInquiry = params.get("inquiry") || "";
   let sourceStudent = params.get("student") || "";
   let selected =
@@ -119,6 +120,12 @@ export async function startAgents() {
       " →</span></div></a>",
   ).join("");
   app.innerHTML = `<main class="agent-workspace" id="main"><header class="agent-header"><a href="/#today">${brand("AI 직원 업무실")}</a>${workspaceNav("agents")}</header>${workspaceTrail("agents", "상세 작업실")}<section class="page-heading"><span class="eyebrow">AGENT1000 · CONNECTED WORKSPACE</span><h1>우리 학원의 AI 업무실.</h1><p>학원 기록으로 일을 준비하고, AI 결과를 확인한 뒤 승인하세요.</p></section><section class="panel spaced"><div class="panel-body"><h2>우리 학원 AI 직원팀</h2><p>맡길 일을 선택하면 필요한 기록과 결과가 반영될 위치를 안내합니다.</p><div class="agent-featured">${featured}</div><div class="entry-actions"><a class="button secondary" href="/#today">통합 결재함 →</a><a class="button secondary" href="/#website">홈페이지 문의·상담 →</a><a class="button secondary" href="/learn">공개 수업 체험 →</a></div></div></section><div id="agentConnection"></div><div class="agent-layout"><section class="panel"><div class="panel-body"><h2>업무 선택</h2><label class="field">직원 찾기<input id="agentSearch" type="search" placeholder="직원 이름 또는 코드"></label><label class="field">분류<select id="agentFilter">${["핵심 9종", ...AGENT_TEAMS.map((t) => t.name), "추가 검토", "전체"].map((v) => `<option ${v === filter ? "selected" : ""}>${v}</option>`).join("")}</select></label><div id="agentCatalog" class="agent-catalog"></div></div></section><section class="panel"><div class="panel-body" id="agentEditor"></div></section></div><section class="panel spaced"><div class="panel-body"><div class="entry-head"><h2>작업과 결과</h2><button class="button secondary" id="refreshAgents">새로고침 ↻</button></div><p class="small muted">AI 결과를 다듬어 통합 결재함으로 보내세요. 결재함에서 승인하면 연결한 문의·홈페이지·보호자 공간에 반영됩니다. 외부 문자·플랫폼 게시 기능은 별도 연결이 필요합니다. 예약 실행은 이 서버가 계속 켜져 있어야 합니다.</p><p id="agentMessage" role="status" aria-live="polite"></p><div id="agentHistory"></div></div></section></main>`;
+  app
+    .querySelector(".page-heading")
+    .insertAdjacentHTML(
+      "beforeend",
+      '<a class="button secondary agent-directory-return" href="/agents?view=directory">← 전체 직원 목록</a>',
+    );
   const message = (text, error = false) => {
     const p = app.querySelector("#agentMessage");
     p.textContent = text;
@@ -147,6 +154,10 @@ export async function startAgents() {
         .join("") || "<p>검색 결과가 없습니다.</p>";
   }
   function editor() {
+    if (params.get("agent")) {
+      app.querySelector(".page-heading h1").textContent = selected.name;
+      document.title = `${selected.name} · 배움결`;
+    }
     dirty = false;
     requestKey = crypto.randomUUID();
     revision = state.revision;

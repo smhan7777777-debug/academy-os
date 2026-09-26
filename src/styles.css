@@ -2302,71 +2302,7 @@ tbody tr:hover {
     flex-wrap: wrap;
   }
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --forest: #142c23;
-    --forest2: #204334;
-    --cream: #ded3b2;
-    --gold: #d6bd83;
-    --sage: #263b2e;
-    --bg: #14201a;
-    --paper: #1c2b23;
-    --paper2: #223228;
-    --text: #e4ece3;
-    --muted: #b0bfb2;
-    --line: #374b3d;
-    --green: #b1d7b7;
-    --on-green: #143320;
-    --red: #ffb4a6;
-    --red-bg: #412c26;
-    --amber: #e4c28a;
-    --amber-bg: #3d3525;
-    --blue: #aacbe2;
-    --blue-bg: #273845;
-    color-scheme: dark;
-  }
-  .stat.accent,
-  .side-note,
-  .parent-hero,
-  .portal-hero {
-    border-color: var(--line);
-  }
-  input,
-  select,
-  textarea {
-    border-color: #516653;
-  }
-  .doc-symbol,
-  .doc-symbol.billing,
-  .doc-symbol.care,
-  .doc-symbol.booking {
-    border-color: var(--line);
-  }
-  .brand-mark {
-    color: #173d30;
-  }
-  .approval-proof {
-    border-color: var(--line);
-  }
-  .button.light {
-    color: var(--green);
-  }
-  .mini-progress i.filled {
-    background: #a6c393;
-  }
-  .switch.on {
-    background: #548764;
-  }
-  .rail {
-    background: #10291e;
-  }
-  .avatar {
-    color: #173d30;
-  }
-  .quick-link .icon {
-    color: var(--green);
-  }
-}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

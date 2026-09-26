@@ -13,6 +13,7 @@
     "test:agents": "node tests/agents.e2e.mjs",
     "test:quick-agents": "node tests/agent-quick.e2e.mjs",
     "test:navigation": "node tests/navigation.e2e.mjs",
+    "test:mobile": "node tests/mobile-ui.e2e.mjs",
     "agents:check": "node scripts/check-agent-setup.mjs",
     "test:website": "node tests/website.e2e.mjs",
     "test:studio": "node tests/studio.e2e.mjs",

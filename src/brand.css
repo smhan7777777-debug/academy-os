@@ -19,7 +19,8 @@
   --amber-bg: #faf3e3;
   --blue: #3c6482;
   --blue-bg: #eef4f8;
-  color-scheme: light;
+  /* Keep brand surfaces consistent with the OS setting; no partial auto-dark theme. */
+  color-scheme: only light;
   --shadow: 0 8px 28px #21385909;
 }
 .bg-brand {
@@ -748,16 +749,5 @@ body.studio-page {
   }
   .studio-page .st-paper {
     box-shadow: none;
-  }
-}
-@media (prefers-color-scheme: dark) {
-  .button.primary {
-    background: #bce6dc;
-    border-color: #82beb1;
-    color: #173e3d;
-  }
-  .button.primary:hover {
-    background: #a5d9cd;
-    border-color: #71aa9d;
   }
 }

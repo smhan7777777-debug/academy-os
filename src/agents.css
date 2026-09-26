@@ -75,7 +75,29 @@
 .agent-workspace .local-banner {
   align-items: start;
 }
+.agent-directory-return {
+  margin-top: 16px;
+}
+.agent-focused .page-heading + .panel {
+  display: none;
+}
 @media (max-width: 760px) {
+  .agent-focused .agent-layout > section:first-child {
+    order: 2;
+  }
+  .agent-focused .agent-layout > section:last-child {
+    order: 1;
+  }
+  .agent-focused .page-heading {
+    margin: 16px 0;
+  }
+  .agent-focused .agent-layout {
+    margin-top: 16px;
+  }
+  .agent-directory-return {
+    width: 100%;
+    justify-content: center;
+  }
   .agent-workspace {
     padding: 18px;
   }
